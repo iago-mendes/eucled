@@ -6,6 +6,6 @@
 #include "../../utils/math.h"
 #include "../../utils/colors.h"
 
-#define MAX_RESIDUAL 1e-5
+#define MAX_RESIDUAL 1e-13
 
 #endif
