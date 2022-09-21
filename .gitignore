@@ -1,0 +1,7 @@
+# Compiled files
+binary
+*.gch
+*.o
+
+# Editor preferences
+.vscode
