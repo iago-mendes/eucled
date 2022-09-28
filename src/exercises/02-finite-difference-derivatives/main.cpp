@@ -46,7 +46,8 @@ double get_e_theta_z(int i, int j) {
 	return dyad.e_theta_z(theta, phi);
 }
 
-void check_finite_difference_derivatives(int N) {
+// Returns the overall RMS residual.
+double check_finite_difference_derivatives(int N) {
 	Grid grid_(N, N);
 	grid = grid_;
 
@@ -90,12 +91,25 @@ void check_finite_difference_derivatives(int N) {
 	printf("x's RMS residual = %.5e\n", x_rms_residual);
 	printf("y's RMS residual = %.5e\n", y_rms_residual);
 	printf("z's RMS residual = %.5e\n", z_rms_residual);
+
+	return (x_rms_residual + y_rms_residual + z_rms_residual) / 3;
 }
 
 int main() {
 	printf("Exercise 2: Finite-difference Derivatives.\n");
 
+	vector<double> residuals;
+	vector<double> N_values;
+
 	for (int N = 10; N <= 2000; N *= 2) {
-		check_finite_difference_derivatives(N);
+		double residual = check_finite_difference_derivatives(N);
+
+		residuals.push_back(residual);
+		N_values.push_back(N);
+	}
+
+	ofstream residuals_output("./assets/residuals.csv");
+	for (int i = 0; i < (int) residuals.size(); i++) {
+		residuals_output << N_values[i] << "," << residuals[i] << endl;
 	}
 }
