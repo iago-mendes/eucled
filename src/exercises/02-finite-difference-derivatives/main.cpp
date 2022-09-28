@@ -46,18 +46,8 @@ double get_e_theta_z(int i, int j) {
 	return dyad.e_theta_z(theta, phi);
 }
 
-int main() {
-	printf("Exercise 2: Finite-difference Derivatives.\n\n");
-
-	int N_theta;
-	printf("N_theta = ");
-	cin >> N_theta;
-
-	int N_phi;
-	printf("N_phi = ");
-	cin >> N_phi;
-
-	Grid grid_(N_theta, N_phi);
+void check_finite_difference_derivatives(int N) {
+	Grid grid_(N, N);
 	grid = grid_;
 
 	// Radius of round sphere
@@ -67,7 +57,7 @@ int main() {
 	dyad = dyad_;
 
 	printf("\n-------------------------------------------------------------\n");
-	printf("Dot products residuals for each grid point:\n\n");
+	printf("N_theta = N_phi = %d\n\n", N);
 
 	
 	GridFunction e_phi_x(grid, get_e_phi_x);
@@ -100,7 +90,12 @@ int main() {
 	printf("x's RMS residual = %.5e\n", x_rms_residual);
 	printf("y's RMS residual = %.5e\n", y_rms_residual);
 	printf("z's RMS residual = %.5e\n", z_rms_residual);
+}
 
+int main() {
+	printf("Exercise 2: Finite-difference Derivatives.\n");
 
-	printf("-------------------------------------------------------------\n\n");
+	for (int N = 10; N <= 2000; N *= 2) {
+		check_finite_difference_derivatives(N);
+	}
 }
