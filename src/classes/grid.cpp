@@ -1,7 +1,9 @@
 #include "grid.h"
 using namespace std;
 
-Grid::Grid(double N_theta_, double N_phi_) {
+// Grid
+
+Grid::Grid(int N_theta_, int N_phi_) {
 	N_theta = N_theta_;
 	N_phi = N_phi_;
 
@@ -16,3 +18,47 @@ double Grid::theta(int i) {
 double Grid::phi(int j) {
 	return 2 * M_PI / N_theta * j;
 }
+
+// GridFunction
+
+GridFunction::GridFunction(Grid grid_, double (*function)(int i, int j)) {
+	grid = grid_;
+
+	vector<double> base_vector(grid.N_phi, 0);
+	points.resize(grid.N_theta, base_vector);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			points[i][j] = function(i, j);
+		}
+	}
+}
+
+double GridFunction::partial_theta(int i, int j) {
+	if (i == 0) {
+		return (points[1][j] - points[0][j]) / grid.delta_theta;
+	}
+	else if (i == grid.N_theta - 1) {
+		return (points[grid.N_theta - 1][j] - points[grid.N_theta - 2][j]) / grid.delta_theta;
+	}
+	else {
+		return (points[i + 1][j] - points[i - 1][j]) / (2 * grid.delta_theta);
+	}
+}
+
+double GridFunction::partial_phi(int i, int j) {
+	double df;
+
+	if (j == 0) {
+		df = points[i][1] - points[i][grid.N_phi - 1];
+	}
+	else if (j == grid.N_phi - 1) {
+		df = points[i][0] - points[i][grid.N_phi - 2];
+	}
+	else {
+		df = points[i][j + 1] - points[i][j - 1];
+	}
+
+	return df / (2 * grid.delta_phi);
+}
+

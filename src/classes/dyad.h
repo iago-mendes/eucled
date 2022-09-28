@@ -18,6 +18,7 @@ class RoundSphereDyad : public Dyad {
 		double R; // Radius
 
 		RoundSphereDyad(double radius);
+		RoundSphereDyad() = default;
 
 		double e_theta_x(double theta, double phi);
 		double e_theta_y(double theta, double phi);

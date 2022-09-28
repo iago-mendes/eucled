@@ -2,21 +2,34 @@
 #define GRID_H
 
 #include <bits/stdc++.h>
+using namespace std;
 
 class Grid {
 	public:
 		// Number of grid points
-		double N_theta;
-		double N_phi;
+		int N_theta;
+		int N_phi;
 
 		// Grid-point divisions
 		double delta_theta;
 		double delta_phi;
 
-		Grid(double N_theta_, double N_phi_);
+		Grid(int N_theta_, int N_phi_);
+		Grid() = default;
 
 		double theta(int i);
 		double phi(int j);
+};
+
+class GridFunction {
+	public:
+		Grid grid;
+		vector<vector<double>> points;
+
+		GridFunction(Grid grid_, double (*function)(int i, int j));
+
+		double partial_theta(int i, int j);
+		double partial_phi(int i, int j);
 };
 
 #endif
