@@ -61,3 +61,40 @@ double OblateSpheroidDyad::e_phi_y(double theta, double phi) {
 double OblateSpheroidDyad::e_phi_z([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
 	return 0;
 }
+
+// Rotated Sphere
+
+RotatedSphereDyad::RotatedSphereDyad(double (*rotator)(double theta, double phi)) {
+	this->rotator = rotator;
+
+	RoundSphereDyad round_dyad_(1);
+	round_dyad = round_dyad_;
+}
+
+double RotatedSphereDyad::e_theta_x(double theta, double phi) {
+	double upsilon = rotator(theta, phi);
+	return cos(upsilon) * round_dyad.e_theta_x(theta, phi) + sin(upsilon) * round_dyad.e_theta_z(theta, phi);
+}
+
+double RotatedSphereDyad::e_theta_y(double theta, double phi) {
+	return round_dyad.e_theta_y(theta, phi);
+}
+
+double RotatedSphereDyad::e_theta_z(double theta, double phi) {
+	double upsilon = rotator(theta, phi);
+	return cos(upsilon) * round_dyad.e_theta_z(theta, phi) - sin(upsilon) * round_dyad.e_theta_z(theta, phi);
+}
+
+double RotatedSphereDyad::e_phi_x(double theta, double phi) {
+	double upsilon = rotator(theta, phi);
+	return cos(upsilon) * round_dyad.e_phi_x(theta, phi) + sin(upsilon) * round_dyad.e_phi_z(theta, phi);
+}
+
+double RotatedSphereDyad::e_phi_y(double theta, double phi) {
+	return round_dyad.e_phi_y(theta, phi);
+}
+
+double RotatedSphereDyad::e_phi_z(double theta, double phi) {
+	double upsilon = rotator(theta, phi);
+	return cos(upsilon) * round_dyad.e_phi_z(theta, phi) - sin(upsilon) * round_dyad.e_phi_z(theta, phi);
+}

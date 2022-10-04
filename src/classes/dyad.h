@@ -45,4 +45,21 @@ class OblateSpheroidDyad : public Dyad {
 		double e_phi_z(double theta, double phi);
 };
 
+class RotatedSphereDyad : public Dyad {
+	public:
+		double (*rotator)(double theta, double phi); // Field rotator
+
+		RoundSphereDyad round_dyad;
+
+		RotatedSphereDyad(double (*rotator)(double theta, double phi));
+		RotatedSphereDyad() = default;
+
+		double e_theta_x(double theta, double phi);
+		double e_theta_y(double theta, double phi);
+		double e_theta_z(double theta, double phi);
+		double e_phi_x(double theta, double phi);
+		double e_phi_y(double theta, double phi);
+		double e_phi_z(double theta, double phi);
+};
+
 #endif
