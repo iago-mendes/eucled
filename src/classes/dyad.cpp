@@ -15,7 +15,7 @@ double RoundSphereDyad::e_theta_y(double theta, double phi) {
 	return R * cos(theta) * sin(phi);
 }
 
-double RoundSphereDyad::e_theta_z(double theta, double phi) {
+double RoundSphereDyad::e_theta_z(double theta, [[maybe_unused]] double phi) {
 	return - R * sin(theta);
 }
 
@@ -27,7 +27,7 @@ double RoundSphereDyad::e_phi_y(double theta, double phi) {
 	return R * sin(theta) * cos(phi);
 }
 
-double RoundSphereDyad::e_phi_z(double theta, double phi) {
+double RoundSphereDyad::e_phi_z([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
 	return 0;
 }
 
@@ -46,7 +46,7 @@ double OblateSpheroidDyad::e_theta_y(double theta, double phi) {
 	return a * cos(theta) * sin(phi);
 }
 
-double OblateSpheroidDyad::e_theta_z(double theta, double phi) {
+double OblateSpheroidDyad::e_theta_z(double theta, [[maybe_unused]] double phi) {
 	return - a * sin(theta);
 }
 
@@ -58,6 +58,6 @@ double OblateSpheroidDyad::e_phi_y(double theta, double phi) {
 	return b * sin(theta) * cos(phi);
 }
 
-double OblateSpheroidDyad::e_phi_z(double theta, double phi) {
+double OblateSpheroidDyad::e_phi_z([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
 	return 0;
 }
