@@ -124,4 +124,16 @@ int main() {
 		double residual = check_finite_difference_derivatives(N, nonconstant_rotator);
 		nonconstant_residuals_output << N << "," << residual << endl;
 	}
+
+	printf("\n=============================================================\n");
+	printf("NON-CONSTANT ROTATOR (CHANGING ALPHA)\n");
+	printf("=============================================================\n");
+
+	int N = 100; // number of grid points
+	ofstream nonconstant_alpha_residuals_output("./assets/nonconstant_alpha_residuals.csv");
+	for (alpha = 10; alpha <= 2000; alpha *= 2) {
+		double residual = check_finite_difference_derivatives(N, nonconstant_rotator);
+		printf("\nalpha = %f\n", alpha);
+		nonconstant_alpha_residuals_output << alpha << "," << residual << endl;
+	}
 }
