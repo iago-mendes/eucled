@@ -103,7 +103,7 @@ double check_finite_difference_derivatives(int N, double (*rotator)(double theta
 }
 
 int main() {
-	printf("Exercise 4: Check commutators for oblate spheroid.\n");
+	printf("Exercise 5: Check commutators for rotated sphere.\n");
 
 	printf("\n=============================================================\n");
 	printf("CONSTANT ROTATOR\n");
