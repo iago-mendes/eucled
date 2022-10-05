@@ -131,7 +131,7 @@ int main() {
 
 	int N = 100; // number of grid points
 	ofstream nonconstant_alpha_residuals_output("./assets/nonconstant_alpha_residuals.csv");
-	for (alpha = 10; alpha <= 2000; alpha *= 2) {
+	for (alpha = 0; alpha <= 1; alpha += 0.1) {
 		double residual = check_finite_difference_derivatives(N, nonconstant_rotator);
 		printf("\nalpha = %f\n", alpha);
 		nonconstant_alpha_residuals_output << alpha << "," << residual << endl;
