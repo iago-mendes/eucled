@@ -4,6 +4,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#include "../utils/rms.h"
+
 class Grid {
 	public:
 		// Number of grid points
@@ -30,6 +32,20 @@ class GridFunction {
 
 		double partial_theta(int i, int j);
 		double partial_phi(int i, int j);
+};
+
+class Grid3DFunction {
+	public:
+		Grid grid;
+
+		vector<vector<double>> x_values;
+		vector<vector<double>> y_values;
+		vector<vector<double>> z_values;
+
+		Grid3DFunction(Grid grid_, double (*function)(int i, int j, char coordinate));
+		Grid3DFunction() = default;
+
+		double rms();
 };
 
 #endif

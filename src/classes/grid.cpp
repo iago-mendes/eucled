@@ -62,3 +62,30 @@ double GridFunction::partial_phi(int i, int j) {
 	return df / (2 * grid.delta_phi);
 }
 
+// Grid3DFunction
+
+Grid3DFunction::Grid3DFunction(Grid grid_, double (*function)(int i, int j, char coordinate)) {
+	grid = grid_;
+
+	vector<double> base_vector(grid.N_phi, 0);
+	x_values.resize(grid.N_theta, base_vector);
+	y_values.resize(grid.N_theta, base_vector);
+	z_values.resize(grid.N_theta, base_vector);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			x_values[i][j] = function(i, j, 'x');
+			y_values[i][j] = function(i, j, 'y');
+			z_values[i][j] = function(i, j, 'z');
+		}
+	}
+}
+
+double Grid3DFunction::rms() {
+	double x_rms = get_rms(&x_values);
+	double y_rms = get_rms(&y_values);
+	double z_rms = get_rms(&z_values);
+
+	double rms = (x_rms + y_rms + z_rms) / 3;
+	return rms;
+}

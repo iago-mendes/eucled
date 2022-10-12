@@ -6,5 +6,6 @@
 using namespace std;
 
 double get_rms(const vector<double> *p_vect);
+double get_rms(const vector<vector<double>> *p_vect);
 
 #endif
