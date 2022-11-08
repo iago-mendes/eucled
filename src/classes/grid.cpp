@@ -12,7 +12,7 @@ Grid::Grid(int N_theta_, int N_phi_) {
 }
 
 double Grid::theta(int i) {
-	return M_PI / N_theta * (i + 1 / 2);
+	return M_PI / N_theta * (i + (double) 1 / 2);
 }
 
 double Grid::phi(int j) {
@@ -88,4 +88,140 @@ double Grid3DFunction::rms() {
 
 	double rms = (x_rms + y_rms + z_rms) / 3;
 	return rms;
+}
+
+Grid3DFunction *Grid3DFunction::partial_theta() {
+	Grid3DFunction *new_function = multiplied_by(1);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			if (i == 0) {
+				(*new_function).x_values[i][j] = (x_values[1][j] - x_values[0][j]) / grid.delta_theta;
+				(*new_function).y_values[i][j] = (y_values[1][j] - y_values[0][j]) / grid.delta_theta;
+				(*new_function).z_values[i][j] = (z_values[1][j] - z_values[0][j]) / grid.delta_theta;
+			}
+			else if (i == grid.N_theta - 1) {
+				(*new_function).x_values[i][j] = (x_values[grid.N_theta - 1][j] - x_values[grid.N_theta - 2][j]) / grid.delta_theta;
+				(*new_function).y_values[i][j] = (y_values[grid.N_theta - 1][j] - y_values[grid.N_theta - 2][j]) / grid.delta_theta;
+				(*new_function).z_values[i][j] = (z_values[grid.N_theta - 1][j] - z_values[grid.N_theta - 2][j]) / grid.delta_theta;
+			}
+			else {
+				(*new_function).x_values[i][j] = (x_values[i + 1][j] - x_values[i - 1][j]) / (2 * grid.delta_theta);
+				(*new_function).y_values[i][j] = (y_values[i + 1][j] - y_values[i - 1][j]) / (2 * grid.delta_theta);
+				(*new_function).z_values[i][j] = (z_values[i + 1][j] - z_values[i - 1][j]) / (2 * grid.delta_theta);
+			}
+		}
+	}
+
+	return new_function;
+}
+
+Grid3DFunction *Grid3DFunction::partial_phi() {
+	Grid3DFunction *new_function = multiplied_by(1);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			if (j == 0) {
+				(*new_function).x_values[i][j] = (x_values[i][1] - x_values[i][grid.N_phi - 1]) / (2 * grid.delta_phi);
+				(*new_function).y_values[i][j] = (y_values[i][1] - y_values[i][grid.N_phi - 1]) / (2 * grid.delta_phi);
+				(*new_function).z_values[i][j] = (z_values[i][1] - z_values[i][grid.N_phi - 1]) / (2 * grid.delta_phi);
+			}
+			else if (j == grid.N_phi - 1) {
+				(*new_function).x_values[i][j] = (x_values[i][0] - x_values[i][grid.N_phi - 2]) / (2 * grid.delta_phi);
+				(*new_function).y_values[i][j] = (y_values[i][0] - y_values[i][grid.N_phi - 2]) / (2 * grid.delta_phi);
+				(*new_function).z_values[i][j] = (z_values[i][0] - z_values[i][grid.N_phi - 2]) / (2 * grid.delta_phi);
+			}
+			else {
+				(*new_function).x_values[i][j] = (x_values[i][j + 1] - x_values[i][j - 1]) / (2 * grid.delta_phi);
+				(*new_function).y_values[i][j] = (y_values[i][j + 1] - y_values[i][j - 1]) / (2 * grid.delta_phi);
+				(*new_function).z_values[i][j] = (z_values[i][j + 1] - z_values[i][j - 1]) / (2 * grid.delta_phi);
+			}
+		}
+	}
+
+	return new_function;
+}
+
+Grid3DFunction *Grid3DFunction::multiplied_by(double (*multiplier)(double theta, double phi, char coordinate)) {
+	Grid3DFunction *new_function;
+	new_function = new Grid3DFunction;
+	(*new_function) = Grid3DFunction();
+
+	(*new_function).grid = grid;
+	(*new_function).x_values = x_values;
+	(*new_function).y_values = y_values;
+	(*new_function).z_values = z_values;
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		double theta = grid.theta(i);
+
+		for (int j = 0; j < grid.N_phi; j++) {
+			double phi = grid.phi(j);
+			
+			(*new_function).x_values[i][j] *= multiplier(theta, phi, 'x');
+			(*new_function).y_values[i][j] *= multiplier(theta, phi, 'y');
+			(*new_function).z_values[i][j] *= multiplier(theta, phi, 'z');
+		}
+	}
+
+	return new_function;
+}
+
+Grid3DFunction *Grid3DFunction::multiplied_by(double multiplier) {
+	Grid3DFunction *new_function;
+	new_function = new Grid3DFunction;
+	(*new_function) = Grid3DFunction();
+
+	(*new_function).grid = grid;
+	(*new_function).x_values = x_values;
+	(*new_function).y_values = y_values;
+	(*new_function).z_values = z_values;
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			(*new_function).x_values[i][j] *= multiplier;
+			(*new_function).y_values[i][j] *= multiplier;
+			(*new_function).z_values[i][j] *= multiplier;
+		}
+	}
+
+	return new_function;
+}
+
+Grid3DFunction *Grid3DFunction::added_with(
+	Grid3DFunction *function,
+	double (*multiplier)(double theta, double phi, char coordinate)
+) {
+	Grid3DFunction *new_function = multiplied_by(1);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		double theta = grid.theta(i);
+
+		for (int j = 0; j < grid.N_phi; j++) {
+			double phi = grid.phi(j);
+
+			(*new_function).x_values[i][j] += multiplier(theta, phi, 'x') * (*function).x_values[i][j];
+			(*new_function).y_values[i][j] += multiplier(theta, phi, 'y') * (*function).y_values[i][j];
+			(*new_function).z_values[i][j] += multiplier(theta, phi, 'z') * (*function).z_values[i][j];
+		}
+	}
+
+	return new_function;
+}
+
+Grid3DFunction *Grid3DFunction::added_with(
+	Grid3DFunction *function,
+	double multiplier
+) {
+	Grid3DFunction *new_function = multiplied_by(1);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			(*new_function).x_values[i][j] += multiplier * (*function).x_values[i][j];
+			(*new_function).y_values[i][j] += multiplier * (*function).y_values[i][j];
+			(*new_function).z_values[i][j] += multiplier * (*function).z_values[i][j];
+		}
+	}
+
+	return new_function;
 }

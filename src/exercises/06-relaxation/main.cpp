@@ -75,5 +75,5 @@ int main() {
 	OblateSpheroidDyad dyad_(a, b);
 	dyad = dyad_;
 
-	find_solution(100);
+	find_solution(20);
 }

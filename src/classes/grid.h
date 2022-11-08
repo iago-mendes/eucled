@@ -46,6 +46,30 @@ class Grid3DFunction {
 		Grid3DFunction() = default;
 
 		double rms();
+
+		// Returns the partial derivative relative to theta of this function.
+		Grid3DFunction *partial_theta();
+
+		// Returns the partial derivative relative to phi of this function.
+		Grid3DFunction *partial_phi();
+
+		// Returns a new function multipled by the given multiplier.
+		Grid3DFunction *multiplied_by(double (*multiplier)(double theta, double phi, char coordinate));
+
+		// Returns a new function multipled by the given multiplier.
+		Grid3DFunction *multiplied_by(double multiplier);
+
+		// Returns a new function added with the given function multiplied by the given multiplier.
+		Grid3DFunction *added_with(
+			Grid3DFunction *function,
+			double (*multiplier)(double theta, double phi, char coordinate)
+		);
+
+		// Returns a new function added with the given function multiplied by the given multiplier.
+		Grid3DFunction *added_with(
+			Grid3DFunction *function,
+			double multiplier
+		);
 };
 
 #endif

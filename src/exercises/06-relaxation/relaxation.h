@@ -2,9 +2,11 @@
 #define RELAXATION_H
 
 #include "../../classes/grid.h"
+#include "../../functions/commutator.h"
+#include "../../functions/cross_product.h"
 
 #define RESIDUAL_TOLERANCE 1e-13
-#define MAX_ITERATIONS 1e2
+#define MAX_ITERATIONS 1e5
 
 double run_relaxation(
 	Grid3DFunction *e_theta_,
