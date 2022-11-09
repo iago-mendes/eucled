@@ -73,6 +73,10 @@ class Grid3DFunction {
 			shared_ptr<Grid3DFunction> function,
 			double multiplier
 		);
+
+		private:
+			shared_ptr<Grid3DFunction> cached_partial_theta;
+			shared_ptr<Grid3DFunction> cached_partial_phi;
 };
 
 #endif

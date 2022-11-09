@@ -116,8 +116,8 @@ double run_relaxation(
 		residual > RESIDUAL_TOLERANCE &&
 		iteration_number < MAX_ITERATIONS
 	) {
-		// if (iteration_number % 20 == 0)
-		printf("(%d) %f\n", iteration_number, residual);
+		if (iteration_number % 20 == 0)
+			printf("(%d) %f\n", iteration_number, residual);
 		
 		update_e_theta();
 		update_e_phi();

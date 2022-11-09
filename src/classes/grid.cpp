@@ -85,6 +85,9 @@ Grid3DFunction::Grid3DFunction(Grid grid_, double (*function)(int i, int j, char
 			z_values[i][j] = function(i, j, 'z');
 		}
 	}
+
+	cached_partial_theta = nullptr;
+	cached_partial_phi = nullptr;
 }
 
 double Grid3DFunction::rms() {
@@ -111,6 +114,10 @@ shared_ptr<Grid3DFunction> Grid3DFunction::get_copy() {
 }
 
 shared_ptr<Grid3DFunction> Grid3DFunction::partial_theta() {
+	if (cached_partial_theta != nullptr) {
+		return cached_partial_theta;
+	}
+
 	auto new_function = get_copy();
 
 	for (int i = 0; i < grid.N_theta; i++) {
@@ -133,10 +140,16 @@ shared_ptr<Grid3DFunction> Grid3DFunction::partial_theta() {
 		}
 	}
 
+	cached_partial_theta = new_function;
+
 	return new_function;
 }
 
 shared_ptr<Grid3DFunction> Grid3DFunction::partial_phi() {
+	if (cached_partial_phi != nullptr) {
+		return cached_partial_phi;
+	}
+
 	auto new_function = get_copy();
 
 	for (int i = 0; i < grid.N_theta; i++) {
@@ -158,6 +171,8 @@ shared_ptr<Grid3DFunction> Grid3DFunction::partial_phi() {
 			}
 		}
 	}
+
+	cached_partial_phi = new_function;
 
 	return new_function;
 }
