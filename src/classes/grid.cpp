@@ -1,6 +1,12 @@
 #include "grid.h"
 using namespace std;
 
+// Miscellaneous
+
+double zero_function([[maybe_unused]] int i, [[maybe_unused]] int j, [[maybe_unused]] char coordinate) {
+	return 0;
+}
+
 // Grid
 
 Grid::Grid(int N_theta_, int N_phi_) {
@@ -90,8 +96,22 @@ double Grid3DFunction::rms() {
 	return rms;
 }
 
-Grid3DFunction *Grid3DFunction::partial_theta() {
-	Grid3DFunction *new_function = multiplied_by(1);
+shared_ptr<Grid3DFunction> Grid3DFunction::get_copy() {
+	auto copy = make_shared<Grid3DFunction>(grid, zero_function);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			(*copy).x_values[i][j] = x_values[i][j];
+			(*copy).y_values[i][j] = y_values[i][j];
+			(*copy).z_values[i][j] = z_values[i][j];
+		}
+	}
+
+	return copy;
+}
+
+shared_ptr<Grid3DFunction> Grid3DFunction::partial_theta() {
+	auto new_function = get_copy();
 
 	for (int i = 0; i < grid.N_theta; i++) {
 		for (int j = 0; j < grid.N_phi; j++) {
@@ -116,8 +136,8 @@ Grid3DFunction *Grid3DFunction::partial_theta() {
 	return new_function;
 }
 
-Grid3DFunction *Grid3DFunction::partial_phi() {
-	Grid3DFunction *new_function = multiplied_by(1);
+shared_ptr<Grid3DFunction> Grid3DFunction::partial_phi() {
+	auto new_function = get_copy();
 
 	for (int i = 0; i < grid.N_theta; i++) {
 		for (int j = 0; j < grid.N_phi; j++) {
@@ -142,15 +162,8 @@ Grid3DFunction *Grid3DFunction::partial_phi() {
 	return new_function;
 }
 
-Grid3DFunction *Grid3DFunction::multiplied_by(double (*multiplier)(double theta, double phi, char coordinate)) {
-	Grid3DFunction *new_function;
-	new_function = new Grid3DFunction;
-	(*new_function) = Grid3DFunction();
-
-	(*new_function).grid = grid;
-	(*new_function).x_values = x_values;
-	(*new_function).y_values = y_values;
-	(*new_function).z_values = z_values;
+shared_ptr<Grid3DFunction> Grid3DFunction::multiplied_by(double (*multiplier)(double theta, double phi, char coordinate)) {
+	auto new_function = get_copy();
 
 	for (int i = 0; i < grid.N_theta; i++) {
 		double theta = grid.theta(i);
@@ -167,15 +180,8 @@ Grid3DFunction *Grid3DFunction::multiplied_by(double (*multiplier)(double theta,
 	return new_function;
 }
 
-Grid3DFunction *Grid3DFunction::multiplied_by(double multiplier) {
-	Grid3DFunction *new_function;
-	new_function = new Grid3DFunction;
-	(*new_function) = Grid3DFunction();
-
-	(*new_function).grid = grid;
-	(*new_function).x_values = x_values;
-	(*new_function).y_values = y_values;
-	(*new_function).z_values = z_values;
+shared_ptr<Grid3DFunction> Grid3DFunction::multiplied_by(double multiplier) {
+	auto new_function = get_copy();
 
 	for (int i = 0; i < grid.N_theta; i++) {
 		for (int j = 0; j < grid.N_phi; j++) {
@@ -188,11 +194,11 @@ Grid3DFunction *Grid3DFunction::multiplied_by(double multiplier) {
 	return new_function;
 }
 
-Grid3DFunction *Grid3DFunction::added_with(
-	Grid3DFunction *function,
+shared_ptr<Grid3DFunction> Grid3DFunction::added_with(
+	shared_ptr<Grid3DFunction> function,
 	double (*multiplier)(double theta, double phi, char coordinate)
 ) {
-	Grid3DFunction *new_function = multiplied_by(1);
+	auto new_function = get_copy();
 
 	for (int i = 0; i < grid.N_theta; i++) {
 		double theta = grid.theta(i);
@@ -209,11 +215,11 @@ Grid3DFunction *Grid3DFunction::added_with(
 	return new_function;
 }
 
-Grid3DFunction *Grid3DFunction::added_with(
-	Grid3DFunction *function,
+shared_ptr<Grid3DFunction> Grid3DFunction::added_with(
+	shared_ptr<Grid3DFunction> function,
 	double multiplier
 ) {
-	Grid3DFunction *new_function = multiplied_by(1);
+	auto new_function = get_copy();
 
 	for (int i = 0; i < grid.N_theta; i++) {
 		for (int j = 0; j < grid.N_phi; j++) {

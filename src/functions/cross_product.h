@@ -3,6 +3,6 @@
 
 #include "../classes/grid.h"
 
-Grid3DFunction *get_cross_product(Grid3DFunction *vector_a, Grid3DFunction *vector_b);
+shared_ptr<Grid3DFunction> get_cross_product(shared_ptr<Grid3DFunction> vector_a, shared_ptr<Grid3DFunction> vector_b);
 
 #endif

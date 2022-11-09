@@ -1,7 +1,7 @@
 #include "cross_product.h"
 
-Grid3DFunction *vector_a__cross_product;
-Grid3DFunction *vector_b__cross_product;
+shared_ptr<Grid3DFunction> vector_a__cross_product(nullptr);
+shared_ptr<Grid3DFunction> vector_b__cross_product(nullptr);
 
 double get_cross_product_helper(int i, int j, char coordinate) {
 	switch (coordinate) {
@@ -29,14 +29,11 @@ double get_cross_product_helper(int i, int j, char coordinate) {
 	}
 }
 
-Grid3DFunction *get_cross_product(Grid3DFunction *vector_a, Grid3DFunction *vector_b) {
+shared_ptr<Grid3DFunction> get_cross_product(shared_ptr<Grid3DFunction> vector_a, shared_ptr<Grid3DFunction> vector_b) {
 	vector_a__cross_product = vector_a;
 	vector_b__cross_product = vector_b;
 
-	Grid3DFunction *cross_product;
-	cross_product = new Grid3DFunction;
-	Grid3DFunction cross_product_((*vector_a).grid, get_cross_product_helper);
-	(*cross_product) = cross_product_;
+	shared_ptr<Grid3DFunction> cross_product = make_shared<Grid3DFunction>((*vector_a).grid, get_cross_product_helper);
 
 	return cross_product;
 }

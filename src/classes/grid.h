@@ -47,27 +47,30 @@ class Grid3DFunction {
 
 		double rms();
 
+		// Returns a copy of this function.
+		shared_ptr<Grid3DFunction> get_copy();
+
 		// Returns the partial derivative relative to theta of this function.
-		Grid3DFunction *partial_theta();
+		shared_ptr<Grid3DFunction> partial_theta();
 
 		// Returns the partial derivative relative to phi of this function.
-		Grid3DFunction *partial_phi();
+		shared_ptr<Grid3DFunction> partial_phi();
 
 		// Returns a new function multipled by the given multiplier.
-		Grid3DFunction *multiplied_by(double (*multiplier)(double theta, double phi, char coordinate));
+		shared_ptr<Grid3DFunction> multiplied_by(double (*multiplier)(double theta, double phi, char coordinate));
 
 		// Returns a new function multipled by the given multiplier.
-		Grid3DFunction *multiplied_by(double multiplier);
+		shared_ptr<Grid3DFunction> multiplied_by(double multiplier);
 
 		// Returns a new function added with the given function multiplied by the given multiplier.
-		Grid3DFunction *added_with(
-			Grid3DFunction *function,
+		shared_ptr<Grid3DFunction> added_with(
+			shared_ptr<Grid3DFunction> function,
 			double (*multiplier)(double theta, double phi, char coordinate)
 		);
 
 		// Returns a new function added with the given function multiplied by the given multiplier.
-		Grid3DFunction *added_with(
-			Grid3DFunction *function,
+		shared_ptr<Grid3DFunction> added_with(
+			shared_ptr<Grid3DFunction> function,
 			double multiplier
 		);
 };

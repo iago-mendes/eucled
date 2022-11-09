@@ -3,7 +3,7 @@
 
 #include "../classes/grid.h"
 
-Grid3DFunction *get_commutator(Grid3DFunction *e_theta, Grid3DFunction *e_phi);
-double get_commutator_rms(Grid3DFunction *e_theta, Grid3DFunction *e_phi);
+shared_ptr<Grid3DFunction> get_commutator(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi);
+double get_commutator_rms(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi);
 
 #endif

@@ -8,8 +8,8 @@ OblateSpheroidDyad dyad;
 double a = 1;
 double b = 2;
 
-Grid3DFunction e_theta;
-Grid3DFunction e_phi;
+shared_ptr<Grid3DFunction> e_theta(nullptr);
+shared_ptr<Grid3DFunction> e_phi(nullptr);
 
 double get_e_theta(int i, int j, char coordinate) {
 	double theta = grid.theta(i);
@@ -63,17 +63,15 @@ double find_solution(int N) {
 	grid = grid_;
 
 	// Reset solutions
-	Grid3DFunction e_theta_(grid, get_e_theta);
-	e_theta = e_theta_;
-	Grid3DFunction e_phi_(grid, get_e_phi);
-	e_phi = e_phi_;
+	e_theta = make_shared<Grid3DFunction>(grid, get_e_theta);
+	e_phi = make_shared<Grid3DFunction>(grid, get_e_phi);
 
-	return run_relaxation(&e_theta, &e_phi, get_commutator_rms);
+	return run_relaxation(e_theta, e_phi, get_commutator_rms);
 }
 
 int main() {
 	OblateSpheroidDyad dyad_(a, b);
 	dyad = dyad_;
 
-	find_solution(20);
+	find_solution(10);
 }

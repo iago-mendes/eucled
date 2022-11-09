@@ -13,4 +13,4 @@ relaxation.o: relaxation.cpp relaxation.h
 	g++ $(CFLAGS) -c $^
 
 clean:
-	rm -f binary *.o
+	rm -f binary *.o *.h.gch

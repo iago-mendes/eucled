@@ -1,8 +1,8 @@
 #include "relaxation.h"
 using namespace std;
 
-Grid3DFunction *e_theta__relaxation;
-Grid3DFunction *e_phi__relaxation;
+shared_ptr<Grid3DFunction> e_theta__relaxation(nullptr);
+shared_ptr<Grid3DFunction> e_phi__relaxation(nullptr);
 
 double time_step = 0.01;
 
@@ -31,11 +31,11 @@ double negate_multiplier(
 }
 
 void update_e_theta() {
-	Grid3DFunction *e_theta = e_theta__relaxation;
-	Grid3DFunction *e_phi = e_phi__relaxation;
+	shared_ptr<Grid3DFunction> e_theta = e_theta__relaxation;
+	shared_ptr<Grid3DFunction> e_phi = e_phi__relaxation;
 
-	Grid3DFunction *left_side = get_commutator(e_theta, e_phi);
-	Grid3DFunction *right_side = get_commutator(e_theta, e_phi);
+	shared_ptr<Grid3DFunction> left_side = get_commutator(e_theta, e_phi);
+	shared_ptr<Grid3DFunction> right_side = get_commutator(e_theta, e_phi);
 
 	left_side = (*left_side).multiplied_by(sin_multiplier);
 	right_side = (*right_side).multiplied_by(sin_multiplier);
@@ -65,7 +65,7 @@ void update_e_theta() {
 		printf("NaN 4\n");
 	}
 
-	Grid3DFunction *e_theta_derivative = (*left_side).added_with(right_side, -1);
+	shared_ptr<Grid3DFunction> e_theta_derivative = (*left_side).added_with(right_side, -1);
 
 	e_theta_derivative = get_cross_product(e_theta_derivative, e_theta);
 
@@ -75,11 +75,11 @@ void update_e_theta() {
 }
 
 void update_e_phi() {
-	Grid3DFunction *e_theta = e_theta__relaxation;
-	Grid3DFunction *e_phi = e_phi__relaxation;
+	shared_ptr<Grid3DFunction> e_theta = e_theta__relaxation;
+	shared_ptr<Grid3DFunction> e_phi = e_phi__relaxation;
 
-	Grid3DFunction *left_side = get_commutator(e_theta, e_phi);
-	Grid3DFunction *right_side = get_commutator(e_theta, e_phi);
+	shared_ptr<Grid3DFunction> left_side = get_commutator(e_theta, e_phi);
+	shared_ptr<Grid3DFunction> right_side = get_commutator(e_theta, e_phi);
 
 	left_side = (*left_side).multiplied_by(sin_multiplier);
 	right_side = (*right_side).multiplied_by(sin_multiplier);
@@ -93,7 +93,7 @@ void update_e_phi() {
 	left_side = (*left_side).multiplied_by(inverse_sin_multiplier);
 	right_side = (*right_side).multiplied_by(inverse_sin_multiplier);
 
-	Grid3DFunction *e_phi_derivative = (*left_side).added_with(right_side, -1);
+	shared_ptr<Grid3DFunction> e_phi_derivative = (*left_side).added_with(right_side, -1);
 
 	e_phi_derivative = get_cross_product(e_phi_derivative, e_phi);
 
@@ -103,9 +103,9 @@ void update_e_phi() {
 }
 
 double run_relaxation(
-	Grid3DFunction *e_theta,
-	Grid3DFunction *e_phi,
-	double (*get_residual)(Grid3DFunction *e_theta, Grid3DFunction *e_phi)
+	shared_ptr<Grid3DFunction> e_theta,
+	shared_ptr<Grid3DFunction> e_phi,
+	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi)
 ) {
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
@@ -116,8 +116,8 @@ double run_relaxation(
 		residual > RESIDUAL_TOLERANCE &&
 		iteration_number < MAX_ITERATIONS
 	) {
-		if (iteration_number % 20 == 0)
-			printf("(%d) %f\n", iteration_number, residual);
+		// if (iteration_number % 20 == 0)
+		printf("(%d) %f\n", iteration_number, residual);
 		
 		update_e_theta();
 		update_e_phi();

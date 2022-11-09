@@ -1,7 +1,7 @@
 #include "commutator.h"
 
-Grid3DFunction *e_theta__commutator;
-Grid3DFunction *e_phi__commutator;
+shared_ptr<Grid3DFunction> e_theta__commutator(nullptr);
+shared_ptr<Grid3DFunction> e_phi__commutator(nullptr);
 
 double get_commutator_helper(int i, int j, char coordinate) {
 	// static int count = 0;
@@ -25,19 +25,17 @@ double get_commutator_helper(int i, int j, char coordinate) {
 	}
 }
 
-Grid3DFunction *get_commutator(Grid3DFunction *e_theta, Grid3DFunction *e_phi) {
+shared_ptr<Grid3DFunction> get_commutator(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi) {
 	e_theta__commutator = e_theta;
 	e_phi__commutator = e_phi;
 
-	Grid3DFunction *commutator;
-	commutator = new Grid3DFunction;
-	(*commutator) = Grid3DFunction((*e_theta).grid, get_commutator_helper);
+	shared_ptr<Grid3DFunction> commutator = make_shared<Grid3DFunction>((*e_theta).grid, get_commutator_helper);
 
 	return commutator;
 }
 
-double get_commutator_rms(Grid3DFunction *e_theta, Grid3DFunction *e_phi) {
-	Grid3DFunction *commutator = get_commutator(e_theta, e_phi);
+double get_commutator_rms(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi) {
+	shared_ptr<Grid3DFunction> commutator = get_commutator(e_theta, e_phi);
 
 	return (*commutator).rms();
 }
