@@ -73,5 +73,12 @@ int main() {
 	OblateSpheroidDyad dyad_(a, b);
 	dyad = dyad_;
 
-	find_solution(40);
+	ofstream convergence_output("./assets/convergence.csv");
+	for (int N = 10; N <= 100; N += 10) {
+		printf("\nN = %d\n", N);
+
+		double residual = find_solution(N);
+
+		convergence_output << N << "," << residual << endl;
+	}
 }
