@@ -4,7 +4,7 @@ using namespace std;
 shared_ptr<Grid3DFunction> e_theta__relaxation(nullptr);
 shared_ptr<Grid3DFunction> e_phi__relaxation(nullptr);
 
-double time_step = 0.0025;
+TimeStepper time_stepper(0.01, 10);
 
 double sin_multiplier(
 	double theta,
@@ -71,7 +71,7 @@ void update_e_theta() {
 
 	e_theta_derivative = (*e_theta_derivative).multiplied_by(negate_multiplier);
 
-	e_theta__relaxation = (*e_theta__relaxation).added_with(e_theta_derivative, time_step);
+	e_theta__relaxation = (*e_theta__relaxation).added_with(e_theta_derivative, time_stepper.get_step());
 }
 
 void update_e_phi() {
@@ -99,7 +99,7 @@ void update_e_phi() {
 
 	e_phi_derivative = (*e_phi_derivative).multiplied_by(negate_multiplier);
 
-	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, time_step);
+	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, time_stepper.get_step());
 }
 
 double run_relaxation(
@@ -117,12 +117,20 @@ double run_relaxation(
 		iteration_number < MAX_ITERATIONS
 	) {
 		if (iteration_number % 10 == 0)
-			printf("(%d) %f\n", iteration_number, residual);
+			printf("(%d) %f, step = %f\n", iteration_number, residual, time_stepper.get_step());
 		
 		update_e_theta();
 		update_e_phi();
 
 		residual = get_residual(e_theta__relaxation, e_phi__relaxation);
+
+		shared_ptr<Iteration> updated_iteration = time_stepper.update_step(e_theta__relaxation, e_phi__relaxation, residual);
+		if (updated_iteration->solution1 != e_theta__relaxation || updated_iteration->solution2 != e_phi__relaxation) {
+			e_theta__relaxation = updated_iteration->solution1;
+			e_phi__relaxation = updated_iteration->solution2;
+			residual = updated_iteration->residual;
+		}
+
 		iteration_number++;
 	}
 

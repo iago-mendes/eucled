@@ -2,6 +2,7 @@
 #define RELAXATION_H
 
 #include "../../classes/grid.h"
+#include "../../classes/time_stepper.h"
 #include "../../functions/commutator.h"
 #include "../../functions/cross_product.h"
 
