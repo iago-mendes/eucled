@@ -3,5 +3,8 @@ binary
 *.gch
 *.o
 
+# Data files
+*.csv
+
 # Editor preferences
 .vscode

@@ -4,7 +4,7 @@ using namespace std;
 shared_ptr<Grid3DFunction> e_theta__relaxation(nullptr);
 shared_ptr<Grid3DFunction> e_phi__relaxation(nullptr);
 
-double time_step = 0.01;
+double time_step = 0.0025;
 
 double sin_multiplier(
 	double theta,
@@ -116,7 +116,7 @@ double run_relaxation(
 		residual > RESIDUAL_TOLERANCE &&
 		iteration_number < MAX_ITERATIONS
 	) {
-		if (iteration_number % 20 == 0)
+		if (iteration_number % 10 == 0)
 			printf("(%d) %f\n", iteration_number, residual);
 		
 		update_e_theta();
