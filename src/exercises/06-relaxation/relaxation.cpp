@@ -110,6 +110,8 @@ double run_relaxation(
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
 
+	ofstream residuals_output("./assets/residuals.csv");
+
 	double residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 	int iteration_number = 0;
 	while (
@@ -123,6 +125,7 @@ double run_relaxation(
 		update_e_phi();
 
 		residual = get_residual(e_theta__relaxation, e_phi__relaxation);
+		residuals_output << iteration_number << "," << residual << endl;
 
 		shared_ptr<Iteration> updated_iteration = time_stepper.update_step(e_theta__relaxation, e_phi__relaxation, residual);
 		if (updated_iteration->solution1 != e_theta__relaxation || updated_iteration->solution2 != e_phi__relaxation) {
