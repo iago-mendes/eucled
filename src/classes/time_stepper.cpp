@@ -1,9 +1,10 @@
 #include "time_stepper.h"
 using namespace std;
 
-TimeStepper::TimeStepper(double step, double cache_number) {
+TimeStepper::TimeStepper(double step, double cache_number, double lower_limit) {
 	this->step = step;
 	this->cache_number = cache_number;
+	this->lower_limit = lower_limit;
 }
 
 double TimeStepper::get_step() {
@@ -37,7 +38,7 @@ shared_ptr<Iteration> TimeStepper::update_step(
 	}
 
 	// If old is better than new
-	step *= 0.5; // Decrease step by 50%
+	step = max(step * 0.5, lower_limit); // Decrease step by 50%
 	iterations = {}; // Clear iterations queue
 	iterations.push(old_iteration); // Add returned iteration
 	return old_iteration; // Return to old iteration

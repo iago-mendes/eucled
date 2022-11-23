@@ -4,6 +4,8 @@
 #include <bits/stdc++.h>
 #include "grid.h"
 
+#define DEFAULT_LOWER_LIMIT 1e-10
+
 struct Iteration {
 	shared_ptr<Grid3DFunction> solution1;
 	shared_ptr<Grid3DFunction> solution2;
@@ -12,7 +14,7 @@ struct Iteration {
 
 class TimeStepper {
 	public:
-		TimeStepper(double step, double cache_number);
+		TimeStepper(double step, double cache_number, double lower_limit = DEFAULT_LOWER_LIMIT);
 
 		double get_step();
 
@@ -34,6 +36,7 @@ class TimeStepper {
 	private:
 		double step;
 		double cache_number;
+		double lower_limit;
 
 		// Keeps last iterations.
 		queue<shared_ptr<Iteration>> iterations;
