@@ -47,5 +47,5 @@ double get_commutator_rms(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DF
 
 	commutator = (*commutator).multiplied_by(sin_sqrt_multiplier);
 
-	return (*commutator).rms() * (*e_theta).grid.delta_theta * (*e_theta).grid.delta_phi;
+	return (*commutator).rms();
 }
