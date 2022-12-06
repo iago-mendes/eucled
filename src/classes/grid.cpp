@@ -7,6 +7,10 @@ double zero_function([[maybe_unused]] int i, [[maybe_unused]] int j, [[maybe_unu
 	return 0;
 }
 
+double zero_function_alt([[maybe_unused]] int i, [[maybe_unused]] int j) {
+	return 0;
+}
+
 // Grid
 
 Grid::Grid(int N_theta_, int N_phi_) {
@@ -111,6 +115,18 @@ shared_ptr<Grid3DFunction> Grid3DFunction::get_copy() {
 	}
 
 	return copy;
+}
+
+shared_ptr<GridFunction> Grid3DFunction::norm() {
+	auto norm = make_shared<GridFunction>(grid, zero_function_alt);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			norm->points[i][j] = sqrt( squared(x_values[i][j]) + squared(y_values[i][j]) + squared(z_values[i][j]) );
+		}
+	}
+
+	return norm;
 }
 
 shared_ptr<Grid3DFunction> Grid3DFunction::partial_theta() {

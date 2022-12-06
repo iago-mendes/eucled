@@ -12,8 +12,6 @@ double sin_sqrt_multiplier(
 }
 
 double get_commutator_helper(int i, int j, char coordinate) {
-	// static int count = 0;
-	// printf("<%d>", ++count);
 	switch (coordinate) {
 		case 'x':
 			return (*(*e_phi__commutator).partial_theta()).x_values[i][j] - (*(*e_theta__commutator).partial_phi()).x_values[i][j];
@@ -48,4 +46,10 @@ double get_commutator_rms(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DF
 	commutator = (*commutator).multiplied_by(sin_sqrt_multiplier);
 
 	return (*commutator).rms();
+}
+
+shared_ptr<GridFunction> get_commutator_norm(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi) {
+	shared_ptr<Grid3DFunction> commutator = get_commutator(e_theta, e_phi);
+
+	return commutator->norm();
 }

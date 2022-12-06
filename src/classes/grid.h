@@ -50,6 +50,9 @@ class Grid3DFunction {
 		// Returns a copy of this function.
 		shared_ptr<Grid3DFunction> get_copy();
 
+		// Returns the norm of this function.
+		shared_ptr<GridFunction> norm();
+
 		// Returns the partial derivative relative to theta of this function.
 		shared_ptr<Grid3DFunction> partial_theta();
 

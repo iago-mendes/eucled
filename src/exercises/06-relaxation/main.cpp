@@ -73,6 +73,10 @@ int main() {
 	OblateSpheroidDyad dyad_(a, b);
 	dyad = dyad_;
 
+	// Temporarily run for only one resolution.
+	find_solution(50);
+	return 0;
+
 	ofstream convergence_output("./assets/convergence.csv");
 	for (int N = 10; N <= 100; N += 10) {
 		printf("\nN = %d\n", N);

@@ -109,8 +109,36 @@ double run_relaxation(
 ) {
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
+	Grid *grid = &e_theta->grid;
 
 	ofstream residuals_output("./assets/residuals.csv");
+	ofstream residual_distribution_output("./assets/residual_distribution.csv");
+
+	// output x values
+	for (int i = 0; i < grid->N_theta; i++) {
+		for (int j = 0; j < grid->N_phi; j++) {
+			residual_distribution_output << grid->theta(i);
+
+			if (i == grid->N_theta - 1 && j == grid->N_phi - 1) { // last
+				residual_distribution_output << endl;
+			} else {
+				residual_distribution_output << ",";
+			}
+		}
+	}
+
+	// output y values
+	for (int i = 0; i < grid->N_theta; i++) {
+		for (int j = 0; j < grid->N_phi; j++) {
+			residual_distribution_output << grid->phi(j);
+
+			if (i == grid->N_theta - 1 && j == grid->N_phi - 1) { // last
+				residual_distribution_output << endl;
+			} else {
+				residual_distribution_output << ",";
+			}
+		}
+	}
 
 	double residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 	int iteration_number = 0;
@@ -126,6 +154,22 @@ double run_relaxation(
 
 		residual = get_residual(e_theta__relaxation, e_phi__relaxation);
 		residuals_output << iteration_number << "," << residual << endl;
+
+		if (iteration_number % 500 == 0) {
+			// output residual norm values
+			auto residual_norm = get_commutator_norm(e_theta__relaxation, e_phi__relaxation);
+			for (int i = 0; i < grid->N_theta; i++) {
+				for (int j = 0; j < grid->N_phi; j++) {
+					residual_distribution_output << residual_norm->points[i][j];
+
+					if (i == grid->N_theta - 1 && j == grid->N_phi - 1) { // last
+						residual_distribution_output << endl;
+					} else {
+						residual_distribution_output << ",";
+					}
+				}
+			}
+		}
 
 		shared_ptr<Iteration> updated_iteration = time_stepper.update_step(e_theta__relaxation, e_phi__relaxation, residual);
 		if (updated_iteration->solution1 != e_theta__relaxation || updated_iteration->solution2 != e_phi__relaxation) {
