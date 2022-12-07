@@ -58,8 +58,8 @@ double get_e_phi(int i, int j, char coordinate) {
 }
 
 // Returns residual.
-double find_solution(int N) {
-	Grid grid_(N, N);
+double find_solution(int N_theta, int N_phi) {
+	Grid grid_(N_theta, N_phi);
 	grid = grid_;
 
 	// Reset solutions
@@ -74,14 +74,14 @@ int main() {
 	dyad = dyad_;
 
 	// Temporarily run for only one resolution.
-	find_solution(50);
+	find_solution(20, 80);
 	return 0;
 
 	ofstream convergence_output("./assets/convergence.csv");
 	for (int N = 10; N <= 100; N += 10) {
 		printf("\nN = %d\n", N);
 
-		double residual = find_solution(N);
+		double residual = find_solution(N, N);
 
 		convergence_output << N << "," << residual << endl;
 	}

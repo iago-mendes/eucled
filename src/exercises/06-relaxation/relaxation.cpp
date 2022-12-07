@@ -155,7 +155,7 @@ double run_relaxation(
 		residual = get_residual(e_theta__relaxation, e_phi__relaxation);
 		residuals_output << iteration_number << "," << residual << endl;
 
-		if (iteration_number % 500 == 0) {
+		if (iteration_number % 100 == 0) {
 			// output residual norm values
 			auto residual_norm = get_commutator_norm(e_theta__relaxation, e_phi__relaxation);
 			for (int i = 0; i < grid->N_theta; i++) {
