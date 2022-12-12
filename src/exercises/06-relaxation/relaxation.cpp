@@ -30,7 +30,7 @@ double negate_multiplier(
 	return - 1;
 }
 
-void update_e_theta() {
+void update_e_theta(double time_step) {
 	shared_ptr<Grid3DFunction> e_theta = e_theta__relaxation;
 	shared_ptr<Grid3DFunction> e_phi = e_phi__relaxation;
 
@@ -71,10 +71,10 @@ void update_e_theta() {
 
 	e_theta_derivative = (*e_theta_derivative).multiplied_by(negate_multiplier);
 
-	e_theta__relaxation = (*e_theta__relaxation).added_with(e_theta_derivative, time_stepper.get_step());
+	e_theta__relaxation = (*e_theta__relaxation).added_with(e_theta_derivative, time_step);
 }
 
-void update_e_phi() {
+void update_e_phi(double time_step) {
 	shared_ptr<Grid3DFunction> e_theta = e_theta__relaxation;
 	shared_ptr<Grid3DFunction> e_phi = e_phi__relaxation;
 
@@ -99,7 +99,7 @@ void update_e_phi() {
 
 	e_phi_derivative = (*e_phi_derivative).multiplied_by(negate_multiplier);
 
-	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, time_stepper.get_step());
+	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, time_step);
 }
 
 double run_relaxation(
@@ -141,21 +141,56 @@ double run_relaxation(
 	}
 
 	double residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
+
+	// Find ideal time step.
+	vector<double> time_steps;
+	for (int i = 0; i < INITIAL_ITERATIONS; i++) {
+		if (i % OUTPUT_FREQUENCY == 0)
+			printf("(%d) R = %8.2e, step = %8.2e\n", i, residual, time_stepper.get_step());
+
+		update_e_theta(time_stepper.get_step());
+		update_e_phi(time_stepper.get_step());
+
+		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
+
+		shared_ptr<Iteration> updated_iteration = time_stepper.update_step(e_theta__relaxation, e_phi__relaxation, residual);
+		if (updated_iteration->solution1 != e_theta__relaxation || updated_iteration->solution2 != e_phi__relaxation) {
+			e_theta__relaxation = updated_iteration->solution1;
+			e_phi__relaxation = updated_iteration->solution2;
+			residual = updated_iteration->residual;
+		}
+
+		time_steps.push_back(time_stepper.get_step());
+	}
+	// double time_step = time_stepper.get_step();
+	double time_step = 0;
+	for (unsigned int i = 0; i < time_steps.size(); i++) {
+		time_step += time_steps[i];
+	}
+	time_step = time_step / time_steps.size();
+	printf("Restarting with step = %8.2e...\n", time_step);
+
+	// Restart.
+	e_theta__relaxation = e_theta;
+	e_phi__relaxation = e_phi;
+	residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
+
+	// Solve.
 	int iteration_number = 0;
 	while (
 		residual > RESIDUAL_TOLERANCE &&
 		iteration_number < MAX_ITERATIONS
 	) {
-		if (iteration_number % 10 == 0)
-			printf("(%d) R = %8.2e, step = %8.2e\n", iteration_number, residual, time_stepper.get_step());
+		if (iteration_number % OUTPUT_FREQUENCY == 0)
+			printf("(%d) R = %8.2e, step = %8.2e\n", iteration_number, residual, time_step);
 		
-		update_e_theta();
-		update_e_phi();
+		update_e_theta(time_step);
+		update_e_phi(time_step);
 
-		residual = get_residual(e_theta__relaxation, e_phi__relaxation);
+		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 		residuals_output << iteration_number << "," << residual << endl;
 
-		if (iteration_number % 100 == 0) {
+		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			// output residual norm values
 			auto residual_norm = get_commutator_norm(e_theta__relaxation, e_phi__relaxation);
 			for (int i = 0; i < grid->N_theta; i++) {
@@ -169,13 +204,6 @@ double run_relaxation(
 					}
 				}
 			}
-		}
-
-		shared_ptr<Iteration> updated_iteration = time_stepper.update_step(e_theta__relaxation, e_phi__relaxation, residual);
-		if (updated_iteration->solution1 != e_theta__relaxation || updated_iteration->solution2 != e_phi__relaxation) {
-			e_theta__relaxation = updated_iteration->solution1;
-			e_phi__relaxation = updated_iteration->solution2;
-			residual = updated_iteration->residual;
 		}
 
 		iteration_number++;

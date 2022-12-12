@@ -20,6 +20,7 @@ shared_ptr<Iteration> TimeStepper::update_step(
 	new_iteration->solution1 = solution1;
 	new_iteration->solution2 = solution2;
 	new_iteration->residual = residual;
+	// return new_iteration;
 
 	iterations.push(new_iteration);
 
@@ -33,7 +34,7 @@ shared_ptr<Iteration> TimeStepper::update_step(
 
 	// If new is better than old
 	if (new_iteration->residual < old_iteration->residual) {
-		step *= 1.1; // Increase step by 10%
+		step *= 1.01; // Increase step by 10%
 		return new_iteration; // Keep new iteration
 	}
 
