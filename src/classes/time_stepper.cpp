@@ -3,6 +3,7 @@ using namespace std;
 
 TimeStepper::TimeStepper(double step, double cache_number, double lower_limit) {
 	this->step = step;
+	this->initial_step = step;
 	this->cache_number = cache_number;
 	this->lower_limit = lower_limit;
 }
@@ -50,4 +51,9 @@ shared_ptr<Iteration> TimeStepper::update_step(
 	double residual
 ) {
 	return update_step(solution, nullptr, residual);
+}
+
+void TimeStepper::reset() {
+	this->step = initial_step;
+	iterations = {}; // Clear iterations queue
 }

@@ -4,7 +4,7 @@ using namespace std;
 shared_ptr<Grid3DFunction> e_theta__relaxation(nullptr);
 shared_ptr<Grid3DFunction> e_phi__relaxation(nullptr);
 
-TimeStepper time_stepper(0.01, 10);
+TimeStepper time_stepper(INITIAL_TIME_STEP, 10);
 
 double sin_multiplier(
 	double theta,
@@ -111,8 +111,12 @@ double run_relaxation(
 	e_phi__relaxation = e_phi;
 	Grid *grid = &e_theta->grid;
 
-	ofstream residuals_output("./assets/residuals.csv");
+	char residuals_filename[50];
+	sprintf(residuals_filename, "./assets/residuals_%d.csv", grid->N_theta);
+	ofstream residuals_output(residuals_filename);
 	ofstream residual_distribution_output("./assets/residual_distribution.csv");
+
+	time_stepper.reset();
 
 	// output x values
 	for (int i = 0; i < grid->N_theta; i++) {
@@ -143,7 +147,7 @@ double run_relaxation(
 	double residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 
 	// Find ideal time step.
-	vector<double> time_steps;
+	double time_step = INITIAL_TIME_STEP;
 	for (int i = 0; i < INITIAL_ITERATIONS; i++) {
 		if (i % OUTPUT_FREQUENCY == 0)
 			printf("(%d) R = %8.2e, step = %8.2e\n", i, residual, time_stepper.get_step());
@@ -151,6 +155,7 @@ double run_relaxation(
 		update_e_theta(time_stepper.get_step());
 		update_e_phi(time_stepper.get_step());
 
+		double previous_residual = residual;
 		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 
 		shared_ptr<Iteration> updated_iteration = time_stepper.update_step(e_theta__relaxation, e_phi__relaxation, residual);
@@ -160,20 +165,17 @@ double run_relaxation(
 			residual = updated_iteration->residual;
 		}
 
-		time_steps.push_back(time_stepper.get_step());
+		if (residual < previous_residual) {
+			time_step = min(time_step, time_stepper.get_step());
+		}
 	}
-	// double time_step = time_stepper.get_step();
-	double time_step = 0;
-	for (unsigned int i = 0; i < time_steps.size(); i++) {
-		time_step += time_steps[i];
-	}
-	time_step = time_step / time_steps.size();
 	printf("Restarting with step = %8.2e...\n", time_step);
 
 	// Restart.
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
 	residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
+	double minimum_residual = residual;
 
 	// Solve.
 	int iteration_number = 0;
@@ -189,6 +191,7 @@ double run_relaxation(
 
 		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 		residuals_output << iteration_number << "," << residual << endl;
+		minimum_residual = min(minimum_residual, residual);
 
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			// output residual norm values
@@ -212,6 +215,6 @@ double run_relaxation(
 	(*e_theta) = (*e_theta__relaxation);
 	(*e_phi) = (*e_phi__relaxation);
 
-	printf("Relaxation finished with R = %8.2e after %5d iterations.\n", residual, iteration_number);
-	return residual;
+	printf("Relaxation finished with R = %8.2e after %5d iterations.\n", minimum_residual, iteration_number);
+	return minimum_residual;
 }

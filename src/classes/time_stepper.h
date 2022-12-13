@@ -32,9 +32,12 @@ class TimeStepper {
 			shared_ptr<Grid3DFunction> solution,
 			double residual
 		);
+		
+		void reset();
 
 	private:
 		double step;
+		double initial_step;
 		double cache_number;
 		double lower_limit;
 

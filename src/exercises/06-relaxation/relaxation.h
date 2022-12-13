@@ -7,9 +7,10 @@
 #include "../../functions/cross_product.h"
 
 #define RESIDUAL_TOLERANCE 1e-16
-#define MAX_ITERATIONS 1e4
+#define MAX_ITERATIONS 2000
 #define INITIAL_ITERATIONS 1e2
-#define OUTPUT_FREQUENCY 10
+#define OUTPUT_FREQUENCY 100
+#define INITIAL_TIME_STEP 0.01
 
 double run_relaxation(
 	shared_ptr<Grid3DFunction> e_theta_,

@@ -74,14 +74,14 @@ int main() {
 	dyad = dyad_;
 
 	// Temporarily run for only one resolution.
-	find_solution(20, 80);
-	return 0;
+	// find_solution(40, 4*40);
+	// return 0;
 
 	ofstream convergence_output("./assets/convergence.csv");
-	for (int N = 10; N <= 100; N += 10) {
-		printf("\nN = %d\n", N);
+	for (int N = 10; N <= 40; N += 10) {
+		printf("\n(Nx, Ny) = (%d, %d)\n", N, 4*N);
 
-		double residual = find_solution(N, N);
+		double residual = find_solution(N, 4*N);
 
 		convergence_output << N << "," << residual << endl;
 	}
