@@ -18,6 +18,7 @@ int main() {
 	double R = 1;
 
 	RoundSphereDyad dyad(R);
+	RoundSphereMetric metric(R);
 
 	printf("\n-------------------------------------------------------------\n");
 	printf("Dot products residuals for each grid point:\n\n");
@@ -36,19 +37,19 @@ int main() {
 				squared(dyad.e_theta_x(theta, phi)) +
 				squared(dyad.e_theta_y(theta, phi)) +
 				squared(dyad.e_theta_z(theta, phi));
-			double e_theta_e_theta_residual = e_theta_e_theta - squared(R);
+			double e_theta_e_theta_residual = e_theta_e_theta - metric.g_theta_theta(theta, phi);
 			
 			double e_phi_e_phi =
 				squared(dyad.e_phi_x(theta, phi)) +
 				squared(dyad.e_phi_y(theta, phi)) +
 				squared(dyad.e_phi_z(theta, phi));
-			double e_phi_e_phi_residual = e_phi_e_phi - squared(R) * squared(sin(theta));
+			double e_phi_e_phi_residual = e_phi_e_phi - metric.g_phi_phi(theta, phi);
 			
 			double e_theta_e_phi =
 				dyad.e_theta_x(theta, phi) * dyad.e_phi_x(theta, phi) +
 				dyad.e_theta_y(theta, phi) * dyad.e_phi_y(theta, phi) +
 				dyad.e_theta_z(theta, phi) * dyad.e_phi_z(theta, phi);
-			double e_theta_e_phi_residual = e_theta_e_phi - 0;
+			double e_theta_e_phi_residual = e_theta_e_phi - metric.g_theta_phi(theta, phi);
 
 			printf("i = %d, j = %d:\n", i, j);
 			printf("\tR(e_theta . e_theta) = %.5e\n", e_theta_e_theta_residual);

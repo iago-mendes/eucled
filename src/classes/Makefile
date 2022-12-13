@@ -1,4 +1,4 @@
-TARGETS = dyad.o grid.o time_stepper.o
+TARGETS = dyad.o grid.o time_stepper.o metric.o
 
 CFLAGS=-g -pedantic -Wall -Wextra
 
@@ -11,6 +11,9 @@ grid.o: grid.cpp grid.h
 	g++ $(CFLAGS) -c $^
 
 time_stepper.o: time_stepper.cpp time_stepper.h
+	g++ $(CFLAGS) -c $^
+
+metric.o: metric.cpp metric.h
 	g++ $(CFLAGS) -c $^
 
 clean:

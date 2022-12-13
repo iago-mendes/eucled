@@ -5,6 +5,7 @@
 #include "../../classes/grid.h"
 #include "../../utils/math.h"
 #include "../../utils/colors.h"
+#include "../../classes/metric.h"
 
 #define MAX_RESIDUAL 1e-13
 
