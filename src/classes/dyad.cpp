@@ -1,6 +1,42 @@
 #include "dyad.h"
 using namespace std;
 
+shared_ptr<Grid3DFunction> Dyad::get_theta_function(Grid grid) {
+	shared_ptr<Grid3DFunction> function = make_shared<Grid3DFunction>(grid);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		double theta = grid.theta(i);
+
+		for (int j = 0; j < grid.N_phi; j++) {
+			double phi = grid.phi(j);
+
+			function->x_values[i][j] = this->e_theta_x(theta, phi);
+			function->y_values[i][j] = this->e_theta_y(theta, phi);
+			function->z_values[i][j] = this->e_theta_z(theta, phi);
+		}
+	}
+
+	return function;
+}
+
+shared_ptr<Grid3DFunction> Dyad::get_phi_function(Grid grid) {
+	shared_ptr<Grid3DFunction> function = make_shared<Grid3DFunction>(grid);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		double theta = grid.theta(i);
+
+		for (int j = 0; j < grid.N_phi; j++) {
+			double phi = grid.phi(j);
+
+			function->x_values[i][j] = this->e_phi_x(theta, phi);
+			function->y_values[i][j] = this->e_phi_y(theta, phi);
+			function->z_values[i][j] = this->e_phi_z(theta, phi);
+		}
+	}
+
+	return function;
+}
+
 // Round Sphere
 
 RoundSphereDyad::RoundSphereDyad(double radius) {

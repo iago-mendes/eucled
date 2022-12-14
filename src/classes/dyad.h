@@ -2,6 +2,7 @@
 #define DYAD_H
 
 #include <bits/stdc++.h>
+#include "grid.h"
 
 class Dyad {
 	public:
@@ -11,6 +12,9 @@ class Dyad {
 		virtual double e_phi_x(double theta, double phi) = 0;
 		virtual double e_phi_y(double theta, double phi) = 0;
 		virtual double e_phi_z(double theta, double phi) = 0;
+
+		shared_ptr<Grid3DFunction> get_theta_function(Grid grid);
+		shared_ptr<Grid3DFunction> get_phi_function(Grid grid);
 };
 
 class RoundSphereDyad : public Dyad {

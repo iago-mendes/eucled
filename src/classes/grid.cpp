@@ -94,6 +94,18 @@ Grid3DFunction::Grid3DFunction(Grid grid_, double (*function)(int i, int j, char
 	cached_partial_phi = nullptr;
 }
 
+Grid3DFunction::Grid3DFunction(Grid grid) {
+	this->grid = grid;
+
+	vector<double> base_vector(grid.N_phi, 0);
+	x_values.resize(grid.N_theta, base_vector);
+	y_values.resize(grid.N_theta, base_vector);
+	z_values.resize(grid.N_theta, base_vector);
+
+	cached_partial_theta = nullptr;
+	cached_partial_phi = nullptr;
+}
+
 double Grid3DFunction::rms() {
 	double x_rms = get_rms(&x_values);
 	double y_rms = get_rms(&y_values);

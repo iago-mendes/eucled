@@ -43,6 +43,7 @@ class Grid3DFunction {
 		vector<vector<double>> z_values;
 
 		Grid3DFunction(Grid grid_, double (*function)(int i, int j, char coordinate));
+		Grid3DFunction(Grid grid);
 		Grid3DFunction() = default;
 
 		double rms();

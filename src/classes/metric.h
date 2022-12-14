@@ -24,4 +24,18 @@ class RoundSphereMetric : public Metric {
 		double g_phi_phi(double theta, double phi);
 };
 
+class OblateSpheroidMetric : public Metric {
+	public:
+		// Semi-axes
+		double a;
+		double b;
+
+		OblateSpheroidMetric(double a, double b);
+		OblateSpheroidMetric() = default;
+
+		double g_theta_theta(double theta, double phi);
+		double g_theta_phi(double theta, double phi);
+		double g_phi_phi(double theta, double phi);
+};
+
 #endif
