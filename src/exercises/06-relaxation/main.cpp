@@ -3,10 +3,9 @@ using namespace std;
 
 Grid grid;
 
-OblateSpheroidDyad dyad;
-// Semi axes
-double a = 1;
-double b = 2;
+// Rotation of black hole horizon.
+double chi = 1;
+HorizonDyad dyad(chi);
 
 shared_ptr<Grid3DFunction> e_theta(nullptr);
 shared_ptr<Grid3DFunction> e_phi(nullptr);
@@ -70,12 +69,9 @@ double find_solution(int N_theta, int N_phi) {
 }
 
 int main() {
-	OblateSpheroidDyad dyad_(a, b);
-	dyad = dyad_;
-
 	// Temporarily run for only one resolution.
-	// find_solution(40, 4*40);
-	// return 0;
+	find_solution(20, 4*20);
+	return 0;
 
 	ofstream convergence_output("./assets/convergence.csv");
 	for (int N = 10; N <= 40; N += 10) {
