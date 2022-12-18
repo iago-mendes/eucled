@@ -66,4 +66,25 @@ class RotatedSphereDyad : public Dyad {
 		double e_phi_z(double theta, double phi);
 };
 
+// Dyad of the Horizon of a Spinning Black Hole.
+class HorizonDyad : public Dyad {
+	private:
+		double rho();
+		double alpha(double theta);
+		double beta(double theta);
+	
+	public:
+		double chi; // Rotation parameter (0 - 1).
+
+		HorizonDyad(double chi);
+		HorizonDyad() = default;
+
+		double e_theta_x(double theta, double phi);
+		double e_theta_y(double theta, double phi);
+		double e_theta_z(double theta, double phi);
+		double e_phi_x(double theta, double phi);
+		double e_phi_y(double theta, double phi);
+		double e_phi_z(double theta, double phi);
+};
+
 #endif

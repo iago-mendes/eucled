@@ -38,4 +38,21 @@ class OblateSpheroidMetric : public Metric {
 		double g_phi_phi(double theta, double phi);
 };
 
+// Metric of the Horizon of a Spinning Black Hole.
+class HorizonMetric : public Metric {
+	private:
+		double rho();
+		double sigma(double theta);
+	
+	public:
+		double chi; // Rotation parameter (0 - 1).
+
+		HorizonMetric(double chi);
+		HorizonMetric() = default;
+
+		double g_theta_theta(double theta, double phi);
+		double g_theta_phi(double theta, double phi);
+		double g_phi_phi(double theta, double phi);
+};
+
 #endif

@@ -1,18 +1,17 @@
 #include "main.h"
 using namespace std;
 
-// Semi-axes of oblate spheroid
-double a = 1;
-double b = 2;
+// Rotation of black hole horizon.
+double chi = 0;
 
 Grid grid;
-RoundSphereDyad round_sphere_dyad(a);
+RoundSphereDyad round_sphere_dyad(1);
 shared_ptr<GridFunction> round_sphere_e_theta_norm;
 shared_ptr<GridFunction> round_sphere_e_phi_norm;
-OblateSpheroidDyad oblate_spheroid_dyad(a, b);
+HorizonDyad expected_dyad(chi);
 
 // Input
-shared_ptr<OblateSpheroidMetric> metric;
+shared_ptr<HorizonMetric> metric;
 
 // Output
 shared_ptr<Grid3DFunction> e_phi;
@@ -85,12 +84,12 @@ void find_solution(int N_theta, int N_phi) {
 }
 
 int main() {
-	metric = make_shared<OblateSpheroidMetric>(a, b);
+	metric = make_shared<HorizonMetric>(chi);
 
 	find_solution(10, 10);
 
-	auto residual_theta = e_theta->added_with(oblate_spheroid_dyad.get_theta_function(grid), negate_multiplier);
-	auto residual_phi = e_phi->added_with(oblate_spheroid_dyad.get_phi_function(grid), negate_multiplier);
+	auto residual_theta = e_theta->added_with(expected_dyad.get_theta_function(grid), negate_multiplier);
+	auto residual_phi = e_phi->added_with(expected_dyad.get_phi_function(grid), negate_multiplier);
 
 	printf("R(e_theta) = %.5e\n", residual_theta->rms());
 	printf("R(e_phi) = %.5e\n", residual_phi->rms());

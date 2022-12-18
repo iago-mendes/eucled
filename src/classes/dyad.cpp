@@ -134,3 +134,45 @@ double RotatedSphereDyad::e_phi_z(double theta, double phi) {
 	double upsilon = rotator(theta, phi);
 	return cos(upsilon) * round_dyad.e_phi_z(theta, phi) - sin(upsilon) * round_dyad.e_phi_z(theta, phi);
 }
+
+// Horizon
+
+HorizonDyad::HorizonDyad(double chi) {
+	this->chi = chi;
+}
+
+double HorizonDyad::rho() {
+	return 1 + sqrt(1 - squared(this->chi));
+}
+
+double HorizonDyad::alpha(double theta) {
+	return sqrt(2 * this->rho() - squared(this->chi) * squared(sin(theta)));
+}
+
+double HorizonDyad::beta(double theta) {
+	return 2 * this->rho() / this->alpha(theta);
+}
+
+double HorizonDyad::e_theta_x(double theta, double phi) {
+	return this->alpha(theta) * cos(theta) * cos(phi);
+}
+
+double HorizonDyad::e_theta_y(double theta, double phi) {
+	return this->alpha(theta) * cos(theta) * sin(phi);
+}
+
+double HorizonDyad::e_theta_z(double theta, [[maybe_unused]] double phi) {
+	return - this->alpha(theta) * sin(theta);
+}
+
+double HorizonDyad::e_phi_x(double theta, double phi) {
+	return - this->beta(theta) * sin(theta) * sin(phi);
+}
+
+double HorizonDyad::e_phi_y(double theta, double phi) {
+	return this->beta(theta) * sin(theta) * cos(phi);
+}
+
+double HorizonDyad::e_phi_z([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+	return 0;
+}
