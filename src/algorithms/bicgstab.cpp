@@ -15,9 +15,10 @@ bool is_residual_small_enough(vector<double> *p_residuals) {
 void run_bicgstab(
 	double (*A_operator)(const vector<double> *p_vect, int I),
 	vector<double> *p_solution,
-	const vector<double> *p_b,
-	int N
+	const vector<double> *p_b
 ) {
+	int N = p_solution->size();
+
 	vector<double> b = *p_b;
 	vector<double> base_vector(N, 0);
 	linear_solver_rms_residuals.clear();

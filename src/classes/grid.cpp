@@ -42,34 +42,103 @@ GridFunction::GridFunction(Grid grid_, double (*function)(int i, int j)) {
 			points[i][j] = function(i, j);
 		}
 	}
+
+	cached_partial_theta = nullptr;
+	cached_partial_phi = nullptr;
 }
 
-double GridFunction::partial_theta(int i, int j) {
-	if (i == 0) {
-		return (points[1][j] - points[0][j]) / grid.delta_theta;
+GridFunction::GridFunction(Grid grid, vector<vector<double>> *points) {
+	this->grid = grid;
+
+	vector<double> base_vector(grid.N_phi, 0);
+	this->points.resize(grid.N_theta, base_vector);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			this->points[i][j] = (*points)[i][j];
+		}
 	}
-	else if (i == grid.N_theta - 1) {
-		return (points[grid.N_theta - 1][j] - points[grid.N_theta - 2][j]) / grid.delta_theta;
-	}
-	else {
-		return (points[i + 1][j] - points[i - 1][j]) / (2 * grid.delta_theta);
-	}
+
+	this->cached_partial_theta = nullptr;
+	this->cached_partial_phi = nullptr;
 }
 
-double GridFunction::partial_phi(int i, int j) {
-	double df;
+GridFunction::GridFunction(Grid grid) {
+	this->grid = grid;
 
-	if (j == 0) {
-		df = points[i][1] - points[i][grid.N_phi - 1];
-	}
-	else if (j == grid.N_phi - 1) {
-		df = points[i][0] - points[i][grid.N_phi - 2];
-	}
-	else {
-		df = points[i][j + 1] - points[i][j - 1];
+	vector<double> base_vector(grid.N_phi, 0);
+	this->points.resize(grid.N_theta, base_vector);
+
+	this->cached_partial_theta = nullptr;
+	this->cached_partial_phi = nullptr;
+}
+
+shared_ptr<GridFunction> GridFunction::get_copy() {
+	auto copy = make_shared<GridFunction>(grid);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			copy->points[i][j] = this->points[i][j];
+		}
 	}
 
-	return df / (2 * grid.delta_phi);
+	return copy;
+}
+
+shared_ptr<GridFunction> GridFunction::partial_theta() {
+	if (cached_partial_theta != nullptr) {
+		return cached_partial_theta;
+	}
+
+	auto new_function = get_copy();
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			if (i == 0) {
+				new_function->points[i][j] = (points[1][j] - points[0][j]) / grid.delta_theta;
+			}
+			else if (i == grid.N_theta - 1) {
+				new_function->points[i][j] = (points[grid.N_theta - 1][j] - points[grid.N_theta - 2][j]) / grid.delta_theta;
+			}
+			else {
+				new_function->points[i][j] = (points[i + 1][j] - points[i - 1][j]) / (2 * grid.delta_theta);
+			}
+		}
+	}
+
+	cached_partial_theta = new_function;
+
+	return new_function;
+}
+
+shared_ptr<GridFunction> GridFunction::partial_phi() {
+	if (cached_partial_phi != nullptr) {
+		return cached_partial_phi;
+	}
+
+	auto new_function = get_copy();
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			double df;
+
+			if (j == 0) {
+				df = points[i][1] - points[i][grid.N_phi - 1];
+			}
+			else if (j == grid.N_phi - 1) {
+				df = points[i][0] - points[i][grid.N_phi - 2];
+			}
+			else {
+				df = points[i][j + 1] - points[i][j - 1];
+			}
+			
+			new_function->points[i][j] = df / (2 * grid.delta_phi);
+		}
+	}
+
+	cached_partial_phi = new_function;
+
+	return new_function;
 }
 
 // Grid3DFunction

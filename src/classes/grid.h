@@ -29,9 +29,18 @@ class GridFunction {
 		vector<vector<double>> points;
 
 		GridFunction(Grid grid_, double (*function)(int i, int j));
+		GridFunction(Grid grid_, vector<vector<double>> *points);
+		GridFunction(Grid grid);
 
-		double partial_theta(int i, int j);
-		double partial_phi(int i, int j);
+		shared_ptr<GridFunction> partial_theta();
+		shared_ptr<GridFunction> partial_phi();
+
+		// Returns a copy of this function.
+		shared_ptr<GridFunction> get_copy();
+
+		private:
+			shared_ptr<GridFunction> cached_partial_theta;
+			shared_ptr<GridFunction> cached_partial_phi;
 };
 
 class Grid3DFunction {

@@ -14,8 +14,7 @@ using namespace std;
 void run_bicgstab(
 	double (*p_A_operator)(const vector<double> *p_vect, int I),
 	vector<double> *p_solution,
-	const vector<double> *p_b,
-	int N
+	const vector<double> *p_b
 );
 
 #endif
