@@ -1,10 +1,10 @@
 #ifndef RELAXATION_H
 #define RELAXATION_H
 
-#include "../../classes/grid.h"
-#include "../../classes/time_stepper.h"
-#include "../../functions/commutator.h"
-#include "../../functions/cross_product.h"
+#include "../classes/grid.h"
+#include "../classes/time_stepper.h"
+#include "../functions/commutator.h"
+#include "../functions/cross_product.h"
 
 #define RESIDUAL_TOLERANCE 1e-16
 #define MAX_ITERATIONS 2000

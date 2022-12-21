@@ -1,4 +1,4 @@
-TARGETS = factorization.o bicgstab.o integration.o
+TARGETS = factorization.o bicgstab.o integration.o relaxation.o
 
 CFLAGS=-g -pedantic -Wall -Wextra
 
@@ -11,6 +11,9 @@ bicgstab.o: bicgstab.cpp bicgstab.h
 	g++ $(CFLAGS) -c $^
 
 integration.o: integration.cpp integration.h
+	g++ $(CFLAGS) -c $^
+
+relaxation.o: relaxation.cpp relaxation.h
 	g++ $(CFLAGS) -c $^
 
 clean:

@@ -4,8 +4,7 @@
 #include "../../classes/dyad.h"
 #include "../../classes/grid.h"
 #include "../../functions/commutator.h"
-
-#include "relaxation.h"
+#include "../../algorithms/relaxation.h"
 
 #define MAX_RESIDUAL 1e-13
 
