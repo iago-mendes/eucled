@@ -5,7 +5,8 @@ Grid grid;
 
 // Rotation of black hole horizon.
 double chi = 1;
-HorizonDyad dyad(chi);
+// HorizonDyad dyad(chi);
+RoundSphereDyad dyad(chi);
 
 shared_ptr<Grid3DFunction> e_theta(nullptr);
 shared_ptr<Grid3DFunction> e_phi(nullptr);

@@ -56,7 +56,8 @@ double L_operator(const vector<double> *function_old, int I) {
 	double theta = grid__integration.theta(i);
 
 	if (function_ref != function_old) {
-		vector<vector<double>> function_R2;
+		vector<double> base_vector(grid__integration.N_phi, 0);
+		vector<vector<double>> function_R2(grid__integration.N_theta, base_vector);
 		R1_to_R2(function_old, &function_R2);
 		function = make_shared<GridFunction>(grid__integration, &function_R2);
 		function_ref = function_old;
@@ -78,15 +79,15 @@ void run_integration(
 	N__integration = grid__integration.N_theta * grid__integration.N_phi;
 
 	vector<vector<double>> x = embedding->x_values;
-	vector<double> x_R1;
+	vector<double> x_R1(N__integration, 0);
 	R2_to_R1(&x, &x_R1);
 
 	vector<vector<double>> y = embedding->y_values;
-	vector<double> y_R1;
+	vector<double> y_R1(N__integration, 0);
 	R2_to_R1(&y, &y_R1);
 
 	vector<vector<double>> z = embedding->z_values;
-	vector<double> z_R1;
+	vector<double> z_R1(N__integration, 0);
 	R2_to_R1(&z, &z_R1);
 
 	// Compute right side of the equations.
