@@ -38,6 +38,9 @@ class GridFunction {
 		// Returns a copy of this function.
 		shared_ptr<GridFunction> get_copy();
 
+		// Returns the RMS of this function.
+		double rms();
+
 		private:
 			shared_ptr<GridFunction> cached_partial_theta;
 			shared_ptr<GridFunction> cached_partial_phi;

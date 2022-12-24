@@ -22,11 +22,11 @@ Grid::Grid(int N_theta_, int N_phi_) {
 }
 
 double Grid::theta(int i) {
-	return M_PI / N_theta * (i + (double) 1 / 2);
+	return this->delta_theta * (i + (double) 1 / 2);
 }
 
 double Grid::phi(int j) {
-	return 2 * M_PI / N_theta * j;
+	return this->delta_phi * j;
 }
 
 // GridFunction
@@ -141,6 +141,10 @@ shared_ptr<GridFunction> GridFunction::partial_phi() {
 	return new_function;
 }
 
+double GridFunction::rms() {
+	return get_rms(&this->points);
+}
+
 // Grid3DFunction
 
 Grid3DFunction::Grid3DFunction(Grid grid_, double (*function)(int i, int j, char coordinate)) {
@@ -219,20 +223,20 @@ shared_ptr<Grid3DFunction> Grid3DFunction::partial_theta() {
 
 	for (int i = 0; i < grid.N_theta; i++) {
 		for (int j = 0; j < grid.N_phi; j++) {
-			if (i == 0) {
-				(*new_function).x_values[i][j] = (x_values[1][j] - x_values[0][j]) / grid.delta_theta;
-				(*new_function).y_values[i][j] = (y_values[1][j] - y_values[0][j]) / grid.delta_theta;
-				(*new_function).z_values[i][j] = (z_values[1][j] - z_values[0][j]) / grid.delta_theta;
+			if (i == 0) { // forward
+				new_function->x_values[i][j] = (- 3 * x_values[0][j] + 4 * x_values[1][j] - x_values[2][j]) / (2 * grid.delta_theta);
+				new_function->y_values[i][j] = (- 3 * y_values[0][j] + 4 * y_values[1][j] - y_values[2][j]) / (2 * grid.delta_theta);
+				new_function->z_values[i][j] = (- 3 * z_values[0][j] + 4 * z_values[1][j] - z_values[2][j]) / (2 * grid.delta_theta);
 			}
-			else if (i == grid.N_theta - 1) {
-				(*new_function).x_values[i][j] = (x_values[grid.N_theta - 1][j] - x_values[grid.N_theta - 2][j]) / grid.delta_theta;
-				(*new_function).y_values[i][j] = (y_values[grid.N_theta - 1][j] - y_values[grid.N_theta - 2][j]) / grid.delta_theta;
-				(*new_function).z_values[i][j] = (z_values[grid.N_theta - 1][j] - z_values[grid.N_theta - 2][j]) / grid.delta_theta;
+			else if (i == grid.N_theta - 1) { // backward
+				new_function->x_values[i][j] = (3 * x_values[grid.N_theta - 1][j] - 4 * x_values[grid.N_theta - 2][j] + x_values[grid.N_theta - 3][j]) / (2 * grid.delta_theta);
+				new_function->y_values[i][j] = (3 * y_values[grid.N_theta - 1][j] - 4 * y_values[grid.N_theta - 2][j] + y_values[grid.N_theta - 3][j]) / (2 * grid.delta_theta);
+				new_function->z_values[i][j] = (3 * z_values[grid.N_theta - 1][j] - 4 * z_values[grid.N_theta - 2][j] + z_values[grid.N_theta - 3][j]) / (2 * grid.delta_theta);
 			}
-			else {
-				(*new_function).x_values[i][j] = (x_values[i + 1][j] - x_values[i - 1][j]) / (2 * grid.delta_theta);
-				(*new_function).y_values[i][j] = (y_values[i + 1][j] - y_values[i - 1][j]) / (2 * grid.delta_theta);
-				(*new_function).z_values[i][j] = (z_values[i + 1][j] - z_values[i - 1][j]) / (2 * grid.delta_theta);
+			else { // centered
+				new_function->x_values[i][j] = (x_values[i + 1][j] - x_values[i - 1][j]) / (2 * grid.delta_theta);
+				new_function->y_values[i][j] = (y_values[i + 1][j] - y_values[i - 1][j]) / (2 * grid.delta_theta);
+				new_function->z_values[i][j] = (z_values[i + 1][j] - z_values[i - 1][j]) / (2 * grid.delta_theta);
 			}
 		}
 	}
@@ -268,7 +272,7 @@ shared_ptr<Grid3DFunction> Grid3DFunction::partial_phi() {
 			}
 		}
 	}
-
+ 
 	cached_partial_phi = new_function;
 
 	return new_function;
