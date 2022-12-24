@@ -5,7 +5,7 @@ using namespace std;
 using namespace std;
 
 // Rotation of black hole horizon.
-double chi = 1;
+double chi = 0.5;
 
 Grid grid;
 
@@ -13,8 +13,8 @@ void find_solution(int N_theta, int N_phi) {
 	Grid grid_(N_theta, N_phi);
 	grid = grid_;
 
-	// shared_ptr<HorizonMetric> metric = make_shared<HorizonMetric>(chi);
-	shared_ptr<RoundSphereMetric> metric = make_shared<RoundSphereMetric>(chi);
+	shared_ptr<HorizonMetric> metric = make_shared<HorizonMetric>(chi);
+	// shared_ptr<RoundSphereMetric> metric = make_shared<RoundSphereMetric>(chi);
 
 	shared_ptr<Grid3DFunction> e_theta = make_shared<Grid3DFunction>(grid);
 	shared_ptr<Grid3DFunction> e_phi = make_shared<Grid3DFunction>(grid);
@@ -35,5 +35,9 @@ void find_solution(int N_theta, int N_phi) {
 }
 
 int main() {
-	find_solution(30, 120);
+	for (int N = 10; N <= 100; N += 20) {
+		printf("\n(Nx, Ny) = (%d, %d)\n", N, N);
+
+		find_solution(N, N);
+	}
 }
