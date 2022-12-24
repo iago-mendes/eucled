@@ -177,12 +177,15 @@ double run_relaxation(
 	residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 	double minimum_residual = residual;
 
+	Iteration best_solution;
+	best_solution.solution1 = e_theta;
+	best_solution.solution2 = e_phi;
+	best_solution.residual = residual;
+
 	// Solve.
 	int iteration_number = 0;
-	while (
-		residual > RESIDUAL_TOLERANCE &&
-		iteration_number < MAX_ITERATIONS
-	) {
+	int max_iterations = MAX_ITERATIONS;
+	while (iteration_number < max_iterations) {
 		if (iteration_number % OUTPUT_FREQUENCY == 0)
 			printf("(%d) R = %8.2e, step = %8.2e\n", iteration_number, residual, time_step);
 		
@@ -191,7 +194,16 @@ double run_relaxation(
 
 		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 		residuals_output << iteration_number << "," << residual << endl;
-		minimum_residual = min(minimum_residual, residual);
+
+		if (residual < best_solution.residual) {
+			best_solution.solution1 = e_theta__relaxation;
+			best_solution.solution2 = e_phi__relaxation;
+			best_solution.residual = residual;
+		} else if (max_iterations == MAX_ITERATIONS) {
+			// Run 100 more iterations after minimum residual was found.
+			max_iterations = iteration_number + 100;
+			printf("Minimum residual was reached.\n");
+		}
 
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			// output residual norm values
@@ -209,12 +221,18 @@ double run_relaxation(
 			}
 		}
 
+		if (residual <= RESIDUAL_TOLERANCE) {
+			// Stop after the residual tolerance is reached.
+			printf("Residual tolerance was reached.\n");
+			break;
+		}
+
 		iteration_number++;
 	}
 
-	(*e_theta) = (*e_theta__relaxation);
-	(*e_phi) = (*e_phi__relaxation);
+	(*e_theta) = (*best_solution.solution1);
+	(*e_phi) = (*best_solution.solution2);
 
-	printf("Relaxation finished with R = %8.2e after %5d iterations.\n", minimum_residual, iteration_number);
+	printf("Relaxation finished with R = %8.2e after %5d iterations.\n", best_solution.residual, iteration_number);
 	return minimum_residual;
 }

@@ -48,7 +48,7 @@ void run_bicgstab(
 	// repeat until ||r[k+l]|| is small enough
 	while (!is_residual_small_enough(&r[k+l])) {
 		number_of_iterations++;
-			printf("(%d) R = %8.2e\n", number_of_iterations, get_rms(&r[k+l]));
+		// printf("(%d) R = %8.2e\n", number_of_iterations, get_rms(&r[k+l]));
 
 		// k = k + l,
 		k = k + l;

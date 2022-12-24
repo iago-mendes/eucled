@@ -6,8 +6,8 @@
 #include "../functions/commutator.h"
 #include "../functions/cross_product.h"
 
-#define RESIDUAL_TOLERANCE 1e-16
-#define MAX_ITERATIONS 1000
+#define RESIDUAL_TOLERANCE 1e-15
+#define MAX_ITERATIONS 100000
 #define INITIAL_ITERATIONS 1e2
 #define OUTPUT_FREQUENCY 100
 #define INITIAL_TIME_STEP 0.01
