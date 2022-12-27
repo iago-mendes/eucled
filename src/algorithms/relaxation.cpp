@@ -105,14 +105,19 @@ void update_e_phi(double time_step) {
 double run_relaxation(
 	shared_ptr<Grid3DFunction> e_theta,
 	shared_ptr<Grid3DFunction> e_phi,
-	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi)
+	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi),
+	double identifier
 ) {
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
 	Grid *grid = &e_theta->grid;
 
 	char residuals_filename[50];
-	sprintf(residuals_filename, "./assets/residuals_%d.csv", grid->N_theta);
+	if (identifier != INFINITY) {
+		sprintf(residuals_filename, "./assets/residuals_%.1f.csv", identifier);
+	} else {
+		sprintf(residuals_filename, "./assets/residuals_%d.csv", grid->N_theta);
+	}
 	ofstream residuals_output(residuals_filename);
 	ofstream residual_distribution_output("./assets/residual_distribution.csv");
 

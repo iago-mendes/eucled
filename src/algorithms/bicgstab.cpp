@@ -179,7 +179,7 @@ void run_bicgstab(
 	}
 
 	double final_rms_residual = linear_solver_rms_residuals[linear_solver_rms_residuals.size() - 1];
-	printf("BiCGSTAB ran %5d times and finished with R = %8.2e\n", number_of_iterations, final_rms_residual);
+	printf("BiCGSTAB ran %d times and finished with R = %8.2e\n", number_of_iterations, final_rms_residual);
 	
 	*p_solution = x[x.size() - 1];
 }
