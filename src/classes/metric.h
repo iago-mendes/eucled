@@ -55,4 +55,20 @@ class HorizonMetric : public Metric {
 		double g_phi_phi(double theta, double phi);
 };
 
+// Metric of the Ellipsoid.
+class EllipsoidMetric : public Metric {
+	public:
+	  // Semi-axes
+		double a;
+		double b;
+		double c;
+
+		EllipsoidMetric(double a, double b, double c);
+		EllipsoidMetric() = default;
+
+		double g_theta_theta(double theta, double phi);
+		double g_theta_phi(double theta, double phi);
+		double g_phi_phi(double theta, double phi);
+};
+
 #endif
