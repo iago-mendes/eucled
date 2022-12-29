@@ -55,7 +55,6 @@ class HorizonMetric : public Metric {
 		double g_phi_phi(double theta, double phi);
 };
 
-// Metric of the Ellipsoid.
 class EllipsoidMetric : public Metric {
 	public:
 	  // Semi-axes
@@ -65,6 +64,18 @@ class EllipsoidMetric : public Metric {
 
 		EllipsoidMetric(double a, double b, double c);
 		EllipsoidMetric() = default;
+
+		double g_theta_theta(double theta, double phi);
+		double g_theta_phi(double theta, double phi);
+		double g_phi_phi(double theta, double phi);
+};
+
+class PeanutMetric : public Metric {
+	public:
+		double a; // Distance of sphere centers.
+
+		PeanutMetric(double a);
+		PeanutMetric() = default;
 
 		double g_theta_theta(double theta, double phi);
 		double g_theta_phi(double theta, double phi);
