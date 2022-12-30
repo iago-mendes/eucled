@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "../utils/dot_product.h"
+#include "../functions/dot_product.h"
 #include "../utils/rms.h"
 
 #define BICGSTAB_MIN_ACCURACY 1e-15

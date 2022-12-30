@@ -145,6 +145,36 @@ double GridFunction::rms() {
 	return get_rms(&this->points);
 }
 
+shared_ptr<GridFunction> GridFunction::added_with(
+	shared_ptr<GridFunction> function,
+	double multiplier
+) {
+	shared_ptr<GridFunction> new_function = this->get_copy();
+
+	for (int i = 0; i < this->grid.N_theta; i++) {
+		for (int j = 0; j < this->grid.N_phi; j++) {
+			new_function->points[i][j] += multiplier * function->points[i][j];
+		}
+	}
+
+	return new_function;
+}
+
+void GridFunction::print() {
+	for (int i = 0; i < this->grid.N_theta; i++) {
+		printf("\t");
+		for (int j = 0; j < this->grid.N_phi; j++) {
+			printf("%9.2e ", this->points[i][j]);
+		}
+		printf("\n");
+	}
+}
+
+void GridFunction::print(string identifier) {
+	cout << identifier << endl;
+	this->print();
+}
+
 // Grid3DFunction
 
 Grid3DFunction::Grid3DFunction(Grid grid_, double (*function)(int i, int j, char coordinate)) {
@@ -346,4 +376,53 @@ shared_ptr<Grid3DFunction> Grid3DFunction::added_with(
 	}
 
 	return new_function;
+}
+
+shared_ptr<GridFunction> Grid3DFunction::dot_product_with(shared_ptr<Grid3DFunction> function) {
+	shared_ptr<GridFunction> dot_product = make_shared<GridFunction>(this->grid);	
+
+	for (int i = 0; i < this->grid.N_theta; i++) {
+		for (int j = 0; j < this->grid.N_phi; j++) {
+			dot_product->points[i][j] =
+				this->x_values[i][j] * function->x_values[i][j] +
+				this->y_values[i][j] * function->y_values[i][j] +
+				this->z_values[i][j] * function->z_values[i][j];
+		}
+	}
+	
+	return dot_product;
+}
+
+void Grid3DFunction::print() {
+	printf("\tx:\n");
+	for (int i = 0; i < this->grid.N_theta; i++) {
+		printf("\t\t");
+		for (int j = 0; j < this->grid.N_phi; j++) {
+			printf("%9.2e ", this->x_values[i][j]);
+		}
+		printf("\n");
+	}
+
+	printf("\ty:\n");
+	for (int i = 0; i < this->grid.N_theta; i++) {
+		printf("\t\t");
+		for (int j = 0; j < this->grid.N_phi; j++) {
+			printf("%9.2e ", this->y_values[i][j]);
+		}
+		printf("\n");
+	}
+
+	printf("\tz:\n");
+	for (int i = 0; i < this->grid.N_theta; i++) {
+		printf("\t\t");
+		for (int j = 0; j < this->grid.N_phi; j++) {
+			printf("%9.2e ", this->z_values[i][j]);
+		}
+		printf("\n");
+	}
+}
+
+void Grid3DFunction::print(string identifier) {
+	cout << identifier << endl;
+	this->print();
 }

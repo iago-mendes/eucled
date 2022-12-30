@@ -191,8 +191,9 @@ double run_relaxation(
 	int iteration_number = 0;
 	int max_iterations = MAX_ITERATIONS;
 	while (iteration_number < max_iterations) {
-		if (iteration_number % OUTPUT_FREQUENCY == 0)
+		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			printf("(%d) R = %8.2e, step = %8.2e\n", iteration_number, residual, time_step);
+		}
 		
 		update_e_theta(time_step);
 		update_e_phi(time_step);
@@ -235,9 +236,32 @@ double run_relaxation(
 		iteration_number++;
 	}
 
+  double dot_product_residual_theta_theta =
+		e_theta->dot_product_with(e_theta)->added_with(
+			best_solution.solution1->dot_product_with(best_solution.solution1),
+			-1
+		)->rms();
+	double dot_product_residual_theta_phi =
+		e_theta->dot_product_with(e_phi)->added_with(
+			best_solution.solution1->dot_product_with(best_solution.solution2),
+			-1
+		)->rms();
+	double dot_product_residual_phi_phi =
+		e_phi->dot_product_with(e_phi)->added_with(
+			best_solution.solution2->dot_product_with(best_solution.solution2),
+			-1
+		)->rms();
+	
+	printf(
+		"Dot product residuals:\n\ttheta theta = %.2e\n\ttheta phi = %.2e\n\tphi phi = %.2e\n",
+		dot_product_residual_theta_theta,
+		dot_product_residual_theta_phi,
+		dot_product_residual_phi_phi
+	);
+
 	(*e_theta) = (*best_solution.solution1);
 	(*e_phi) = (*best_solution.solution2);
 
-	printf("Relaxation finished with R = %8.2e after %5d iterations.\n", best_solution.residual, iteration_number);
+	printf("Relaxation finished with R = %.2e after %d iterations.\n", best_solution.residual, iteration_number);
 	return minimum_residual;
 }

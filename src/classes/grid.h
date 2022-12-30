@@ -41,6 +41,18 @@ class GridFunction {
 		// Returns the RMS of this function.
 		double rms();
 
+		// Returns a new function added with the given function multiplied by the given multiplier.
+		shared_ptr<GridFunction> added_with(
+			shared_ptr<GridFunction> function,
+			double multiplier
+		);
+
+    // Prints a string representation of this function.
+		void print();
+
+		// Prints a string representation of this function with an identifier string on top.
+		void print(string identifier);
+
 		private:
 			shared_ptr<GridFunction> cached_partial_theta;
 			shared_ptr<GridFunction> cached_partial_phi;
@@ -89,6 +101,15 @@ class Grid3DFunction {
 			shared_ptr<Grid3DFunction> function,
 			double multiplier
 		);
+
+    // Returns a new 1D function with the dot product of the x, y, and z values.
+		shared_ptr<GridFunction> dot_product_with(shared_ptr<Grid3DFunction> function);
+
+		// Prints a string representation of this function.
+		void print();
+
+		// Prints a string representation of this function with an identifier string on top.
+		void print(string identifier);
 
 		private:
 			shared_ptr<Grid3DFunction> cached_partial_theta;

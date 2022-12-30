@@ -5,15 +5,15 @@ using namespace std;
 using namespace std;
 
 // Rotation of black hole horizon.
-double chi = 0;
+double chi = 0.8;
 
 // Dimensions of ellipsoid
 double a = 1;
-double b = 1;
+double b = 2;
 double c = 1;
 
 // Distance between sphere centers of peanut.
-double d = 1.1;
+double d = 0.9;
 
 Grid grid;
 
@@ -31,6 +31,8 @@ void find_solution(int N_theta, int N_phi) {
 	shared_ptr<Grid3DFunction> embedding = make_shared<Grid3DFunction>(grid);
 
 	double identifier = a*100 + b*10 + c;
+	// double identifier = d;
+	// double identifier = chi;
 
 	run_factorization(metric, e_theta, e_phi);
 	run_relaxation(e_theta, e_phi, get_commutator_rms, identifier);
@@ -53,7 +55,7 @@ void find_solution(int N_theta, int N_phi) {
 
 int main() {
 	// Temporarily run for only one resolution.
-	// find_solution(15, 60);
+	find_solution(15, 60);
 
 	// Vary grid space.
 	// for (int N = 10; N <= 100; N += 20) {
@@ -77,9 +79,9 @@ int main() {
 	// }
 
 	// Vary ellipsoid dimensions.
-	for (b = 1; b <= 9; b += 1) {
-		printf("\nb = %.1f\n", b);
+	// for (b = 1; b <= 9; b += 1) {
+	// 	printf("\nb = %.1f\n", b);
 
-		find_solution(15, 60);
-	}
+	// 	find_solution(15, 60);
+	// }
 }
