@@ -166,6 +166,19 @@ void run_bicgstab(
 				r_hat[0][I] = r_hat[0][I] - gamma_prime[j] * r_hat[j][I];
 			}
 		}
+
+		// Check for NaN's.
+		bool has_nan = false;
+		for (int I = 0; I < N; I++) {
+			if (isnan(x_hat_0[I])) {
+				has_nan = true;
+        break;
+			}
+		}
+		if (has_nan) {
+			printf("NaN detected in BiCGSTAB algorithm after %d iterations.\n", number_of_iterations);
+			break;
+		}
 		
 		// Put uk+l−1 = u^0, rk+l = r^0 and xk+l = x^0.
 		u.resize(k+l+1, base_vector); u[k+l-1] = u_hat[0];

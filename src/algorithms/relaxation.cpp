@@ -106,15 +106,15 @@ double run_relaxation(
 	shared_ptr<Grid3DFunction> e_theta,
 	shared_ptr<Grid3DFunction> e_phi,
 	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi),
-	double identifier
+	char *identifier
 ) {
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
 	Grid *grid = &e_theta->grid;
 
 	char residuals_filename[50];
-	if (identifier != INFINITY) {
-		sprintf(residuals_filename, "./assets/residuals_%.1f.csv", identifier);
+	if (identifier != nullptr) {
+		sprintf(residuals_filename, "./assets/residuals_%s.csv", identifier);
 	} else {
 		sprintf(residuals_filename, "./assets/residuals_%d.csv", grid->N_theta);
 	}
