@@ -82,4 +82,13 @@ class PeanutMetric : public Metric {
 		double g_phi_phi(double theta, double phi);
 };
 
+class DentedSphereMetric : public Metric {
+	public:
+		DentedSphereMetric() = default;
+
+		double g_theta_theta(double theta, double phi);
+		double g_theta_phi(double theta, double phi);
+		double g_phi_phi(double theta, double phi);
+};
+
 #endif

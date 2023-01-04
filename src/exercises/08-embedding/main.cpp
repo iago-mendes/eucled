@@ -23,25 +23,29 @@ void find_solution(int N_theta, int N_phi) {
 
 	// shared_ptr<RoundSphereMetric> metric = make_shared<RoundSphereMetric>(chi);
 	// shared_ptr<HorizonMetric> metric = make_shared<HorizonMetric>(chi);
-	shared_ptr<EllipsoidMetric> metric = make_shared<EllipsoidMetric>(a, b, c);
+	// shared_ptr<EllipsoidMetric> metric = make_shared<EllipsoidMetric>(a, b, c);
 	// shared_ptr<PeanutMetric> metric = make_shared<PeanutMetric>(d);
+	shared_ptr<DentedSphereMetric> metric = make_shared<DentedSphereMetric>();
 
 	shared_ptr<Grid3DFunction> e_theta = make_shared<Grid3DFunction>(grid);
 	shared_ptr<Grid3DFunction> e_phi = make_shared<Grid3DFunction>(grid);
 	shared_ptr<Grid3DFunction> embedding = make_shared<Grid3DFunction>(grid);
 
-	double identifier = a*100 + b*10 + c;
+	// double identifier = INFINITY; // no identifier
+	double identifier = (double) N_theta;
+	// double identifier = a*100 + b*10 + c;
 	// double identifier = d;
 	// double identifier = chi;
 
 	run_factorization(metric, e_theta, e_phi);
 	run_relaxation(e_theta, e_phi, get_commutator_rms, identifier);
-	// run_relaxation(e_theta, e_phi, get_commutator_rms);
 	run_integration(e_theta, e_phi, embedding);
 
 	char embedding_filename[50];
-	sprintf(embedding_filename, "./assets/embedding_%.1f.csv", identifier);
-	// sprintf(embedding_filename, "./assets/embedding.csv");
+	if (identifier != INFINITY)
+		sprintf(embedding_filename, "./assets/embedding_%.1f.csv", identifier);
+	else 
+		sprintf(embedding_filename, "./assets/embedding.csv");
 	ofstream embedding_output(embedding_filename);
 	for (int i = 0; i < grid.N_theta; i++) {
 		for (int j = 0; j < grid.N_phi; j++) {
@@ -55,14 +59,14 @@ void find_solution(int N_theta, int N_phi) {
 
 int main() {
 	// Temporarily run for only one resolution.
-	find_solution(15, 60);
+	// find_solution(30, 120);
 
 	// Vary grid space.
-	// for (int N = 10; N <= 100; N += 20) {
-	// 	printf("\n(Nx, Ny) = (%d, %d)\n", N, N);
+	for (int N = 30; N <= 50; N += 10) {
+		printf("\n%dx%d\n", N, 4*N);
 
-	// 	find_solution(N, N);
-	// }
+		find_solution(N, 4*N);
+	}
 
 	// Vary chi.
 	// for (chi = 0; chi <= 1; chi += 0.1) {
