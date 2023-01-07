@@ -8,7 +8,7 @@ using namespace std;
 double chi = 0.8;
 
 // Dimensions of ellipsoid
-double a = 2;
+double a = 1.5;
 double b = 1;
 double c = 1;
 
@@ -59,27 +59,28 @@ void find_solution(int N_theta, int N_phi) {
 	shared_ptr<Grid3DFunction> initial_e_phi = e_phi->get_copy();
 
 	// First value of e_theta.
-	sprintf(identifier, "1_(%.0f,%.0f,%.0f)", a, b, c);
+	// sprintf(identifier, "1_(%.0f,%.0f,%.0f)", a, b, c);
+	sprintf(identifier, "(%.1f,%.1f,%.1f)_%dx%d", a, b, c, N_theta, N_phi);
 	run_relaxation(e_theta_1, e_phi, get_commutator_rms, identifier);
 	run_integration(e_theta_1, e_phi, embedding_1);
 	output_embedding(embedding_1, identifier);
 
 	// Second value of e_theta.
-	sprintf(identifier, "2_(%.0f,%.0f,%.0f)", a, b, c);
-	e_phi = initial_e_phi;
-	run_relaxation(e_theta_2, e_phi, get_commutator_rms, identifier);
-	run_integration(e_theta_2, e_phi, embedding_2);
-	output_embedding(embedding_2, identifier);
+	// sprintf(identifier, "2_(%.0f,%.0f,%.0f)", a, b, c);
+	// e_phi = initial_e_phi;
+	// run_relaxation(e_theta_2, e_phi, get_commutator_rms, identifier);
+	// run_integration(e_theta_2, e_phi, embedding_2);
+	// output_embedding(embedding_2, identifier);
 
 	printf("\n\nDone!\n");
 }
 
 int main() {
 	// Temporarily run for only one resolution.
-	find_solution(30, 30);
+	find_solution(40, 4*40);
 
 	// Vary grid space.
-	// for (int N = 30; N <= 50; N += 10) {
+	// for (int N = 10; N <= 30; N *= 2) {
 	// 	printf("\n%dx%d\n", N, 4*N);
 
 	// 	find_solution(N, 4*N);
