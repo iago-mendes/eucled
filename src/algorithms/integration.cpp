@@ -66,7 +66,7 @@ double L_operator(const vector<double> *function_old, int I) {
 	return (
 		function->partial_theta()->partial_theta()->points[i][j] +
 		(1/tan(theta)) * function->partial_theta()->points[i][j] +
-		function->partial_phi()->partial_phi()->points[i][j]
+		(1/squared(sin(theta))) * function->partial_phi()->partial_phi()->points[i][j]
 	);
 }
 
@@ -99,9 +99,18 @@ void run_integration(
 			int I = ij_to_I(i, j);
 			double theta = grid__integration.theta(i);
 
-			b_x_R1[I] = e_theta->partial_theta()->x_values[i][j] + (1/tan(theta)) * e_theta->x_values[i][j] + e_phi->partial_phi()->x_values[i][j];
-			b_y_R1[I] = e_theta->partial_theta()->y_values[i][j] + (1/tan(theta)) * e_theta->y_values[i][j] + e_phi->partial_phi()->y_values[i][j];
-			b_z_R1[I] = e_theta->partial_theta()->z_values[i][j] + (1/tan(theta)) * e_theta->z_values[i][j] + e_phi->partial_phi()->z_values[i][j];
+			b_x_R1[I] =
+				e_theta->partial_theta()->x_values[i][j] +
+				(1/tan(theta)) * e_theta->x_values[i][j] +
+				(1/squared(sin(theta))) * e_phi->partial_phi()->x_values[i][j];
+			b_y_R1[I] =
+				e_theta->partial_theta()->y_values[i][j] +
+				(1/tan(theta)) * e_theta->y_values[i][j] +
+				(1/squared(sin(theta))) * e_phi->partial_phi()->y_values[i][j];
+			b_z_R1[I] =
+				e_theta->partial_theta()->z_values[i][j] +
+				(1/tan(theta)) * e_theta->z_values[i][j] +
+				(1/squared(sin(theta))) * e_phi->partial_phi()->z_values[i][j];
 		}
 	}
 

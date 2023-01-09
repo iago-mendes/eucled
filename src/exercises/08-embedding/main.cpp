@@ -77,7 +77,7 @@ void find_solution(int N_theta, int N_phi) {
 
 int main() {
 	// Temporarily run for only one resolution.
-	find_solution(40, 4*40);
+	find_solution(30, 30);
 
 	// Vary grid space.
 	// for (int N = 10; N <= 30; N *= 2) {
