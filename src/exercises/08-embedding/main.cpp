@@ -5,7 +5,7 @@ using namespace std;
 using namespace std;
 
 // Rotation of black hole horizon.
-double chi = 0.8;
+double chi = 0.7;
 
 // Dimensions of ellipsoid
 double a = 1.5;
@@ -13,7 +13,7 @@ double b = 1;
 double c = 1;
 
 // Distance between sphere centers of peanut.
-double d = 0.9;
+double d = 0.8;
 
 Grid grid;
 
@@ -36,11 +36,11 @@ void find_solution(int N_theta, int N_phi) {
 	Grid grid_(N_theta, N_phi);
 	grid = grid_;
 
-	// shared_ptr<RoundSphereMetric> metric = make_shared<RoundSphereMetric>(chi);
+	// shared_ptr<RoundSphereMetric> metric = make_shared<RoundSphereMetric>(2);
 	// shared_ptr<HorizonMetric> metric = make_shared<HorizonMetric>(chi);
-	shared_ptr<EllipsoidMetric> metric = make_shared<EllipsoidMetric>(a, b, c);
+	// shared_ptr<EllipsoidMetric> metric = make_shared<EllipsoidMetric>(a, b, c);
 	// shared_ptr<PeanutMetric> metric = make_shared<PeanutMetric>(d);
-	// shared_ptr<DentedSphereMetric> metric = make_shared<DentedSphereMetric>();
+	shared_ptr<DentedSphereMetric> metric = make_shared<DentedSphereMetric>();
 
 	shared_ptr<Grid3DFunction> e_theta_1 = make_shared<Grid3DFunction>(grid);
 	shared_ptr<Grid3DFunction> e_theta_2 = make_shared<Grid3DFunction>(grid);
@@ -60,7 +60,7 @@ void find_solution(int N_theta, int N_phi) {
 
 	// First value of e_theta.
 	// sprintf(identifier, "1_(%.0f,%.0f,%.0f)", a, b, c);
-	sprintf(identifier, "(%.1f,%.1f,%.1f)_%dx%d", a, b, c, N_theta, N_phi);
+	sprintf(identifier, "dented");
 	run_relaxation(e_theta_1, e_phi, get_commutator_rms, identifier);
 	run_integration(e_theta_1, e_phi, embedding_1);
 	output_embedding(embedding_1, identifier);
@@ -77,7 +77,7 @@ void find_solution(int N_theta, int N_phi) {
 
 int main() {
 	// Temporarily run for only one resolution.
-	find_solution(30, 30);
+	find_solution(40, 4*40);
 
 	// Vary grid space.
 	// for (int N = 10; N <= 30; N *= 2) {
