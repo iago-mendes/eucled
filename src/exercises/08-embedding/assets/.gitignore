@@ -1,1 +1,4 @@
 *.gif
+!durations.csv
+!solution_residuals_unweighted.csv
+!solution_residuals.csv
