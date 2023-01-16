@@ -74,12 +74,12 @@ void find_solution(int N_theta, int N_phi) {
 
 int main() {
 	// Single run.
-	// find_solution(25, 4*25);
+	find_solution(30, 4*30);
 
 	// Vary grid space.
-	for (int N = 10; N <= 40; N *= 2) {
-		printf("\n%dx%d\n", N, 4*N);
+	// for (int N = 10; N <= 40; N *= 2) {
+	// 	printf("\n%dx%d\n", N, 4*N);
 
-		find_solution(N, 4*N);
-	}
+	// 	find_solution(N, 4*N);
+	// }
 }

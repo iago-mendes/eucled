@@ -5,6 +5,7 @@
 #include "../classes/time_stepper.h"
 #include "../functions/commutator.h"
 #include "../functions/cross_product.h"
+#include "./integration.h"
 
 #define RESIDUAL_TOLERANCE 1e-15
 #define MAX_ITERATIONS 100000

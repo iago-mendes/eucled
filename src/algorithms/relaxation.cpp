@@ -5,6 +5,7 @@ shared_ptr<Grid3DFunction> e_theta__relaxation(nullptr);
 shared_ptr<Grid3DFunction> e_phi__relaxation(nullptr);
 
 TimeStepper time_stepper(INITIAL_TIME_STEP, 10);
+Grid *grid__relaxation;
 
 double sin_multiplier(
 	double theta,
@@ -28,6 +29,41 @@ double negate_multiplier(
 	[[maybe_unused]] char coordinate
 ) {
 	return - 1;
+}
+
+double get_ellipsoid__relaxation(int i, int j, char coordinate) {
+	double theta = grid__relaxation->theta(i);
+	double phi = grid__relaxation->phi(j);
+
+	double a = 1.5;
+	double b = 1;
+	double c = 1;
+
+	switch (coordinate) {
+	case 'x':
+		return a * cos(phi) * sin(theta);
+		break;
+
+	case 'y':
+		return b * sin(phi) * sin(theta);
+		break;
+
+	case 'z':
+		return c * cos(theta);
+		break;
+
+	default:
+		return -1;
+		break;
+	}
+}
+
+double sin_sqrt_multiplier__relaxation(
+		double theta,
+		[[maybe_unused]] double phi,
+	[[maybe_unused]] char coordinate
+) {
+	return sqrt(sin(theta));
 }
 
 void update_e_theta(double time_step) {
@@ -110,13 +146,13 @@ double run_relaxation(
 ) {
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
-	Grid *grid = &e_theta->grid;
+	grid__relaxation = &e_theta->grid;
 
 	char residuals_filename[50];
 	if (identifier != nullptr) {
 		sprintf(residuals_filename, "./assets/residuals_%s.csv", identifier);
 	} else {
-		sprintf(residuals_filename, "./assets/residuals_%d.csv", grid->N_theta);
+		sprintf(residuals_filename, "./assets/residuals_%d.csv", grid__relaxation->N_theta);
 	}
 	ofstream residuals_output(residuals_filename);
 	ofstream residual_distribution_output("./assets/residual_distribution.csv");
@@ -124,11 +160,11 @@ double run_relaxation(
 	time_stepper.reset();
 
 	// output x values
-	for (int i = 0; i < grid->N_theta; i++) {
-		for (int j = 0; j < grid->N_phi; j++) {
-			residual_distribution_output << grid->theta(i);
+	for (int i = 0; i < grid__relaxation->N_theta; i++) {
+		for (int j = 0; j < grid__relaxation->N_phi; j++) {
+			residual_distribution_output << grid__relaxation->theta(i);
 
-			if (i == grid->N_theta - 1 && j == grid->N_phi - 1) { // last
+			if (i == grid__relaxation->N_theta - 1 && j == grid__relaxation->N_phi - 1) { // last
 				residual_distribution_output << endl;
 			} else {
 				residual_distribution_output << ",";
@@ -137,11 +173,11 @@ double run_relaxation(
 	}
 
 	// output y values
-	for (int i = 0; i < grid->N_theta; i++) {
-		for (int j = 0; j < grid->N_phi; j++) {
-			residual_distribution_output << grid->phi(j);
+	for (int i = 0; i < grid__relaxation->N_theta; i++) {
+		for (int j = 0; j < grid__relaxation->N_phi; j++) {
+			residual_distribution_output << grid__relaxation->phi(j);
 
-			if (i == grid->N_theta - 1 && j == grid->N_phi - 1) { // last
+			if (i == grid__relaxation->N_theta - 1 && j == grid__relaxation->N_phi - 1) { // last
 				residual_distribution_output << endl;
 			} else {
 				residual_distribution_output << ",";
@@ -214,11 +250,11 @@ double run_relaxation(
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			// output residual norm values
 			auto residual_norm = get_commutator_norm(e_theta__relaxation, e_phi__relaxation);
-			for (int i = 0; i < grid->N_theta; i++) {
-				for (int j = 0; j < grid->N_phi; j++) {
+			for (int i = 0; i < grid__relaxation->N_theta; i++) {
+				for (int j = 0; j < grid__relaxation->N_phi; j++) {
 					residual_distribution_output << residual_norm->points[i][j];
 
-					if (i == grid->N_theta - 1 && j == grid->N_phi - 1) { // last
+					if (i == grid__relaxation->N_theta - 1 && j == grid__relaxation->N_phi - 1) { // last
 						residual_distribution_output << endl;
 					} else {
 						residual_distribution_output << ",";
@@ -232,6 +268,21 @@ double run_relaxation(
 			printf("Residual tolerance was reached.\n");
 			break;
 		}
+
+		// if (iteration_number % 1000 == 0) {
+		// 	shared_ptr<Grid3DFunction> embedding = make_shared<Grid3DFunction>(*grid__relaxation);
+		// 	run_integration(best_solution.solution1, best_solution.solution2, embedding);
+		// 	shared_ptr<Grid3DFunction> ellipsoid = make_shared<Grid3DFunction>(*grid__relaxation, get_ellipsoid__relaxation);
+		// 	double solution_residual = embedding->multiplied_by(sin_sqrt_multiplier__relaxation)->norm()->rms();
+		// 	double residual_tolerance = 1 / squared(grid__relaxation->N_theta);
+
+		// 	printf("Solution residual: %e\n", solution_residual);
+
+		// 	if (solution_residual <= residual_tolerance) {
+		// 		printf("Solution residual tolerance was reached.\n");
+		// 		break;
+		// 	}
+		// }
 
 		iteration_number++;
 	}
