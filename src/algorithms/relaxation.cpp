@@ -23,47 +23,12 @@ double inverse_sin_multiplier(
 	return 1 / sin(theta);
 }
 
-double negate_multiplier(
-	[[maybe_unused]] double theta,
+double sin_squared_multiplier(
+	double theta,
 	[[maybe_unused]] double phi,
 	[[maybe_unused]] char coordinate
 ) {
-	return - 1;
-}
-
-double get_ellipsoid__relaxation(int i, int j, char coordinate) {
-	double theta = grid__relaxation->theta(i);
-	double phi = grid__relaxation->phi(j);
-
-	double a = 1.5;
-	double b = 1;
-	double c = 1;
-
-	switch (coordinate) {
-	case 'x':
-		return a * cos(phi) * sin(theta);
-		break;
-
-	case 'y':
-		return b * sin(phi) * sin(theta);
-		break;
-
-	case 'z':
-		return c * cos(theta);
-		break;
-
-	default:
-		return -1;
-		break;
-	}
-}
-
-double sin_sqrt_multiplier__relaxation(
-		double theta,
-		[[maybe_unused]] double phi,
-	[[maybe_unused]] char coordinate
-) {
-	return sqrt(sin(theta));
+	return squared(sin(theta));
 }
 
 void update_e_theta(double time_step) {
@@ -105,9 +70,9 @@ void update_e_theta(double time_step) {
 
 	e_theta_derivative = get_cross_product(e_theta_derivative, e_theta);
 
-	e_theta_derivative = (*e_theta_derivative).multiplied_by(negate_multiplier);
+	e_theta_derivative = (*e_theta_derivative).multiplied_by(-time_step);
 
-	e_theta__relaxation = (*e_theta__relaxation).added_with(e_theta_derivative, time_step);
+	e_theta__relaxation = (*e_theta__relaxation).added_with(e_theta_derivative, sin_squared_multiplier);
 }
 
 void update_e_phi(double time_step) {
@@ -133,9 +98,9 @@ void update_e_phi(double time_step) {
 
 	e_phi_derivative = get_cross_product(e_phi_derivative, e_phi);
 
-	e_phi_derivative = (*e_phi_derivative).multiplied_by(negate_multiplier);
+	e_phi_derivative = (*e_phi_derivative).multiplied_by(-time_step);
 
-	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, time_step);
+	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, sin_squared_multiplier);
 }
 
 double run_relaxation(
@@ -268,21 +233,6 @@ double run_relaxation(
 			printf("Residual tolerance was reached.\n");
 			break;
 		}
-
-		// if (iteration_number % 1000 == 0) {
-		// 	shared_ptr<Grid3DFunction> embedding = make_shared<Grid3DFunction>(*grid__relaxation);
-		// 	run_integration(best_solution.solution1, best_solution.solution2, embedding);
-		// 	shared_ptr<Grid3DFunction> ellipsoid = make_shared<Grid3DFunction>(*grid__relaxation, get_ellipsoid__relaxation);
-		// 	double solution_residual = embedding->multiplied_by(sin_sqrt_multiplier__relaxation)->norm()->rms();
-		// 	double residual_tolerance = 1 / squared(grid__relaxation->N_theta);
-
-		// 	printf("Solution residual: %e\n", solution_residual);
-
-		// 	if (solution_residual <= residual_tolerance) {
-		// 		printf("Solution residual tolerance was reached.\n");
-		// 		break;
-		// 	}
-		// }
 
 		iteration_number++;
 	}
