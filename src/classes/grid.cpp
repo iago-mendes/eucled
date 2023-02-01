@@ -29,6 +29,14 @@ double Grid::phi(int j) {
 	return this->delta_phi * j;
 }
 
+int Grid::i(double theta) {
+	return (int) (theta / this->delta_theta - 1 / 2);
+}
+
+int Grid::j(double phi) {
+	return (int) (phi / this->delta_phi);
+}
+
 // GridFunction
 
 GridFunction::GridFunction(Grid grid_, double (*function)(int i, int j)) {

@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 #include "../utils/math.h"
+#include "./grid.h"
 
 // Metric Tensor
 class Metric {
@@ -85,6 +86,18 @@ class PeanutMetric : public Metric {
 class DentedSphereMetric : public Metric {
 	public:
 		DentedSphereMetric() = default;
+
+		double g_theta_theta(double theta, double phi);
+		double g_theta_phi(double theta, double phi);
+		double g_phi_phi(double theta, double phi);
+};
+
+class NumericalMetric : public Metric {
+	public:
+		vector<vector<double>> data[3];
+		Grid grid;
+
+		NumericalMetric();
 
 		double g_theta_theta(double theta, double phi);
 		double g_theta_phi(double theta, double phi);

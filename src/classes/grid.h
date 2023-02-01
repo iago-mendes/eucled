@@ -21,6 +21,8 @@ class Grid {
 
 		double theta(int i);
 		double phi(int j);
+		int i(double theta);
+		int j(double phi);
 };
 
 class GridFunction {
@@ -28,8 +30,8 @@ class GridFunction {
 		Grid grid;
 		vector<vector<double>> points;
 
-		GridFunction(Grid grid_, double (*function)(int i, int j));
-		GridFunction(Grid grid_, vector<vector<double>> *points);
+		GridFunction(Grid grid, double (*function)(int i, int j));
+		GridFunction(Grid grid, vector<vector<double>> *points);
 		GridFunction(Grid grid);
 
 		shared_ptr<GridFunction> partial_theta();

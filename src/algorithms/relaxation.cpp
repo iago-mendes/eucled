@@ -23,7 +23,7 @@ double inverse_sin_multiplier(
 	return 1 / sin(theta);
 }
 
-double sin_squared_multiplier(
+double euler_step_multiplier(
 	double theta,
 	[[maybe_unused]] double phi,
 	[[maybe_unused]] char coordinate
@@ -72,7 +72,7 @@ void update_e_theta(double time_step) {
 
 	e_theta_derivative = (*e_theta_derivative).multiplied_by(-time_step);
 
-	e_theta__relaxation = (*e_theta__relaxation).added_with(e_theta_derivative, sin_squared_multiplier);
+	e_theta__relaxation = (*e_theta__relaxation).added_with(e_theta_derivative, euler_step_multiplier);
 }
 
 void update_e_phi(double time_step) {
@@ -100,7 +100,7 @@ void update_e_phi(double time_step) {
 
 	e_phi_derivative = (*e_phi_derivative).multiplied_by(-time_step);
 
-	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, sin_squared_multiplier);
+	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, euler_step_multiplier);
 }
 
 double run_relaxation(

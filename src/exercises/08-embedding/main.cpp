@@ -40,32 +40,24 @@ double sin_sqrt_multiplier__main(
 	return sqrt(sin(theta));
 }
 
-void find_solution(int N_theta, int N_phi) {
+void find_solution(Grid grid, shared_ptr<Metric> metric, char *identifier = nullptr) {
 	auto start_time = high_resolution_clock::now();
 
-	Grid grid_(N_theta, N_phi);
-	grid = grid_;
-
-	char identifier[50];
-	sprintf(identifier, "ellipsoid_%dx%d", N_theta, N_phi);
-
-	shared_ptr<Metric> metric = make_shared<EllipsoidMetric>(a, b, c);
 	shared_ptr<Grid3DFunction> embedding = make_shared<Grid3DFunction>(grid);
 
 	run_embedding(metric, embedding, identifier);
 
-	shared_ptr<Grid3DFunction> ellipsoid = make_shared<Grid3DFunction>(grid, get_ellipsoid);
-	shared_ptr<Grid3DFunction> solution_residual_unweighted = embedding->added_with(ellipsoid, -1);
-	shared_ptr<Grid3DFunction> solution_residual = solution_residual_unweighted->multiplied_by(sin_sqrt_multiplier__main);
+	// shared_ptr<Grid3DFunction> ellipsoid = make_shared<Grid3DFunction>(grid, get_ellipsoid);
+	// shared_ptr<Grid3DFunction> solution_residual_unweighted = embedding->added_with(ellipsoid, -1);
+	// shared_ptr<Grid3DFunction> solution_residual = solution_residual_unweighted->multiplied_by(sin_sqrt_multiplier__main);
+	// printf(
+	// 	"Solution residuals:\n\tUnweighted: %e\n\tWeighted: %e\n",
+	// 	solution_residual_unweighted->norm()->rms(),
+	// 	solution_residual->norm()->rms()
+	// );
 
 	auto stop_time = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(stop_time - start_time).count();
-
-	printf(
-		"Solution residuals:\n\tUnweighted: %e\n\tWeighted: %e\n",
-		solution_residual_unweighted->norm()->rms(),
-		solution_residual->norm()->rms()
-	);
 
 	printf("Time duration: %ld ms\n", duration);
 
@@ -73,8 +65,24 @@ void find_solution(int N_theta, int N_phi) {
 }
 
 int main() {
+	int N_theta, N_phi;
+
+	// N_theta = 30;
+	// N_phi = 4 * N_theta;
+	// shared_ptr<Metric> metric = make_shared<EllipsoidMetric>(a, b, c);
+
+	// Numeric metric input
+	shared_ptr<NumericalMetric> metric = make_shared<NumericalMetric>();
+	N_theta = metric->grid.N_theta;
+	N_phi = metric->grid.N_phi;
+
+	Grid grid(N_theta, N_phi);
+
+	char identifier[50];
+	sprintf(identifier, "numerical_%dx%d", N_theta, N_phi);
+
 	// Single run.
-	find_solution(30, 4*30);
+	find_solution(grid, metric, identifier);
 
 	// Vary grid space.
 	// for (int N = 10; N <= 40; N *= 2) {
