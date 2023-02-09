@@ -114,8 +114,35 @@ void run_integration(
 		}
 	}
 
+	// Compute average of right sides.
+	double sum_x = 0;
+	double sum_y = 0;
+	double sum_z = 0;
+	for (int I = 0; I < N__integration; I++) {
+		int i = I_to_i(I);
+		double theta = grid__integration.theta(i);
+
+		double dA = grid__integration.delta_theta * grid__integration.delta_phi;
+
+		sum_x += b_x_R1[I] * dA * cos(theta);
+		sum_y += b_y_R1[I] * dA * cos(theta);
+		sum_z += b_z_R1[I] * dA * cos(theta);
+	}
+	double total_area = 2 * M_PI * M_PI;
+	double average_x = sum_x / total_area;
+	double average_y = sum_y / total_area;
+	double average_z = sum_z / total_area;
+	printf("Average of Poisson equations' right sides:\n");
+	printf("\tx: %e\n", average_x);
+	printf("\ty: %e\n", average_y);
+	printf("\tz: %e\n", average_z);
+
+	printf("Solving Poisson equations:\n");
+	printf("\tx: ");
 	run_bicgstab(L_operator, &x_R1, &b_x_R1);
+	printf("\ty: ");
 	run_bicgstab(L_operator, &y_R1, &b_y_R1);
+	printf("\tz: ");
 	run_bicgstab(L_operator, &z_R1, &b_z_R1);
 
 	R1_to_R2(&x_R1, &embedding->x_values);

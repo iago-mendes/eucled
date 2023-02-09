@@ -67,19 +67,20 @@ void find_solution(Grid grid, shared_ptr<Metric> metric, char *identifier = null
 int main() {
 	int N_theta, N_phi;
 
-	// N_theta = 30;
-	// N_phi = 4 * N_theta;
-	// shared_ptr<Metric> metric = make_shared<EllipsoidMetric>(a, b, c);
+	N_theta = 15;
+	N_phi = 4 * N_theta;
+	shared_ptr<Metric> metric = make_shared<PeanutMetric>();
 
 	// Numeric metric input
-	shared_ptr<NumericalMetric> metric = make_shared<NumericalMetric>();
-	N_theta = metric->grid.N_theta;
-	N_phi = metric->grid.N_phi;
+	// shared_ptr<NumericalMetric> metric = make_shared<NumericalMetric>();
+	// N_theta = metric->grid.N_theta;
+	// N_phi = metric->grid.N_phi;
 
 	Grid grid(N_theta, N_phi);
 
 	char identifier[50];
-	sprintf(identifier, "numerical_%dx%d", N_theta, N_phi);
+	// sprintf(identifier, "numerical_%dx%d", N_theta, N_phi);
+	sprintf(identifier, "peanut_%dx%d", N_theta, N_phi);
 
 	// Single run.
 	find_solution(grid, metric, identifier);
