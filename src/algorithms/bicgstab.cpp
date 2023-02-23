@@ -176,7 +176,7 @@ void run_bicgstab(
 			}
 		}
 		if (has_nan) {
-			printf("NaN detected in BiCGSTAB algorithm after %d iterations.\n", number_of_iterations);
+			printf("(NaN detected at i = %d) ", number_of_iterations);
 			break;
 		}
 		

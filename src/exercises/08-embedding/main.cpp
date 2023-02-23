@@ -57,38 +57,31 @@ void find_solution(Grid grid, shared_ptr<Metric> metric, char *identifier = null
 	// );
 
 	auto stop_time = high_resolution_clock::now();
-	auto duration = duration_cast<milliseconds>(stop_time - start_time).count();
+	auto duration = duration_cast<seconds>(stop_time - start_time).count();
 
-	printf("Time duration: %ld ms\n", duration);
+	printf("Time duration: %f min\n", duration / 60.0);
 
 	printf("\n\nDone!\n");
 }
 
 int main() {
 	int N_theta, N_phi;
+	char identifier[50];
 
-	N_theta = 15;
-	N_phi = 4 * N_theta;
-	shared_ptr<Metric> metric = make_shared<PeanutMetric>();
+	// N_theta = 15;
+	// N_phi = 4 * N_theta;
+	// shared_ptr<Metric> metric = make_shared<PeanutMetric>();
+	// sprintf(identifier, "peanut_%dx%d_fixed", N_theta, N_phi);
 
 	// Numeric metric input
-	// shared_ptr<NumericalMetric> metric = make_shared<NumericalMetric>();
-	// N_theta = metric->grid.N_theta;
-	// N_phi = metric->grid.N_phi;
+	shared_ptr<NumericalMetric> metric = make_shared<NumericalMetric>();
+	N_theta = metric->grid.N_theta;
+	N_phi = metric->grid.N_phi;
+	sprintf(identifier, "numerical_%dx%d_fixed", N_theta, N_phi);
 
 	Grid grid(N_theta, N_phi);
 
-	char identifier[50];
-	// sprintf(identifier, "numerical_%dx%d", N_theta, N_phi);
-	sprintf(identifier, "peanut_%dx%d", N_theta, N_phi);
+	printf(">>> %s <<<\n", identifier);
 
-	// Single run.
 	find_solution(grid, metric, identifier);
-
-	// Vary grid space.
-	// for (int N = 10; N <= 40; N *= 2) {
-	// 	printf("\n%dx%d\n", N, 4*N);
-
-	// 	find_solution(N, 4*N);
-	// }
 }

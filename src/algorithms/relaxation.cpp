@@ -252,9 +252,11 @@ double run_relaxation(
 			best_solution.solution2->dot_product_with(best_solution.solution2),
 			-1
 		)->rms();
+
+	printf("Relaxation finished with R = %.2e after %d iterations.\n", best_solution.residual, iteration_number);
 	
 	printf(
-		"Dot product residuals:\n\ttheta theta = %.2e\n\ttheta phi = %.2e\n\tphi phi = %.2e\n",
+		"Dot product residuals:\n\ttheta theta: %.2e\n\ttheta phi: %.2e\n\tphi phi: %.2e\n",
 		dot_product_residual_theta_theta,
 		dot_product_residual_theta_phi,
 		dot_product_residual_phi_phi
@@ -263,6 +265,5 @@ double run_relaxation(
 	(*e_theta) = (*best_solution.solution1);
 	(*e_phi) = (*best_solution.solution2);
 
-	printf("Relaxation finished with R = %.2e after %d iterations.\n", best_solution.residual, iteration_number);
 	return minimum_residual;
 }

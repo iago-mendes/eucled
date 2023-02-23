@@ -70,6 +70,30 @@ double L_operator(const vector<double> *function_old, int I) {
 	);
 }
 
+void subtract_right_side_averages(vector<double> *b) {
+	double average = 0;
+	for (int I = 0; I < N__integration; I++) {
+		double theta = grid__integration.theta(I_to_i(I));
+		average += (*b)[I] * sin(theta) / N__integration;
+	}
+	printf("\t\t%e\n", average);
+
+	while (abs(average) > 1e-15) {
+		for (int I = 0; I < N__integration; I++) {
+			(*b)[I] -= average;
+		}
+
+		average = 0;
+		for (int I = 0; I < N__integration; I++) {
+			double theta = grid__integration.theta(I_to_i(I));
+			average += (*b)[I] * sin(theta) / N__integration;
+			// average += (*b)[I] / N__integration;
+		}
+
+		printf("\t\t%e\n", average);
+	}
+}
+
 void run_integration(
 	shared_ptr<Grid3DFunction> e_theta,
 	shared_ptr<Grid3DFunction> e_phi,
@@ -114,28 +138,13 @@ void run_integration(
 		}
 	}
 
-	// Compute average of right sides.
-	double sum_x = 0;
-	double sum_y = 0;
-	double sum_z = 0;
-	for (int I = 0; I < N__integration; I++) {
-		int i = I_to_i(I);
-		double theta = grid__integration.theta(i);
-
-		double dA = grid__integration.delta_theta * grid__integration.delta_phi;
-
-		sum_x += b_x_R1[I] * dA * cos(theta);
-		sum_y += b_y_R1[I] * dA * cos(theta);
-		sum_z += b_z_R1[I] * dA * cos(theta);
-	}
-	double total_area = 2 * M_PI * M_PI;
-	double average_x = sum_x / total_area;
-	double average_y = sum_y / total_area;
-	double average_z = sum_z / total_area;
-	printf("Average of Poisson equations' right sides:\n");
-	printf("\tx: %e\n", average_x);
-	printf("\ty: %e\n", average_y);
-	printf("\tz: %e\n", average_z);
+	printf("Fixing right side of Poisson equations:\n");
+	printf("\tx:\n");
+	subtract_right_side_averages(&b_x_R1);
+	printf("\ty:\n");
+	subtract_right_side_averages(&b_y_R1);
+	printf("\tz:\n");
+	subtract_right_side_averages(&b_z_R1);
 
 	printf("Solving Poisson equations:\n");
 	printf("\tx: ");
