@@ -7,100 +7,50 @@ shared_ptr<Grid3DFunction> e_phi__relaxation(nullptr);
 TimeStepper time_stepper(INITIAL_TIME_STEP, 10);
 Grid *grid__relaxation;
 
-double sin_multiplier(
-	double theta,
-	[[maybe_unused]] double phi,
-	[[maybe_unused]] char coordinate
-) {
-	return sin(theta);
+// Operator from equation 28 for theta
+shared_ptr<Grid3DFunction> D_theta(shared_ptr<Grid3DFunction> v) {
+	return v
+		->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);}) // multiply by sin(theta)
+		->partial_theta() // take theta partial derivative
+		->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return 1/sin(theta);}) // divide by sin(theta)
+	;
 }
 
-double inverse_sin_multiplier(
-	double theta,
-	[[maybe_unused]] double phi,
-	[[maybe_unused]] char coordinate
-) {
-	return 1 / sin(theta);
+// Operator from equation 28 for phi
+shared_ptr<Grid3DFunction> D_phi(shared_ptr<Grid3DFunction> v) {
+	return v
+		->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);}) // multiply by sin(theta)
+		->partial_phi() // take theta partial derivative
+		->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return 1/sin(theta);}) // divide by sin(theta)
+	;
 }
 
-double euler_step_multiplier(
-	double theta,
-	[[maybe_unused]] double phi,
-	[[maybe_unused]] char coordinate
-) {
-	return squared(sin(theta));
+// Angular velocity vector from equation 30
+shared_ptr<Grid3DFunction> omega() {
+	shared_ptr<Grid3DFunction> commutator = get_commutator(e_theta__relaxation, e_phi__relaxation);
+
+	return
+		get_cross_product(D_theta(commutator), e_phi__relaxation)
+		->added_with(get_cross_product(D_phi(commutator), e_theta__relaxation), -1)
+	;
 }
 
+// Euler stepping for theta
 void update_e_theta(double time_step) {
-	shared_ptr<Grid3DFunction> e_theta = e_theta__relaxation;
-	shared_ptr<Grid3DFunction> e_phi = e_phi__relaxation;
+	shared_ptr<Grid3DFunction> e_theta_derivative = get_cross_product(omega(), e_theta__relaxation);
 
-	shared_ptr<Grid3DFunction> left_side = get_commutator(e_theta, e_phi);
-	shared_ptr<Grid3DFunction> right_side = get_commutator(e_theta, e_phi);
-
-	left_side = (*left_side).multiplied_by(sin_multiplier);
-	right_side = (*right_side).multiplied_by(sin_multiplier);
-
-	if (isnan((*left_side).rms()) || isnan((*right_side).rms())) {
-		printf("NaN 1\n");
-	}
-
-	left_side = (*left_side).partial_theta();
-	right_side = (*right_side).partial_phi();
-
-	if (isnan((*left_side).rms()) || isnan((*right_side).rms())) {
-		printf("NaN 2\n");
-	}
-
-	left_side = get_cross_product(left_side, e_phi);
-	right_side = get_cross_product(right_side, e_theta);
-
-	if (isnan((*left_side).rms()) || isnan((*right_side).rms())) {
-		printf("NaN 3\n");
-	}
-
-	left_side = (*left_side).multiplied_by(inverse_sin_multiplier);
-	right_side = (*right_side).multiplied_by(inverse_sin_multiplier);
-
-	if (isnan((*left_side).rms()) || isnan((*right_side).rms())) {
-		printf("NaN 4\n");
-	}
-
-	shared_ptr<Grid3DFunction> e_theta_derivative = (*left_side).added_with(right_side, -1);
-
-	e_theta_derivative = get_cross_product(e_theta_derivative, e_theta);
-
-	e_theta_derivative = (*e_theta_derivative).multiplied_by(-time_step);
-
-	e_theta__relaxation = (*e_theta__relaxation).added_with(e_theta_derivative, euler_step_multiplier);
+	e_theta__relaxation = e_theta__relaxation
+		// ->added_with(e_theta_derivative, -time_step);
+		->added_with(e_theta_derivative->multiplied_by(-time_step), [] (double theta, [[maybe_unused]] double phi) {return squared(sin(theta));});
 }
 
+// Euler stepping for phi
 void update_e_phi(double time_step) {
-	shared_ptr<Grid3DFunction> e_theta = e_theta__relaxation;
-	shared_ptr<Grid3DFunction> e_phi = e_phi__relaxation;
+	shared_ptr<Grid3DFunction> e_phi_derivative = get_cross_product(omega(), e_phi__relaxation);
 
-	shared_ptr<Grid3DFunction> left_side = get_commutator(e_theta, e_phi);
-	shared_ptr<Grid3DFunction> right_side = get_commutator(e_theta, e_phi);
-
-	left_side = (*left_side).multiplied_by(sin_multiplier);
-	right_side = (*right_side).multiplied_by(sin_multiplier);
-
-	left_side = (*left_side).partial_theta();
-	right_side = (*right_side).partial_phi();
-
-	left_side = get_cross_product(left_side, e_phi);
-	right_side = get_cross_product(right_side, e_theta);
-
-	left_side = (*left_side).multiplied_by(inverse_sin_multiplier);
-	right_side = (*right_side).multiplied_by(inverse_sin_multiplier);
-
-	shared_ptr<Grid3DFunction> e_phi_derivative = (*left_side).added_with(right_side, -1);
-
-	e_phi_derivative = get_cross_product(e_phi_derivative, e_phi);
-
-	e_phi_derivative = (*e_phi_derivative).multiplied_by(-time_step);
-
-	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, euler_step_multiplier);
+	e_phi__relaxation = e_phi__relaxation
+		// ->added_with(e_phi_derivative, -time_step);
+		->added_with(e_phi_derivative->multiplied_by(-time_step), [] (double theta, [[maybe_unused]] double phi) {return squared(sin(theta));});
 }
 
 double run_relaxation(

@@ -14,8 +14,8 @@
 #define INITIAL_TIME_STEP 0.01
 
 double run_relaxation(
-	shared_ptr<Grid3DFunction> e_theta_,
-	shared_ptr<Grid3DFunction> e_phi_,
+	shared_ptr<Grid3DFunction> e_theta,
+	shared_ptr<Grid3DFunction> e_phi,
 	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi),
 	char *identifier = nullptr
 );
