@@ -153,15 +153,28 @@ double GridFunction::rms() {
 	return get_rms(&this->points);
 }
 
-shared_ptr<GridFunction> GridFunction::added_with(
-	shared_ptr<GridFunction> function,
-	double multiplier
-) {
+shared_ptr<GridFunction> GridFunction::added_with(shared_ptr<GridFunction> function, double multiplier) {
 	shared_ptr<GridFunction> new_function = this->get_copy();
 
 	for (int i = 0; i < this->grid.N_theta; i++) {
 		for (int j = 0; j < this->grid.N_phi; j++) {
 			new_function->points[i][j] += multiplier * function->points[i][j];
+		}
+	}
+
+	return new_function;
+}
+
+shared_ptr<GridFunction> GridFunction::added_with(double (*function)(double theta, double phi)) {
+	shared_ptr<GridFunction> new_function = this->get_copy();
+
+	for (int i = 0; i < this->grid.N_theta; i++) {
+		double theta = this->grid.theta(i);
+
+		for (int j = 0; j < this->grid.N_phi; j++) {
+			double phi = this->grid.phi(j);
+
+			new_function->points[i][j] += function(theta, phi);
 		}
 	}
 
@@ -200,9 +213,6 @@ Grid3DFunction::Grid3DFunction(Grid grid_, double (*function)(int i, int j, char
 			z_values[i][j] = function(i, j, 'z');
 		}
 	}
-
-	cached_partial_theta = nullptr;
-	cached_partial_phi = nullptr;
 }
 
 Grid3DFunction::Grid3DFunction(Grid grid) {
@@ -212,9 +222,6 @@ Grid3DFunction::Grid3DFunction(Grid grid) {
 	x_values.resize(grid.N_theta, base_vector);
 	y_values.resize(grid.N_theta, base_vector);
 	z_values.resize(grid.N_theta, base_vector);
-
-	cached_partial_theta = nullptr;
-	cached_partial_phi = nullptr;
 }
 
 double Grid3DFunction::rms() {
@@ -241,6 +248,10 @@ shared_ptr<Grid3DFunction> Grid3DFunction::get_copy() {
 }
 
 shared_ptr<GridFunction> Grid3DFunction::norm() {
+	if (cached_norm != nullptr) {
+		return cached_norm;
+	}
+
 	auto norm = make_shared<GridFunction>(grid, zero_function_alt);
 
 	for (int i = 0; i < grid.N_theta; i++) {
@@ -248,6 +259,8 @@ shared_ptr<GridFunction> Grid3DFunction::norm() {
 			norm->points[i][j] = sqrt( squared(x_values[i][j]) + squared(y_values[i][j]) + squared(z_values[i][j]) );
 		}
 	}
+
+	cached_norm = norm;
 
 	return norm;
 }
@@ -334,6 +347,24 @@ shared_ptr<Grid3DFunction> Grid3DFunction::multiplied_by(double (*multiplier)(do
 	return new_function;
 }
 
+shared_ptr<Grid3DFunction> Grid3DFunction::multiplied_by(double (*multiplier)(double theta, double phi)) {
+	auto new_function = get_copy();
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		double theta = grid.theta(i);
+
+		for (int j = 0; j < grid.N_phi; j++) {
+			double phi = grid.phi(j);
+			
+			(*new_function).x_values[i][j] *= multiplier(theta, phi);
+			(*new_function).y_values[i][j] *= multiplier(theta, phi);
+			(*new_function).z_values[i][j] *= multiplier(theta, phi);
+		}
+	}
+
+	return new_function;
+}
+
 shared_ptr<Grid3DFunction> Grid3DFunction::multiplied_by(double multiplier) {
 	auto new_function = get_copy();
 
@@ -363,6 +394,27 @@ shared_ptr<Grid3DFunction> Grid3DFunction::added_with(
 			(*new_function).x_values[i][j] += multiplier(theta, phi, 'x') * (*function).x_values[i][j];
 			(*new_function).y_values[i][j] += multiplier(theta, phi, 'y') * (*function).y_values[i][j];
 			(*new_function).z_values[i][j] += multiplier(theta, phi, 'z') * (*function).z_values[i][j];
+		}
+	}
+
+	return new_function;
+}
+
+shared_ptr<Grid3DFunction> Grid3DFunction::added_with(
+	shared_ptr<Grid3DFunction> function,
+	double (*multiplier)(double theta, double phi)
+) {
+	auto new_function = get_copy();
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		double theta = grid.theta(i);
+
+		for (int j = 0; j < grid.N_phi; j++) {
+			double phi = grid.phi(j);
+
+			(*new_function).x_values[i][j] += multiplier(theta, phi) * (*function).x_values[i][j];
+			(*new_function).y_values[i][j] += multiplier(theta, phi) * (*function).y_values[i][j];
+			(*new_function).z_values[i][j] += multiplier(theta, phi) * (*function).z_values[i][j];
 		}
 	}
 
