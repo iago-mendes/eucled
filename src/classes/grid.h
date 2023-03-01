@@ -44,10 +44,8 @@ class GridFunction {
 		double rms();
 
 		// Returns a new function added with the given function multiplied by the given multiplier.
-		shared_ptr<GridFunction> added_with(
-			shared_ptr<GridFunction> function,
-			double multiplier
-		);
+		shared_ptr<GridFunction> added_with(shared_ptr<GridFunction> function, double multiplier);
+		shared_ptr<GridFunction> added_with(double (*function)(double theta, double phi));
 
     // Prints a string representation of this function.
 		void print();
@@ -88,21 +86,13 @@ class Grid3DFunction {
 
 		// Returns a new function multipled by the given multiplier.
 		shared_ptr<Grid3DFunction> multiplied_by(double (*multiplier)(double theta, double phi, char coordinate));
-
-		// Returns a new function multipled by the given multiplier.
+		shared_ptr<Grid3DFunction> multiplied_by(double (*multiplier)(double theta, double phi));
 		shared_ptr<Grid3DFunction> multiplied_by(double multiplier);
 
 		// Returns a new function added with the given function multiplied by the given multiplier.
-		shared_ptr<Grid3DFunction> added_with(
-			shared_ptr<Grid3DFunction> function,
-			double (*multiplier)(double theta, double phi, char coordinate)
-		);
-
-		// Returns a new function added with the given function multiplied by the given multiplier.
-		shared_ptr<Grid3DFunction> added_with(
-			shared_ptr<Grid3DFunction> function,
-			double multiplier
-		);
+		shared_ptr<Grid3DFunction> added_with(shared_ptr<Grid3DFunction> function, double (*multiplier)(double theta, double phi, char coordinate));
+		shared_ptr<Grid3DFunction> added_with(shared_ptr<Grid3DFunction> function, double (*multiplier)(double theta, double phi));
+		shared_ptr<Grid3DFunction> added_with(shared_ptr<Grid3DFunction> function, double multiplier);
 
     // Returns a new 1D function with the dot product of the x, y, and z values.
 		shared_ptr<GridFunction> dot_product_with(shared_ptr<Grid3DFunction> function);
@@ -114,8 +104,9 @@ class Grid3DFunction {
 		void print(string identifier);
 
 		private:
-			shared_ptr<Grid3DFunction> cached_partial_theta;
-			shared_ptr<Grid3DFunction> cached_partial_phi;
+			shared_ptr<Grid3DFunction> cached_partial_theta = nullptr;
+			shared_ptr<Grid3DFunction> cached_partial_phi = nullptr;
+			shared_ptr<GridFunction> cached_norm = nullptr;
 };
 
 #endif

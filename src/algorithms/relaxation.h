@@ -17,6 +17,7 @@ double run_relaxation(
 	shared_ptr<Grid3DFunction> e_theta_,
 	shared_ptr<Grid3DFunction> e_phi_,
 	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi),
+	shared_ptr<Metric> metric,
 	char *identifier = nullptr
 );
 

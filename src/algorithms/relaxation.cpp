@@ -3,6 +3,11 @@ using namespace std;
 
 shared_ptr<Grid3DFunction> e_theta__relaxation(nullptr);
 shared_ptr<Grid3DFunction> e_phi__relaxation(nullptr);
+shared_ptr<Metric> metric__relaxation(nullptr);
+
+// Used in rescale_dyad()
+shared_ptr<GridFunction> e_phi_dot_e_theta__relaxation(nullptr);
+double initial_dyad_scaling_error__relaxation;
 
 TimeStepper time_stepper(INITIAL_TIME_STEP, 10);
 Grid *grid__relaxation;
@@ -103,14 +108,84 @@ void update_e_phi(double time_step) {
 	e_phi__relaxation = (*e_phi__relaxation).added_with(e_phi_derivative, euler_step_multiplier);
 }
 
+double dyad_scaling_error() {
+	if (e_phi_dot_e_theta__relaxation == nullptr) {
+		e_phi_dot_e_theta__relaxation = e_phi__relaxation->dot_product_with(e_theta__relaxation);
+	}
+
+	double error = e_phi_dot_e_theta__relaxation->added_with([](double theta, double phi) {
+		double g_theta_phi = metric__relaxation->g_theta_phi(theta, phi);
+		return - g_theta_phi;
+	})->rms();
+
+	// printf(" << dyad_scaling_error: %e >> ", error);
+
+	return error;
+}
+
+void rescale_dyad() {
+	// Re-scale e_{\theta} to conserve g_{\theta\theta}.
+	// e_{\theta} *= \sqrt{g_{\theta\theta}} / |e_{\theta}|
+	e_theta__relaxation = e_theta__relaxation->multiplied_by([](double theta, double phi) {
+		int i = grid__relaxation->i(theta);
+		int j = grid__relaxation->j(phi);
+
+		double g_theta_theta = metric__relaxation->g_theta_theta(theta, phi);
+		double e_theta_norm = e_theta__relaxation->norm()->points[i][j];
+
+		return sqrt(g_theta_theta) / e_theta_norm;
+	});
+
+	e_phi_dot_e_theta__relaxation = e_phi__relaxation->dot_product_with(e_theta__relaxation);
+
+	dyad_scaling_error();
+
+	// Start iteration process to conserve the other metric components.
+	while(
+		// |e_\phi \cdot e_\theta - g_{\theta\phi}| > some threshold
+		// dyad_scaling_error() > 10 * initial_dyad_scaling_error__relaxation
+		dyad_scaling_error() > 1e-15
+	) {
+		// Add factors of e_{\theta} to e_{\phi} to conserve g_{\theta\phi}.
+		// e_{\phi} += e_{\theta} * (g_{\theta\phi} - e_{\phi} \cdot e_{\theta}) / |e_{\theta}|^2
+		e_phi__relaxation->added_with(e_theta__relaxation, [](double theta, double phi) {
+			int i = grid__relaxation->i(theta);
+			int j = grid__relaxation->j(phi);
+
+			double g_theta_phi = metric__relaxation->g_theta_phi(theta, phi);
+			double e_phi_dot_e_theta = e_phi_dot_e_theta__relaxation->points[i][j];
+			double e_theta_norm = e_theta__relaxation->norm()->points[i][j];
+
+			return (g_theta_phi - e_phi_dot_e_theta) / squared(e_theta_norm);
+			// return (g_theta_phi - e_phi_dot_e_theta) / e_theta_norm;
+		});
+
+		// Re-scale e_{\phi} to conserve g_{\phi\phi}.
+		// e_{\phi} *= \sqrt{g_{\phi\phi}} / |e_{\phi}|
+		e_phi__relaxation = e_phi__relaxation->multiplied_by([](double theta, double phi) {
+			int i = grid__relaxation->i(theta);
+			int j = grid__relaxation->j(phi);
+
+			double g_phi_phi = metric__relaxation->g_phi_phi(theta, phi);
+			double e_phi_norm = e_phi__relaxation->norm()->points[i][j];
+
+			return sqrt(g_phi_phi) / e_phi_norm;
+		});
+
+		e_phi_dot_e_theta__relaxation = e_phi__relaxation->dot_product_with(e_theta__relaxation);
+	}
+}
+
 double run_relaxation(
 	shared_ptr<Grid3DFunction> e_theta,
 	shared_ptr<Grid3DFunction> e_phi,
 	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi),
+	shared_ptr<Metric> metric,
 	char *identifier
 ) {
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
+	metric__relaxation = metric;
 	grid__relaxation = &e_theta->grid;
 
 	char residuals_filename[50];
@@ -188,6 +263,9 @@ double run_relaxation(
 	best_solution.solution2 = e_phi;
 	best_solution.residual = residual;
 
+	// Save initial dyad scaling error.
+	initial_dyad_scaling_error__relaxation = dyad_scaling_error();
+
 	// Solve.
 	int iteration_number = 0;
 	int max_iterations = MAX_ITERATIONS;
@@ -198,6 +276,10 @@ double run_relaxation(
 		
 		update_e_theta(time_step);
 		update_e_phi(time_step);
+
+		// if (iteration_number % 100) {
+		rescale_dyad();
+		// }
 
 		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 		residuals_output << iteration_number << "," << residual << endl;

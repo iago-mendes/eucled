@@ -29,7 +29,7 @@ void run_embedding(
 	shared_ptr<Grid3DFunction> e_phi = make_shared<Grid3DFunction>(grid__embedding);
 
 	run_factorization(metric, e_theta, e_phi);
-	run_relaxation(e_theta, e_phi, get_commutator_rms, identifier);
+	run_relaxation(e_theta, e_phi, get_commutator_rms, metric, identifier);
 	run_integration(e_theta, e_phi, embedding);
 
 	output_embedding(embedding, identifier);
