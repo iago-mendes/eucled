@@ -76,22 +76,23 @@ void subtract_right_side_averages(vector<double> *b) {
 		double theta = grid__integration.theta(I_to_i(I));
 		average += (*b)[I] * sin(theta) / N__integration;
 	}
-	printf("\t\t%e\n", average);
 
-	while (abs(average) > 1e-15) {
-		for (int I = 0; I < N__integration; I++) {
-			(*b)[I] -= average;
-		}
-
-		average = 0;
-		for (int I = 0; I < N__integration; I++) {
-			double theta = grid__integration.theta(I_to_i(I));
-			average += (*b)[I] * sin(theta) / N__integration;
-			// average += (*b)[I] / N__integration;
-		}
-
-		printf("\t\t%e\n", average);
+	if (abs(average) < 1e-14) {
+		printf("%e\n", average);
+		return;
 	}
+
+	for (int I = 0; I < N__integration; I++) {
+		(*b)[I] -= (M_PI / 2) * average;
+	}
+
+	double corrected_average = 0;
+	for (int I = 0; I < N__integration; I++) {
+		double theta = grid__integration.theta(I_to_i(I));
+		corrected_average += (*b)[I] * sin(theta) / N__integration;
+	}
+
+	printf("%e --> %e\n", average, corrected_average);
 }
 
 void run_integration(
@@ -139,11 +140,11 @@ void run_integration(
 	}
 
 	printf("Fixing right side of Poisson equations:\n");
-	printf("\tx:\n");
+	printf("\tx: ");
 	subtract_right_side_averages(&b_x_R1);
-	printf("\ty:\n");
+	printf("\ty: ");
 	subtract_right_side_averages(&b_y_R1);
-	printf("\tz:\n");
+	printf("\tz: ");
 	subtract_right_side_averages(&b_z_R1);
 
 	printf("Solving Poisson equations:\n");
