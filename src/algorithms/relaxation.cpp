@@ -3,9 +3,12 @@ using namespace std;
 
 shared_ptr<Grid3DFunction> e_theta__relaxation(nullptr);
 shared_ptr<Grid3DFunction> e_phi__relaxation(nullptr);
+shared_ptr<Metric> metric__relaxation(nullptr);
 
-TimeStepper time_stepper(INITIAL_TIME_STEP, 10);
 Grid *grid__relaxation;
+
+// Free parameter
+double gamma__relaxation = 1;
 
 // Operator from equation 28 for theta
 shared_ptr<Grid3DFunction> D_theta(shared_ptr<Grid3DFunction> v) {
@@ -30,38 +33,94 @@ shared_ptr<Grid3DFunction> omega() {
 	shared_ptr<Grid3DFunction> commutator = get_commutator(e_theta__relaxation, e_phi__relaxation);
 
 	return
-		get_cross_product(D_theta(commutator), e_phi__relaxation)
-		->added_with(get_cross_product(D_phi(commutator), e_theta__relaxation), -1)
+		get_cross_product(e_phi__relaxation, D_theta(commutator))
+		->added_with(get_cross_product(e_theta__relaxation, D_phi(commutator)), -1)
+	;
+}
+
+// Constraint from equation 31 for theta theta
+shared_ptr<GridFunction> C_theta_theta() {
+	return e_theta__relaxation
+		->dot_product_with(e_theta__relaxation)
+		->added_with([] (double theta, double phi) {return - metric__relaxation->g_theta_theta(theta, phi);})
+	;
+}
+
+// Constraint from equation 31 for theta phi
+shared_ptr<GridFunction> C_theta_phi() {
+	return e_theta__relaxation
+		->dot_product_with(e_phi__relaxation)
+		->added_with([] (double theta, double phi) {return - metric__relaxation->g_theta_phi(theta, phi);})
+	;
+}
+
+// Constraint from equation 31 for phi phi
+shared_ptr<GridFunction> C_phi_phi() {
+	return e_phi__relaxation
+		->dot_product_with(e_phi__relaxation)
+		->added_with([] (double theta, double phi) {return - metric__relaxation->g_phi_phi(theta, phi);})
 	;
 }
 
 // Euler stepping for theta
 void update_e_theta(double time_step) {
-	shared_ptr<Grid3DFunction> e_theta_derivative = get_cross_product(omega(), e_theta__relaxation);
+	// From equation 42
+	shared_ptr<Grid3DFunction> e_theta_derivative =
+		get_cross_product(omega(), e_theta__relaxation)
+		->added_with(
+			e_theta__relaxation
+				->multiplied_by(gamma__relaxation)
+				->multiplied_by(C_theta_theta())
+		, -1)
+		->added_with(
+			e_phi__relaxation
+				->multiplied_by(gamma__relaxation)
+				->multiplied_by(C_theta_phi())
+				->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return 1/squared(sin(theta));})
+		, -1)
+	;
 
 	e_theta__relaxation = e_theta__relaxation
-		// ->added_with(e_theta_derivative, -time_step);
-		->added_with(e_theta_derivative->multiplied_by(-time_step), [] (double theta, [[maybe_unused]] double phi) {return squared(sin(theta));});
+		->added_with(e_theta_derivative, time_step);
+		// ->added_with(e_theta_derivative->multiplied_by(time_step), [] (double theta, [[maybe_unused]] double phi) {return squared(sin(theta));});
+		// ->added_with(e_theta_derivative->multiplied_by(time_step), [] (double theta, [[maybe_unused]] double phi) {return 1/sin(theta);});
 }
 
 // Euler stepping for phi
 void update_e_phi(double time_step) {
-	shared_ptr<Grid3DFunction> e_phi_derivative = get_cross_product(omega(), e_phi__relaxation);
+	// From equation 43
+	shared_ptr<Grid3DFunction> e_phi_derivative =
+		get_cross_product(omega(), e_phi__relaxation)
+		->added_with(
+			e_theta__relaxation
+				->multiplied_by(gamma__relaxation)
+				->multiplied_by(C_theta_phi())
+		, -1)
+		->added_with(
+			e_phi__relaxation
+				->multiplied_by(gamma__relaxation)
+				->multiplied_by(C_phi_phi())
+				->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return 1/squared(sin(theta));})
+		, -1)
+	;
 
 	e_phi__relaxation = e_phi__relaxation
-		// ->added_with(e_phi_derivative, -time_step);
-		->added_with(e_phi_derivative->multiplied_by(-time_step), [] (double theta, [[maybe_unused]] double phi) {return squared(sin(theta));});
+		->added_with(e_phi_derivative, time_step);
+		// ->added_with(e_phi_derivative->multiplied_by(time_step), [] (double theta, [[maybe_unused]] double phi) {return squared(sin(theta));});
+		// ->added_with(e_phi_derivative->multiplied_by(time_step), [] (double theta, [[maybe_unused]] double phi) {return 1/sin(theta);});
 }
 
 double run_relaxation(
 	shared_ptr<Grid3DFunction> e_theta,
 	shared_ptr<Grid3DFunction> e_phi,
+	shared_ptr<Metric> metric,
 	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi),
 	char *identifier
 ) {
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
 	grid__relaxation = &e_theta->grid;
+	metric__relaxation = metric;
 
 	char residuals_filename[50];
 	if (identifier != nullptr) {
@@ -71,8 +130,7 @@ double run_relaxation(
 	}
 	ofstream residuals_output(residuals_filename);
 	ofstream residual_distribution_output("./assets/residual_distribution.csv");
-
-	time_stepper.reset();
+	ofstream constraints_output("./assets/constraints.csv");
 
 	// output x values
 	for (int i = 0; i < grid__relaxation->N_theta; i++) {
@@ -100,50 +158,20 @@ double run_relaxation(
 		}
 	}
 
-	double residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
-
-	// Find ideal time step.
-	double time_step = INITIAL_TIME_STEP;
-	for (int i = 0; i < INITIAL_ITERATIONS; i++) {
-		if (i % OUTPUT_FREQUENCY == 0)
-			printf("(%d) R = %8.2e, step = %8.2e\n", i, residual, time_stepper.get_step());
-
-		update_e_theta(time_stepper.get_step());
-		update_e_phi(time_stepper.get_step());
-
-		double previous_residual = residual;
-		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
-
-		shared_ptr<Iteration> updated_iteration = time_stepper.update_step(e_theta__relaxation, e_phi__relaxation, residual);
-		if (updated_iteration->solution1 != e_theta__relaxation || updated_iteration->solution2 != e_phi__relaxation) {
-			e_theta__relaxation = updated_iteration->solution1;
-			e_phi__relaxation = updated_iteration->solution2;
-			residual = updated_iteration->residual;
-		}
-
-		if (residual < previous_residual) {
-			time_step = min(time_step, time_stepper.get_step());
-		}
-	}
-	printf("Restarting with step = %8.2e...\n", time_step);
-
-	// Restart.
-	e_theta__relaxation = e_theta;
-	e_phi__relaxation = e_phi;
-	residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
-	double minimum_residual = residual;
+	double time_step = 0.005; // Good for 15 x 60
+	double residual;
 
 	Iteration best_solution;
 	best_solution.solution1 = e_theta;
 	best_solution.solution2 = e_phi;
-	best_solution.residual = residual;
+	best_solution.residual = INFINITY; // Should be replaced by another solution found after relaxation is done.
 
 	// Solve.
 	int iteration_number = 0;
 	int max_iterations = MAX_ITERATIONS;
 	while (iteration_number < max_iterations) {
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
-			printf("(%d) R = %8.2e, step = %8.2e\n", iteration_number, residual, time_step);
+			printf("(%d) R = %8.2e\n", iteration_number, residual);
 		}
 		
 		update_e_theta(time_step);
@@ -152,11 +180,16 @@ double run_relaxation(
 		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 		residuals_output << iteration_number << "," << residual << endl;
 
+		constraints_output
+			<< C_theta_theta()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << ","
+			<< C_theta_phi()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << ","
+			<< C_phi_phi()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << endl;
+
 		if (residual < best_solution.residual) {
 			best_solution.solution1 = e_theta__relaxation;
 			best_solution.solution2 = e_phi__relaxation;
 			best_solution.residual = residual;
-		} else if (max_iterations == MAX_ITERATIONS) {
+		} else if (iteration_number >= 1000 && max_iterations == MAX_ITERATIONS) {
 			// Run 100 more iterations after minimum residual was found.
 			max_iterations = iteration_number + 100;
 			printf("Minimum residual was reached.\n");
@@ -215,5 +248,5 @@ double run_relaxation(
 	(*e_theta) = (*best_solution.solution1);
 	(*e_phi) = (*best_solution.solution2);
 
-	return minimum_residual;
+	return best_solution.residual;
 }
