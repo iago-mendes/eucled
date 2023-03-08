@@ -159,7 +159,7 @@ double run_relaxation(
 	}
 
 	double time_step = 0.005; // Good for 15 x 60
-	double residual;
+	double residual= abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 
 	Iteration best_solution;
 	best_solution.solution1 = e_theta;
@@ -169,6 +169,8 @@ double run_relaxation(
 	// Solve.
 	int iteration_number = 0;
 	int max_iterations = MAX_ITERATIONS;
+	bool started_decreasing = false;
+	double prev_residual = residual;
 	while (iteration_number < max_iterations) {
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			printf("(%d) R = %8.2e\n", iteration_number, residual);
@@ -185,11 +187,18 @@ double run_relaxation(
 			<< C_theta_phi()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << ","
 			<< C_phi_phi()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << endl;
 
-		if (residual < best_solution.residual) {
+		if (!started_decreasing && iteration_number % 100 == 0) {
+			if (residual < prev_residual) {
+				started_decreasing = true;
+			}
+			prev_residual = residual;
+		}
+
+		if (started_decreasing && residual < best_solution.residual) {
 			best_solution.solution1 = e_theta__relaxation;
 			best_solution.solution2 = e_phi__relaxation;
 			best_solution.residual = residual;
-		} else if (iteration_number >= 1000 && max_iterations == MAX_ITERATIONS) {
+		} else if (started_decreasing && max_iterations == MAX_ITERATIONS) {
 			// Run 100 more iterations after minimum residual was found.
 			max_iterations = iteration_number + 100;
 			printf("Minimum residual was reached.\n");
