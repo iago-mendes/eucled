@@ -181,6 +181,22 @@ shared_ptr<GridFunction> GridFunction::added_with(double (*function)(double thet
 	return new_function;
 }
 
+shared_ptr<GridFunction> GridFunction::multiplied_by(double (*multiplier)(double theta, double phi)) {
+	shared_ptr<GridFunction> new_function = get_copy();
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		double theta = grid.theta(i);
+
+		for (int j = 0; j < grid.N_phi; j++) {
+			double phi = grid.phi(j);
+			
+			new_function->points[i][j] *= multiplier(theta, phi);
+		}
+	}
+
+	return new_function;
+}
+
 void GridFunction::print() {
 	for (int i = 0; i < this->grid.N_theta; i++) {
 		printf("\t");
@@ -359,6 +375,20 @@ shared_ptr<Grid3DFunction> Grid3DFunction::multiplied_by(double (*multiplier)(do
 			(*new_function).x_values[i][j] *= multiplier(theta, phi);
 			(*new_function).y_values[i][j] *= multiplier(theta, phi);
 			(*new_function).z_values[i][j] *= multiplier(theta, phi);
+		}
+	}
+
+	return new_function;
+}
+
+shared_ptr<Grid3DFunction> Grid3DFunction::multiplied_by(shared_ptr<GridFunction> multiplier) {
+	auto new_function = get_copy();
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			(*new_function).x_values[i][j] *= multiplier->points[i][j];
+			(*new_function).y_values[i][j] *= multiplier->points[i][j];
+			(*new_function).z_values[i][j] *= multiplier->points[i][j];
 		}
 	}
 

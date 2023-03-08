@@ -47,6 +47,9 @@ class GridFunction {
 		shared_ptr<GridFunction> added_with(shared_ptr<GridFunction> function, double multiplier);
 		shared_ptr<GridFunction> added_with(double (*function)(double theta, double phi));
 
+		// Returns a new function multipled by the given multiplier.
+		shared_ptr<GridFunction> multiplied_by(double (*multiplier)(double theta, double phi));
+
     // Prints a string representation of this function.
 		void print();
 
@@ -87,6 +90,7 @@ class Grid3DFunction {
 		// Returns a new function multipled by the given multiplier.
 		shared_ptr<Grid3DFunction> multiplied_by(double (*multiplier)(double theta, double phi, char coordinate));
 		shared_ptr<Grid3DFunction> multiplied_by(double (*multiplier)(double theta, double phi));
+		shared_ptr<Grid3DFunction> multiplied_by(shared_ptr<GridFunction> multiplier);
 		shared_ptr<Grid3DFunction> multiplied_by(double multiplier);
 
 		// Returns a new function added with the given function multiplied by the given multiplier.
