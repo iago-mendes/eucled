@@ -123,14 +123,17 @@ double run_relaxation(
 	metric__relaxation = metric;
 
 	char residuals_filename[50];
+	char constraints_filename[50];
 	if (identifier != nullptr) {
 		sprintf(residuals_filename, "./assets/residuals_%s.csv", identifier);
+		sprintf(constraints_filename, "./assets/constraints_%s.csv", identifier);
 	} else {
 		sprintf(residuals_filename, "./assets/residuals_%d.csv", grid__relaxation->N_theta);
+		sprintf(constraints_filename, "./assets/constraints.csv");
 	}
 	ofstream residuals_output(residuals_filename);
 	ofstream residual_distribution_output("./assets/residual_distribution.csv");
-	ofstream constraints_output("./assets/constraints.csv");
+	ofstream constraints_output(constraints_filename);
 
 	// output x values
 	for (int i = 0; i < grid__relaxation->N_theta; i++) {
@@ -158,7 +161,7 @@ double run_relaxation(
 		}
 	}
 
-	double time_step = 0.005; // Good for 15 x 60
+	double time_step = 0.02; // Good for 15 x 60
 	double residual= abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 
 	Iteration best_solution;

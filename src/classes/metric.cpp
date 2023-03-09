@@ -163,3 +163,57 @@ double NumericalMetric::g_phi_phi(double theta, [[maybe_unused]] double phi) {
 	
 	return this->data[1][i][j];
 }
+
+// Non-axisymmetric z-Peanut
+
+NonaxisymmetricZPeanutMetric::NonaxisymmetricZPeanutMetric(double r0, double b, double e, Grid grid) {
+	this->r0 = r0;
+	this->b = b;
+	this->e = e;
+
+	this->grid = grid;
+	this->r_function = make_shared<GridFunction>(grid);
+	for (int i = 0; i < grid.N_theta; i++) {
+		double theta = grid.theta(i);
+
+		for (int j = 0; j < grid.N_phi; j++) {
+			double phi = grid.phi(j);
+
+			r_function->points[i][j] = this->r(theta, phi);
+		}
+	}
+}
+
+double NonaxisymmetricZPeanutMetric::r(double theta, double phi) {
+	return r0 - b * squared(sin(theta)) + e * cos(theta) * sin(theta) * cos(phi);
+}
+
+double NonaxisymmetricZPeanutMetric::g_theta_theta([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+	int i = this->grid.i(theta);
+	int j = this->grid.j(phi);
+
+	double partial_theta_r = this->r_function->partial_theta()->points[i][j];
+	double r = this->r_function->points[i][j];
+
+	return squared(partial_theta_r) + squared(r);
+}
+
+double NonaxisymmetricZPeanutMetric::g_theta_phi([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+	int i = this->grid.i(theta);
+	int j = this->grid.j(phi);
+
+	double partial_theta_r = this->r_function->partial_theta()->points[i][j];
+	double partial_phi_r = this->r_function->partial_phi()->points[i][j];
+
+	return partial_theta_r * partial_phi_r;
+}
+
+double NonaxisymmetricZPeanutMetric::g_phi_phi(double theta, [[maybe_unused]] double phi) {
+	int i = this->grid.i(theta);
+	int j = this->grid.j(phi);
+
+	double partial_phi_r = this->r_function->partial_phi()->points[i][j];
+	double r = this->r_function->points[i][j];
+
+	return squared(partial_phi_r) + squared(r) * squared(sin(theta));
+}

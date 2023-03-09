@@ -104,4 +104,24 @@ class NumericalMetric : public Metric {
 		double g_phi_phi(double theta, double phi);
 };
 
+class NonaxisymmetricZPeanutMetric : public Metric {
+	public:
+		double r0; // radius
+		double b; // separation
+		double e; // non-axisymmetry
+
+		NonaxisymmetricZPeanutMetric(double r0, double b, double e, Grid grid);
+		NonaxisymmetricZPeanutMetric() = default;
+
+		double r(double theta, double phi);
+
+		double g_theta_theta(double theta, double phi);
+		double g_theta_phi(double theta, double phi);
+		double g_phi_phi(double theta, double phi);
+	
+	private:
+		Grid grid;
+		shared_ptr<GridFunction> r_function;
+};
+
 #endif
