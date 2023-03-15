@@ -79,9 +79,8 @@ int main() {
 
 	Grid grid(N_theta, N_phi);
 
-	double e = 1e-1;
-	shared_ptr<Metric> metric = make_shared<NonaxisymmetricZPeanutMetric>(1, 0.7, e, grid);
-	sprintf(identifier, "nonaxi_peanut_%.0e_%dx%d", e, N_theta, N_phi);
+	shared_ptr<Metric> metric = make_shared<NonaxisymmetricZPeanutMetric>(1., .7, .1, grid);
+	sprintf(identifier, "nonaxi_peanut_%dx%d", N_theta, N_phi);
 
 	printf(">>> %s <<<\n", identifier);
 
