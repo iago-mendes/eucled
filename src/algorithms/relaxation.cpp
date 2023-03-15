@@ -161,7 +161,10 @@ double run_relaxation(
 		}
 	}
 
-	double time_step = 0.02; // Good for 15 x 60
+	double time_step = 0.01; // Good for 15 x 60
+	time_step *= squared(15. / (double) grid__relaxation->N_theta);
+	printf("Time step = %.2e\n", time_step);
+
 	double residual= abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 
 	Iteration best_solution;
@@ -190,7 +193,7 @@ double run_relaxation(
 			<< C_theta_phi()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << ","
 			<< C_phi_phi()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << endl;
 
-		if (!started_decreasing && iteration_number % 100 == 0) {
+		if (!started_decreasing && iteration_number > 500 && iteration_number % 100 == 0) {
 			if (residual < prev_residual) {
 				started_decreasing = true;
 			}
@@ -232,30 +235,30 @@ double run_relaxation(
 		iteration_number++;
 	}
 
-  double dot_product_residual_theta_theta =
-		e_theta->dot_product_with(e_theta)->added_with(
-			best_solution.solution1->dot_product_with(best_solution.solution1),
-			-1
-		)->rms();
-	double dot_product_residual_theta_phi =
-		e_theta->dot_product_with(e_phi)->added_with(
-			best_solution.solution1->dot_product_with(best_solution.solution2),
-			-1
-		)->rms();
-	double dot_product_residual_phi_phi =
-		e_phi->dot_product_with(e_phi)->added_with(
-			best_solution.solution2->dot_product_with(best_solution.solution2),
-			-1
-		)->rms();
-
 	printf("Relaxation finished with R = %.2e after %d iterations.\n", best_solution.residual, iteration_number);
+
+  // double dot_product_residual_theta_theta =
+	// 	e_theta->dot_product_with(e_theta)->added_with(
+	// 		best_solution.solution1->dot_product_with(best_solution.solution1),
+	// 		-1
+	// 	)->rms();
+	// double dot_product_residual_theta_phi =
+	// 	e_theta->dot_product_with(e_phi)->added_with(
+	// 		best_solution.solution1->dot_product_with(best_solution.solution2),
+	// 		-1
+	// 	)->rms();
+	// double dot_product_residual_phi_phi =
+	// 	e_phi->dot_product_with(e_phi)->added_with(
+	// 		best_solution.solution2->dot_product_with(best_solution.solution2),
+	// 		-1
+	// 	)->rms();
 	
-	printf(
-		"Dot product residuals:\n\ttheta theta: %.2e\n\ttheta phi: %.2e\n\tphi phi: %.2e\n",
-		dot_product_residual_theta_theta,
-		dot_product_residual_theta_phi,
-		dot_product_residual_phi_phi
-	);
+	// printf(
+	// 	"Dot product residuals:\n\ttheta theta: %.2e\n\ttheta phi: %.2e\n\tphi phi: %.2e\n",
+	// 	dot_product_residual_theta_theta,
+	// 	dot_product_residual_theta_phi,
+	// 	dot_product_residual_phi_phi
+	// );
 
 	(*e_theta) = (*best_solution.solution1);
 	(*e_phi) = (*best_solution.solution2);
