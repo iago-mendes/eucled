@@ -176,3 +176,35 @@ double HorizonDyad::e_phi_y(double theta, double phi) {
 double HorizonDyad::e_phi_z([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
 	return 0;
 }
+
+// Ellipsoid
+
+EllipsoidDyad::EllipsoidDyad(double a, double b, double c) {
+	this->a = a;
+	this->b = b;
+	this->c = c;
+}
+
+double EllipsoidDyad::e_theta_x(double theta, double phi) {
+	return a * cos(phi) * cos(theta);
+}
+
+double EllipsoidDyad::e_theta_y(double theta, double phi) {
+	return b * sin(phi) * cos(theta);
+}
+
+double EllipsoidDyad::e_theta_z(double theta, [[maybe_unused]] double phi) {
+	return - c * sin(theta);
+}
+
+double EllipsoidDyad::e_phi_x(double theta, double phi) {
+	return - a * sin(phi) * sin(theta);
+}
+
+double EllipsoidDyad::e_phi_y(double theta, double phi) {
+	return b * cos(phi) * sin(theta);
+}
+
+double EllipsoidDyad::e_phi_z([[maybe_unused]] double theta, [[maybe_unused]] double phi) {
+	return 0;
+}

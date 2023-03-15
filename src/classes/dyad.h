@@ -87,4 +87,22 @@ class HorizonDyad : public Dyad {
 		double e_phi_z(double theta, double phi);
 };
 
+class EllipsoidDyad : public Dyad {
+	public:
+		// Semi axes
+		double a;
+		double b;
+		double c;
+
+		EllipsoidDyad(double a, double b, double c);
+		EllipsoidDyad() = default;
+
+		double e_theta_x(double theta, double phi);
+		double e_theta_y(double theta, double phi);
+		double e_theta_z(double theta, double phi);
+		double e_phi_x(double theta, double phi);
+		double e_phi_y(double theta, double phi);
+		double e_phi_z(double theta, double phi);
+};
+
 #endif
