@@ -2,7 +2,7 @@
 using namespace std;
 
 Grid grid__embedding;
-RoundSphereDyad round_sphere_dyad(1);
+shared_ptr<Dyad> dyad__embedding = nullptr;;
 
 void output_embedding(shared_ptr<Grid3DFunction> embedding, char *identifier = nullptr) {
 	char embedding_filename[50];
@@ -22,13 +22,20 @@ void output_embedding(shared_ptr<Grid3DFunction> embedding, char *identifier = n
 void run_embedding(
 	shared_ptr<Metric> metric,
 	shared_ptr<Grid3DFunction> embedding,
-	char *identifier
+	char *identifier,
+	shared_ptr<Dyad> initial_guess
 ) {
 	grid__embedding = embedding->grid;
 
+	if (initial_guess != nullptr) {
+		dyad__embedding = initial_guess;
+	} else {
+		dyad__embedding = make_shared<RoundSphereDyad>(1);
+	}
+
 	// // Not working (needs to be debugged)
-	// shared_ptr<Grid3DFunction> e_theta = round_sphere_dyad.get_theta_function(grid__embedding);
-	// shared_ptr<Grid3DFunction> e_phi = round_sphere_dyad.get_phi_function(grid__embedding);
+	// shared_ptr<Grid3DFunction> e_theta = dyad__embedding->get_theta_function(grid__embedding);
+	// shared_ptr<Grid3DFunction> e_phi = dyad__embedding->get_phi_function(grid__embedding);
 
 	// Same purpose as previous block
 	shared_ptr<Grid3DFunction> e_theta = make_shared<Grid3DFunction>(grid__embedding, [] (int i, int j, char coord) {
@@ -37,11 +44,11 @@ void run_embedding(
 
 		switch (coord) {
 			case 'x':
-				return round_sphere_dyad.e_theta_x(theta,  phi);
+				return dyad__embedding->e_theta_x(theta,  phi);
 			case 'y':
-				return round_sphere_dyad.e_theta_y(theta,  phi);
+				return dyad__embedding->e_theta_y(theta,  phi);
 			case 'z':
-				return round_sphere_dyad.e_theta_z(theta,  phi);
+				return dyad__embedding->e_theta_z(theta,  phi);
 			default:
 				return -1.;
 		}
@@ -52,11 +59,11 @@ void run_embedding(
 
 		switch (coord) {
 			case 'x':
-				return round_sphere_dyad.e_phi_x(theta,  phi);
+				return dyad__embedding->e_phi_x(theta,  phi);
 			case 'y':
-				return round_sphere_dyad.e_phi_y(theta,  phi);
+				return dyad__embedding->e_phi_y(theta,  phi);
 			case 'z':
-				return round_sphere_dyad.e_phi_z(theta,  phi);
+				return dyad__embedding->e_phi_z(theta,  phi);
 			default:
 				return -1.;
 		}

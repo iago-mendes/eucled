@@ -15,7 +15,8 @@
 void run_embedding(
 	shared_ptr<Metric> metric,
 	shared_ptr<Grid3DFunction> embedding,
-	char *identifier = nullptr
+	char *identifier = nullptr,
+	shared_ptr<Dyad> initial_guess = nullptr
 );
 
 #endif
