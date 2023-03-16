@@ -231,6 +231,27 @@ Grid3DFunction::Grid3DFunction(Grid grid_, double (*function)(int i, int j, char
 	}
 }
 
+Grid3DFunction::Grid3DFunction(Grid grid, double (*function)(double theta, double phi, char coordinate)) {
+	this->grid = grid;
+
+	vector<double> base_vector(grid.N_phi, 0);
+	x_values.resize(grid.N_theta, base_vector);
+	y_values.resize(grid.N_theta, base_vector);
+	z_values.resize(grid.N_theta, base_vector);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		double theta = grid.theta(i);
+		
+		for (int j = 0; j < grid.N_phi; j++) {
+			double phi = grid.phi(j);
+
+			x_values[i][j] = function(theta, phi, 'x');
+			y_values[i][j] = function(theta, phi, 'y');
+			z_values[i][j] = function(theta, phi, 'z');
+		}
+	}
+}
+
 Grid3DFunction::Grid3DFunction(Grid grid) {
 	this->grid = grid;
 
