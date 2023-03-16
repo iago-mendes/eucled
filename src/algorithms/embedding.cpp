@@ -69,8 +69,8 @@ void run_embedding(
 		}
 	});
 
-	run_relaxation(e_theta, e_phi, metric, get_commutator_rms, identifier);
-	run_integration(e_theta, e_phi, embedding);
+	run_relaxation(e_theta, e_phi, embedding, metric, get_commutator_rms, identifier);
+	// run_integration(e_theta, e_phi, embedding);
 
 	output_embedding(embedding, identifier);
 }
