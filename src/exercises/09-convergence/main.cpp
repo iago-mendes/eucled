@@ -5,7 +5,7 @@ using namespace std::chrono;
 double a = 1.5;
 double b = 1;
 double c = 1;
-double delta_a = 0.05;
+double delta_a = 0.01;
 
 shared_ptr<Metric> metric = make_shared<EllipsoidMetric>(a, b, c);
 shared_ptr<Dyad> initial_guess = make_shared<EllipsoidDyad>(a - delta_a, b, c);
@@ -58,7 +58,7 @@ void find_solution() {
 }
 
 int main() {
-	for (int N_theta = 50; N_theta <= 50; N_theta += 5) {
+	for (int N_theta = 10; N_theta <= 30; N_theta += 5) {
 		int N_phi = 4 * N_theta;
 		grid = make_shared<Grid>(N_theta, N_phi);
 
