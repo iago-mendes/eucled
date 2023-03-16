@@ -99,12 +99,12 @@ void subtract_right_side_averages(vector<double> *b) {
 	printf("%e --> %e\n", average, corrected_average);
 }
 
-void output_average(vector<double> *average, ofstream *output) {
+void output_rightside(vector<double> *rightside, ofstream *output) {
 	for (int I = 0; I < N__integration; I++) {
 		int i = I_to_i(I);
 		int j = I_to_j(I);
 
-		(*output) << (*average)[I];
+		(*output) << (*rightside)[I];
 
 		if (i == grid__integration.N_theta - 1 && j == grid__integration.N_phi - 1) { // last
 			(*output) << endl;
@@ -158,9 +158,9 @@ void run_integration(
 		}
 	}
 
-	output_average(&b_x_R1, &rightside_x_distribution_output);
-	output_average(&b_y_R1, &rightside_y_distribution_output);
-	output_average(&b_z_R1, &rightside_z_distribution_output);
+	output_rightside(&b_x_R1, &rightside_x_distribution_output);
+	output_rightside(&b_y_R1, &rightside_y_distribution_output);
+	output_rightside(&b_z_R1, &rightside_z_distribution_output);
 
 	printf("Fixing right side of Poisson equations:\n");
 	printf("\tx: ");
@@ -170,9 +170,9 @@ void run_integration(
 	printf("\tz: ");
 	subtract_right_side_averages(&b_z_R1);
 
-	output_average(&b_x_R1, &rightside_x_distribution_output);
-	output_average(&b_y_R1, &rightside_y_distribution_output);
-	output_average(&b_z_R1, &rightside_z_distribution_output);
+	output_rightside(&b_x_R1, &rightside_x_distribution_output);
+	output_rightside(&b_y_R1, &rightside_y_distribution_output);
+	output_rightside(&b_z_R1, &rightside_z_distribution_output);
 
 	printf("Solving Poisson equations:\n");
 	printf("\tx: ");
