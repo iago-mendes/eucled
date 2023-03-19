@@ -130,9 +130,9 @@ void update_embedding(double time_step, int i) {
 	// printf("\tsource = %e\n", source->norm()->rms());
 
 	shared_ptr<Grid3DFunction> embedding_derivative = laplacian->added_with(source, -1);
-	if (i%10 == 0)
+	if (i%50 == 0)
 		printf("\tembedding_derivative = %e\n", embedding_derivative->norm()->rms());
-	embedding__relaxation = embedding__relaxation->added_with(embedding_derivative, .005 * time_step);
+	embedding__relaxation = embedding__relaxation->added_with(embedding_derivative, .02 * time_step);
 }
 
 double run_relaxation(
@@ -189,9 +189,9 @@ double run_relaxation(
 		}
 	}
 
-	// double time_step = 0.01; // Good for 15 x 60
-	// time_step *= squared(15. / (double) grid__relaxation->N_theta);
-	double time_step = 2.0e-03; // Good for 15 x 60
+	double time_step = 0.01; // Good for 15 x 60
+	time_step *= squared(15. / (double) grid__relaxation->N_theta);
+	// double time_step = 2.0e-03; // Good for 15 x 60
 	printf("Time step = %.2e\n", time_step);
 
 	double residual= abs(get_residual(e_theta__relaxation, e_phi__relaxation));
@@ -238,8 +238,8 @@ double run_relaxation(
 		} else if (started_decreasing && max_iterations == MAX_ITERATIONS) {
 			// Run 100 more iterations after minimum residual was found.
 			// max_iterations = iteration_number + 100;
-			// max_iterations = iteration_number;
-			// printf("Minimum residual was reached.\n");
+			max_iterations = iteration_number;
+			printf("Minimum residual was reached.\n");
 		}
 
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
@@ -269,12 +269,12 @@ double run_relaxation(
 
 	printf("Relaxation finished with R = %.2e after %d iterations.\n", best_solution.residual, iteration_number);
 
-	// for (int i = 0; i < 100; i++) {
-	// 	if (i % 10 == 0) {
-	// 		printf("(%d) R = %8.2e, Embedding RMS = %e\n", i, residual, embedding__relaxation->norm()->rms());
-	// 	}
-	// 	update_embedding(time_step);
-	// }
+	for (int i = 0; i < 10000; i++) {
+		if (i % 100 == 0) {
+			printf("(%d) R = %8.2e, Embedding RMS = %e\n", i, residual, embedding__relaxation->norm()->rms());
+		}
+		update_embedding(time_step, i);
+	}
 
   // double dot_product_residual_theta_theta =
 	// 	e_theta->dot_product_with(e_theta)->added_with(
