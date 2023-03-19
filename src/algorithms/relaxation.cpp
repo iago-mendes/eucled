@@ -3,6 +3,7 @@ using namespace std;
 
 shared_ptr<Grid3DFunction> e_theta__relaxation(nullptr);
 shared_ptr<Grid3DFunction> e_phi__relaxation(nullptr);
+shared_ptr<Grid3DFunction> embedding__relaxation(nullptr);
 shared_ptr<Metric> metric__relaxation(nullptr);
 
 Grid *grid__relaxation;
@@ -110,17 +111,44 @@ void update_e_phi(double time_step) {
 		// ->added_with(e_phi_derivative->multiplied_by(time_step), [] (double theta, [[maybe_unused]] double phi) {return 1/sin(theta);});
 }
 
+void update_embedding(double time_step, int i) {
+	auto cot_theta = [](double theta, [[maybe_unused]] double phi) {return 1/tan(theta);};
+	auto inverse_squared_sin_theta = [](double theta, [[maybe_unused]] double phi) {return 1/squared(sin(theta));};
+
+	shared_ptr<Grid3DFunction> laplacian =
+		embedding__relaxation->partial_theta()->partial_theta()
+		->added_with(embedding__relaxation->partial_theta(), cot_theta)
+		->added_with(embedding__relaxation->partial_phi()->partial_phi(), inverse_squared_sin_theta)
+	;
+	// printf("\tlaplacian = %e\n", laplacian->norm()->rms());
+
+	shared_ptr<Grid3DFunction> source =
+		e_theta__relaxation->partial_theta()
+		->added_with(e_theta__relaxation, cot_theta)
+		->added_with(e_phi__relaxation->partial_phi(), inverse_squared_sin_theta)
+	;
+	// printf("\tsource = %e\n", source->norm()->rms());
+
+	shared_ptr<Grid3DFunction> embedding_derivative = laplacian->added_with(source, -1);
+	if (i%50 == 0)
+		printf("\tembedding_derivative = %e\n", embedding_derivative->norm()->rms());
+	embedding__relaxation = embedding__relaxation->added_with(embedding_derivative, .02 * time_step);
+}
+
 double run_relaxation(
 	shared_ptr<Grid3DFunction> e_theta,
 	shared_ptr<Grid3DFunction> e_phi,
+	shared_ptr<Grid3DFunction> embedding,
 	shared_ptr<Metric> metric,
 	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi),
 	char *identifier
 ) {
 	e_theta__relaxation = e_theta;
 	e_phi__relaxation = e_phi;
+	embedding__relaxation = embedding;
 	grid__relaxation = &e_theta->grid;
 	metric__relaxation = metric;
+	// embedding->print();
 
 	char residuals_filename[50];
 	char constraints_filename[50];
@@ -163,6 +191,7 @@ double run_relaxation(
 
 	double time_step = 0.01; // Good for 15 x 60
 	time_step *= squared(15. / (double) grid__relaxation->N_theta);
+	// double time_step = 2.0e-03; // Good for 15 x 60
 	printf("Time step = %.2e\n", time_step);
 
 	double residual= abs(get_residual(e_theta__relaxation, e_phi__relaxation));
@@ -179,11 +208,13 @@ double run_relaxation(
 	double prev_residual = residual;
 	while (iteration_number < max_iterations) {
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
-			printf("(%d) R = %8.2e\n", iteration_number, residual);
+		// if (iteration_number % 10 == 0) {
+			printf("(%d) R = %8.2e, Embedding RMS = %e\n", iteration_number, residual, embedding__relaxation->norm()->rms());
 		}
 		
 		update_e_theta(time_step);
 		update_e_phi(time_step);
+		update_embedding(time_step, iteration_number);
 
 		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
 		residuals_output << iteration_number << "," << residual << endl;
@@ -206,7 +237,8 @@ double run_relaxation(
 			best_solution.residual = residual;
 		} else if (started_decreasing && max_iterations == MAX_ITERATIONS) {
 			// Run 100 more iterations after minimum residual was found.
-			max_iterations = iteration_number + 100;
+			// max_iterations = iteration_number + 100;
+			max_iterations = iteration_number;
 			printf("Minimum residual was reached.\n");
 		}
 
@@ -237,6 +269,13 @@ double run_relaxation(
 
 	printf("Relaxation finished with R = %.2e after %d iterations.\n", best_solution.residual, iteration_number);
 
+	for (int i = 0; i < 10000; i++) {
+		if (i % 100 == 0) {
+			printf("(%d) R = %8.2e, Embedding RMS = %e\n", i, residual, embedding__relaxation->norm()->rms());
+		}
+		update_embedding(time_step, i);
+	}
+
   // double dot_product_residual_theta_theta =
 	// 	e_theta->dot_product_with(e_theta)->added_with(
 	// 		best_solution.solution1->dot_product_with(best_solution.solution1),
@@ -262,6 +301,7 @@ double run_relaxation(
 
 	(*e_theta) = (*best_solution.solution1);
 	(*e_phi) = (*best_solution.solution2);
+	(*embedding) = (*embedding__relaxation);
 
 	return best_solution.residual;
 }
