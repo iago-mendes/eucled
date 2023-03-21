@@ -102,15 +102,19 @@ shared_ptr<GridFunction> GridFunction::partial_theta() {
 
 	for (int i = 0; i < grid.N_theta; i++) {
 		for (int j = 0; j < grid.N_phi; j++) {
-			if (i == 0) {
-				new_function->points[i][j] = (points[1][j] - points[0][j]) / grid.delta_theta;
+			if (i == 0) { // forward
+				// 1st order
+				new_function->points[i][j] = -1. * points[0][j] +1. * points[1][j];
 			}
-			else if (i == grid.N_theta - 1) {
-				new_function->points[i][j] = (points[grid.N_theta - 1][j] - points[grid.N_theta - 2][j]) / grid.delta_theta;
+			else if (i == grid.N_theta - 1) { // backward
+				// 1st order
+				new_function->points[i][j] = -1. * points[grid.N_theta-2][j] +1. * points[grid.N_theta-1][j];
 			}
-			else {
-				new_function->points[i][j] = (points[i + 1][j] - points[i - 1][j]) / (2 * grid.delta_theta);
+			else { // centered
+				new_function->points[i][j] = -1./2. * points[i-1][j] +1./2. * points[i+1][j];
 			}
+
+			new_function->points[i][j] /= grid.delta_theta;
 		}
 	}
 
@@ -311,21 +315,27 @@ shared_ptr<Grid3DFunction> Grid3DFunction::partial_theta() {
 
 	for (int i = 0; i < grid.N_theta; i++) {
 		for (int j = 0; j < grid.N_phi; j++) {
+			double df_x, df_y, df_z;
+
 			if (i == 0) { // forward
-				new_function->x_values[i][j] = (- 3 * x_values[0][j] + 4 * x_values[1][j] - x_values[2][j]) / (2 * grid.delta_theta);
-				new_function->y_values[i][j] = (- 3 * y_values[0][j] + 4 * y_values[1][j] - y_values[2][j]) / (2 * grid.delta_theta);
-				new_function->z_values[i][j] = (- 3 * z_values[0][j] + 4 * z_values[1][j] - z_values[2][j]) / (2 * grid.delta_theta);
+				df_x = -3./2. * x_values[0][j] +2. * x_values[1][j] -1./2. * x_values[2][j];
+				df_y = -3./2. * y_values[0][j] +2. * y_values[1][j] -1./2. * y_values[2][j];
+				df_z = -3./2. * z_values[0][j] +2. * z_values[1][j] -1./2. * z_values[2][j];
 			}
 			else if (i == grid.N_theta - 1) { // backward
-				new_function->x_values[i][j] = (3 * x_values[grid.N_theta - 1][j] - 4 * x_values[grid.N_theta - 2][j] + x_values[grid.N_theta - 3][j]) / (2 * grid.delta_theta);
-				new_function->y_values[i][j] = (3 * y_values[grid.N_theta - 1][j] - 4 * y_values[grid.N_theta - 2][j] + y_values[grid.N_theta - 3][j]) / (2 * grid.delta_theta);
-				new_function->z_values[i][j] = (3 * z_values[grid.N_theta - 1][j] - 4 * z_values[grid.N_theta - 2][j] + z_values[grid.N_theta - 3][j]) / (2 * grid.delta_theta);
+				df_x = +3./2. * x_values[grid.N_theta-1][j] -2. * x_values[grid.N_theta-2][j] +1./2. * x_values[grid.N_theta-3][j];
+				df_y = +3./2. * y_values[grid.N_theta-1][j] -2. * y_values[grid.N_theta-2][j] +1./2. * y_values[grid.N_theta-3][j];
+				df_z = +3./2. * z_values[grid.N_theta-1][j] -2. * z_values[grid.N_theta-2][j] +1./2. * z_values[grid.N_theta-3][j];
 			}
 			else { // centered
-				new_function->x_values[i][j] = (x_values[i + 1][j] - x_values[i - 1][j]) / (2 * grid.delta_theta);
-				new_function->y_values[i][j] = (y_values[i + 1][j] - y_values[i - 1][j]) / (2 * grid.delta_theta);
-				new_function->z_values[i][j] = (z_values[i + 1][j] - z_values[i - 1][j]) / (2 * grid.delta_theta);
+				df_x = -1./2. * x_values[i-1][j] +1./2. * x_values[i+1][j];
+				df_y = -1./2. * y_values[i-1][j] +1./2. * y_values[i+1][j];
+				df_z = -1./2. * z_values[i-1][j] +1./2. * z_values[i+1][j];
 			}
+
+			new_function->x_values[i][j] = df_x / grid.delta_theta;
+			new_function->y_values[i][j] = df_y / grid.delta_theta;
+			new_function->z_values[i][j] = df_z / grid.delta_theta;
 		}
 	}
 
