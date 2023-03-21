@@ -376,6 +376,87 @@ shared_ptr<Grid3DFunction> Grid3DFunction::partial_phi() {
 	return new_function;
 }
 
+shared_ptr<Grid3DFunction> Grid3DFunction::second_partial_theta() {
+	if (cached_second_partial_theta != nullptr) {
+		return cached_second_partial_theta;
+	}
+
+	auto result = make_shared<Grid3DFunction>(grid);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			double d2f_x, d2f_y, d2f_z;
+
+			if (i == 0) { // forward finite difference
+				// 2nd order
+				d2f_x = +2. * x_values[0][j] -5. * x_values[1][j] +4. * x_values[2][j] -1. * x_values[3][j];
+				d2f_y = +2. * y_values[0][j] -5. * y_values[1][j] +4. * y_values[2][j] -1. * y_values[3][j];
+				d2f_z = +2. * z_values[0][j] -5. * z_values[1][j] +4. * z_values[2][j] -1. * z_values[3][j];
+			}
+			else if (i == grid.N_theta - 1) { // backward finite difference
+				// 2nd order
+				d2f_x = +2. * x_values[i][j] -5. * x_values[i-1][j] +4. * x_values[i-2][j] -1. * x_values[i-3][j];
+				d2f_y = +2. * y_values[i][j] -5. * y_values[i-1][j] +4. * y_values[i-2][j] -1. * y_values[i-3][j];
+				d2f_z = +2. * z_values[i][j] -5. * z_values[i-1][j] +4. * z_values[i-2][j] -1. * z_values[i-3][j];
+			}
+			else { // central finite difference
+				// 2nd order
+				d2f_x = +1. * x_values[i-1][j] -2. * x_values[i][j] +1. * x_values[i+1][j];
+				d2f_y = +1. * y_values[i-1][j] -2. * y_values[i][j] +1. * y_values[i+1][j];
+				d2f_z = +1. * z_values[i-1][j] -2. * z_values[i][j] +1. * z_values[i+1][j];
+			}
+
+			result->x_values[i][j] = d2f_x / squared(grid.delta_theta);
+			result->y_values[i][j] = d2f_y / squared(grid.delta_theta);
+			result->z_values[i][j] = d2f_z / squared(grid.delta_theta);
+		}
+	}
+
+	cached_second_partial_theta = result;
+
+	return result;
+}
+
+shared_ptr<Grid3DFunction> Grid3DFunction::second_partial_phi() {
+	if (cached_second_partial_phi != nullptr) {
+		return cached_second_partial_phi;
+	}
+
+	auto result = make_shared<Grid3DFunction>(grid);
+
+	for (int i = 0; i < grid.N_theta; i++) {
+		for (int j = 0; j < grid.N_phi; j++) {
+			double d2f_x, d2f_y, d2f_z;
+
+			// central finite difference
+			// 2nd order
+			if (j == 0) {
+				d2f_x = +1. * x_values[i][grid.N_phi-1] -2. * x_values[i][j] +1. * x_values[i][j+1];
+				d2f_y = +1. * y_values[i][grid.N_phi-1] -2. * y_values[i][j] +1. * y_values[i][j+1];
+				d2f_z = +1. * z_values[i][grid.N_phi-1] -2. * z_values[i][j] +1. * z_values[i][j+1];
+			}
+			else if (j == grid.N_phi - 1) {
+				d2f_x = +1. * x_values[i][j-1] -2. * x_values[i][j] +1. * x_values[i][0];
+				d2f_y = +1. * y_values[i][j-1] -2. * y_values[i][j] +1. * y_values[i][0];
+				d2f_z = +1. * z_values[i][j-1] -2. * z_values[i][j] +1. * z_values[i][0];
+			}
+			else {
+				d2f_x = +1. * x_values[i][j-1] -2. * x_values[i][j] +1. * x_values[i][j+1];
+				d2f_y = +1. * y_values[i][j-1] -2. * y_values[i][j] +1. * y_values[i][j+1];
+				d2f_z = +1. * z_values[i][j-1] -2. * z_values[i][j] +1. * z_values[i][j+1];
+			}
+
+			result->x_values[i][j] = d2f_x / squared(grid.delta_phi);
+			result->y_values[i][j] = d2f_y / squared(grid.delta_phi);
+			result->z_values[i][j] = d2f_z / squared(grid.delta_phi);
+		}
+	}
+ 
+	cached_second_partial_phi = result;
+
+	return result;
+}
+
 shared_ptr<Grid3DFunction> Grid3DFunction::multiplied_by(double (*multiplier)(double theta, double phi, char coordinate)) {
 	auto new_function = get_copy();
 

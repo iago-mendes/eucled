@@ -88,6 +88,12 @@ class Grid3DFunction {
 		// Returns the partial derivative relative to phi of this function.
 		shared_ptr<Grid3DFunction> partial_phi();
 
+		// Returns the second partial derivative relative to theta of this function.
+		shared_ptr<Grid3DFunction> second_partial_theta();
+
+		// Returns the second partial derivative relative to phi of this function.
+		shared_ptr<Grid3DFunction> second_partial_phi();
+
 		// Returns a new function multipled by the given multiplier.
 		shared_ptr<Grid3DFunction> multiplied_by(double (*multiplier)(double theta, double phi, char coordinate));
 		shared_ptr<Grid3DFunction> multiplied_by(double (*multiplier)(double theta, double phi));
@@ -111,6 +117,8 @@ class Grid3DFunction {
 		private:
 			shared_ptr<Grid3DFunction> cached_partial_theta = nullptr;
 			shared_ptr<Grid3DFunction> cached_partial_phi = nullptr;
+			shared_ptr<Grid3DFunction> cached_second_partial_theta = nullptr;
+			shared_ptr<Grid3DFunction> cached_second_partial_phi = nullptr;
 			shared_ptr<GridFunction> cached_norm = nullptr;
 };
 
