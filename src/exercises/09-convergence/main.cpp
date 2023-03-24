@@ -58,8 +58,10 @@ void find_solution() {
 }
 
 int main() {
-	for (int N_theta = 10; N_theta <= 30; N_theta += 5) {
-		int N_phi = 4 * N_theta;
+	for (int N_theta = 10; N_theta <= 40; N_theta += 5) {
+		// int N_theta = 10;
+		int N_phi = 2 * N_theta;
+		// int N_phi = 4 * N_theta;
 		grid = make_shared<Grid>(N_theta, N_phi);
 
 		sprintf(identifier, "ellipsoid_%dx%d", N_theta, N_phi);
