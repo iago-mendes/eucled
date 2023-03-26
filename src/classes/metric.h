@@ -110,18 +110,16 @@ class NonaxisymmetricZPeanutMetric : public Metric {
 		double b; // separation
 		double e; // non-axisymmetry
 
-		NonaxisymmetricZPeanutMetric(double r0, double b, double e, Grid grid);
+		NonaxisymmetricZPeanutMetric(double r0, double b, double e);
 		NonaxisymmetricZPeanutMetric() = default;
 
 		double r(double theta, double phi);
+		double partial_theta_r(double theta, double phi);
+		double partial_phi_r(double theta, double phi);
 
 		double g_theta_theta(double theta, double phi);
 		double g_theta_phi(double theta, double phi);
 		double g_phi_phi(double theta, double phi);
-	
-	private:
-		Grid grid;
-		shared_ptr<GridFunction> r_function;
 };
 
 #endif
