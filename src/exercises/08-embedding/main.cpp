@@ -34,7 +34,7 @@ int main() {
 	int N_theta, N_phi;
 	char identifier[50];
 
-	N_theta = 15;
+	N_theta = 10;
 	N_phi = 2 * N_theta;
 
 	// Numeric metric input
