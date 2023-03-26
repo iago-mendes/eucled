@@ -23,6 +23,7 @@ void run_embedding(
 	shared_ptr<Metric> metric,
 	shared_ptr<Grid3DFunction> embedding,
 	char *identifier,
+	double final_time,
 	shared_ptr<Dyad> initial_guess
 ) {
 	grid__embedding = embedding->grid;
@@ -69,7 +70,7 @@ void run_embedding(
 		}
 	});
 
-	run_relaxation(e_theta, e_phi, embedding, metric, get_commutator_rms, identifier);
+	run_relaxation(e_theta, e_phi, embedding, metric, get_commutator_rms, identifier, final_time);
 	// run_integration(e_theta, e_phi, embedding);
 
 	output_embedding(embedding, identifier);

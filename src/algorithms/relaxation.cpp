@@ -216,8 +216,7 @@ double run_relaxation(
 	bool started_decreasing = false;
 	double prev_residual = residual;
 	while (
-		(use_fixed_final_time && iteration_number * time_step < final_time) ||
-		iteration_number < max_iterations
+		use_fixed_final_time ? iteration_number * time_step < final_time : iteration_number < max_iterations
 	) {
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			printf("(%d) Dyad residual = %e, Embedding residual = %e\n", iteration_number, residual, embedding_residual);
@@ -285,9 +284,10 @@ double run_relaxation(
 	double prev_embedding_residual = embedding_residual;
 	shared_ptr<Grid3DFunction> prev_embedding = embedding__relaxation;
 	max_iterations = iteration_number + 10000;
+	bool printed_minimum_msg = false;
+	bool printed_tolerance_msg = false;
 	while (
-		(use_fixed_final_time && iteration_number * time_step < 2*final_time) ||
-		iteration_number < max_iterations
+		use_fixed_final_time ? iteration_number * time_step < 2*final_time : iteration_number < max_iterations
 	) {
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			printf("(%d) Embedding residual = %e\n", iteration_number, embedding_residual);
@@ -297,12 +297,18 @@ double run_relaxation(
 
 		if (abs(embedding_residual) > abs(prev_embedding_residual)) {
 			max_iterations = iteration_number; // Stop
-			printf("Reached MINIMUM embedding residual.\n");
+			if (!printed_minimum_msg) {
+				printf("Reached MINIMUM embedding residual.\n");
+				printed_minimum_msg = true;
+			}
 		}
 
 		if (abs(embedding_residual) <= best_solution.residual) {
 			max_iterations = iteration_number; // Stop
-			printf("Reached embedding residual TOLERANCE.\n");
+			if (!printed_tolerance_msg) {
+				printf("Reached embedding residual TOLERANCE.\n");
+				printed_tolerance_msg = true;
+			}
 		}
 
 		iteration_number++;

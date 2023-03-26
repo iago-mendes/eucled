@@ -19,8 +19,8 @@ double run_relaxation(
 	shared_ptr<Grid3DFunction> embedding,
 	shared_ptr<Metric> metric,
 	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi),
-	char *identifier = nullptr,
-	double final_time = 0
+	char *identifier,
+	double final_time
 );
 
 #endif
