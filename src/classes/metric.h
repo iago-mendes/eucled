@@ -122,4 +122,16 @@ class NonaxisymmetricZPeanutMetric : public Metric {
 		double g_phi_phi(double theta, double phi);
 };
 
+class XPeanutMetric : public Metric {
+	public:
+		double s0; // radius
+
+		XPeanutMetric(double s0);
+		XPeanutMetric() = default;
+
+		double g_theta_theta(double theta, double phi);
+		double g_theta_phi(double theta, double phi);
+		double g_phi_phi(double theta, double phi);
+};
+
 #endif
