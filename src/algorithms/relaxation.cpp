@@ -132,7 +132,7 @@ double update_embedding(double time_step) {
 	;
 
 	shared_ptr<Grid3DFunction> embedding_derivative = laplacian->added_with(source, -1);
-	embedding__relaxation = embedding__relaxation->added_with(embedding_derivative->multiplied_by(squared_sin_theta), time_step);
+	embedding__relaxation = embedding__relaxation->added_with(embedding_derivative->multiplied_by(squared_sin_theta), 0.5 * time_step);
 
 	double embedding_residual = embedding_derivative->multiplied_by(sqrt_sin_theta)->norm()->rms();
 	return embedding_residual;
@@ -199,7 +199,6 @@ double run_relaxation(
 
 	double time_step = 0.01; // Good for 15 x 30
 	time_step *= squared(15. / (double) grid__relaxation->N_theta);
-	// double time_step = .625e-02;
 	printf("Time step = %.2e\n", time_step);
 
 	double residual= abs(get_residual(e_theta__relaxation, e_phi__relaxation));
@@ -235,10 +234,15 @@ double run_relaxation(
 			<< C_theta_theta()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << ","
 			<< C_theta_phi()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << ","
 			<< C_phi_phi()->multiplied_by([] (double theta, [[maybe_unused]] double phi) {return sin(theta);})->rms() << endl;
+		
+		if (isnan(residual)) {
+			printf("Found NaN's!\n");
+		}
 
 		if (!started_decreasing) {
 			if (residual < prev_residual) {
 				started_decreasing = true;
+				printf("Started decreasing!\n");
 			}
 			prev_residual = residual;
 		}
@@ -277,13 +281,12 @@ double run_relaxation(
 		iteration_number++;
 	}
 
-	printf("Dyad relaxation finished with R = %.2e after %d iterations.\n", best_solution.residual, iteration_number);
+	int dyad_last_iteration = iteration_number;
+	printf("Dyad relaxation finished with R = %.2e after %d iterations.\n", best_solution.residual, dyad_last_iteration);
 
 	// double embedding_final_time = dyad_final_time + 50;
 
-	double prev_embedding_residual = embedding_residual;
-	shared_ptr<Grid3DFunction> prev_embedding = embedding__relaxation;
-	max_iterations = iteration_number + 10000;
+	max_iterations = iteration_number + 100000;
 	bool printed_minimum_msg = false;
 	bool printed_tolerance_msg = false;
 	while (
@@ -292,7 +295,10 @@ double run_relaxation(
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			printf("(%d) Embedding residual = %e\n", iteration_number, embedding_residual);
 		}
+		double prev_embedding_residual = embedding_residual;
+
 		embedding_residual = update_embedding(time_step);
+
 		embedding_residuals_output << iteration_number << "," << embedding_residual << endl;
 
 		if (abs(embedding_residual) > abs(prev_embedding_residual)) {
@@ -303,7 +309,7 @@ double run_relaxation(
 			}
 		}
 
-		if (abs(embedding_residual) <= best_solution.residual) {
+		if ((iteration_number - dyad_last_iteration) * time_step > 10 && abs(embedding_residual) <= best_solution.residual) {
 			max_iterations = iteration_number; // Stop
 			if (!printed_tolerance_msg) {
 				printf("Reached embedding residual TOLERANCE.\n");
