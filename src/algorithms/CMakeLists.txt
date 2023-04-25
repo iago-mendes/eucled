@@ -1,0 +1,5 @@
+add_library(bicgstab STATIC bicgstab.cpp bicgstab.h)
+add_library(embedding STATIC embedding.cpp embedding.h)
+add_library(factorization STATIC factorization.cpp factorization.h)
+add_library(integration STATIC integration.cpp integration.h)
+add_library(relaxation STATIC relaxation.cpp relaxation.h)
