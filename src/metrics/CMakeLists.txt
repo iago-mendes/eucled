@@ -1,3 +1,11 @@
 add_library(Metric STATIC Metric.cpp Metric.hpp)
+
+add_library(DentedSphereMetric STATIC DentedSphereMetric.cpp DentedSphereMetric.hpp)
+add_library(EllipsoidMetric STATIC EllipsoidMetric.cpp EllipsoidMetric.hpp)
+add_library(KerrHorizonMetric STATIC KerrHorizonMetric.cpp KerrHorizonMetric.hpp)
+add_library(NonaxisymmetricZPeanutMetric STATIC NonaxisymmetricZPeanutMetric.cpp NonaxisymmetricZPeanutMetric.hpp)
+add_library(NumericalMetric STATIC NumericalMetric.cpp NumericalMetric.hpp)
 add_library(OblateSpheroidMetric STATIC OblateSpheroidMetric.cpp OblateSpheroidMetric.hpp)
 add_library(RoundSphereMetric STATIC RoundSphereMetric.cpp RoundSphereMetric.hpp)
+add_library(XPeanutMetric STATIC XPeanutMetric.cpp XPeanutMetric.hpp)
+add_library(ZPeanutMetric STATIC ZPeanutMetric.cpp ZPeanutMetric.hpp)

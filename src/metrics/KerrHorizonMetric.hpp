@@ -1,16 +1,16 @@
-#ifndef METRICS_ROUND_SPHERE_H
-#define METRICS_ROUND_SPHERE_H
+#ifndef METRICS_KERR_HORIZON_H
+#define METRICS_KERR_HORIZON_H
 
 #include <cmath>
 
 #include "Metric.hpp"
 #include "../utils/math.h"
 
-class RoundSphereMetric : public Metric {
+class KerrHorizonMetric : public Metric {
 	public:
-		RoundSphereMetric();
+		KerrHorizonMetric();
 
-		RoundSphereMetric(double radius);
+		KerrHorizonMetric(double chi);
 
 		void set_parameter(std::string parameter, std::string value);
 
@@ -19,8 +19,11 @@ class RoundSphereMetric : public Metric {
 		double g_phi_phi(double theta, double phi);
 	
 	private:
-		// Radius
-		double R = 1;
+		// Rotation parameter (between 0 and 1)
+		double chi;
+
+		double rho();
+		double sigma(double theta);
 };
 
 #endif

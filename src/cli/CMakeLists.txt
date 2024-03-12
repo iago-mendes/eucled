@@ -3,4 +3,5 @@ target_link_libraries(fidec
 	Metric
 	OblateSpheroidMetric
 	RoundSphereMetric
+	embedding
 )

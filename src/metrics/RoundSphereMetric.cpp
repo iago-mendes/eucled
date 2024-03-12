@@ -8,9 +8,9 @@ RoundSphereMetric::RoundSphereMetric(double radius) {
 	this->R = radius;
 }
 
-void RoundSphereMetric::setParameter(std::string parameter, double value) {
+void RoundSphereMetric::set_parameter(std::string parameter, std::string value) {
 	if (parameter == "Radius") {
-		this->R = value;
+		this->R = stod(value);
 	}
 }
 

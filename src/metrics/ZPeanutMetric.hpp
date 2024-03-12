@@ -1,16 +1,16 @@
-#ifndef METRICS_ROUND_SPHERE_H
-#define METRICS_ROUND_SPHERE_H
+#ifndef METRICS_Z_PEANUT_H
+#define METRICS_Z_PEANUT_H
 
 #include <cmath>
 
 #include "Metric.hpp"
 #include "../utils/math.h"
 
-class RoundSphereMetric : public Metric {
+class ZPeanutMetric : public Metric {
 	public:
-		RoundSphereMetric();
+		ZPeanutMetric();
 
-		RoundSphereMetric(double radius);
+		ZPeanutMetric(double chi);
 
 		void set_parameter(std::string parameter, std::string value);
 
@@ -19,8 +19,11 @@ class RoundSphereMetric : public Metric {
 		double g_phi_phi(double theta, double phi);
 	
 	private:
-		// Radius
-		double R = 1;
+		// Separation of sphere centers.
+		double a;
+
+		double rho();
+		double sigma(double theta);
 };
 
 #endif

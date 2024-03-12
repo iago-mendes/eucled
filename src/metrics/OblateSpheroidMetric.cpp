@@ -10,11 +10,11 @@ OblateSpheroidMetric::OblateSpheroidMetric(double a, double b) {
 	this->b = b;
 }
 
-void OblateSpheroidMetric::setParameter(std::string parameter, double value) {
+void OblateSpheroidMetric::set_parameter(std::string parameter, std::string value) {
 	if (parameter == "1st Radius") {
-		this->a = a;
+		this->a = stod(value);
 	} else if (parameter == "2nd Radius") {
-		this->b = b;
+		this->b = stod(value);
 	}
 }
 

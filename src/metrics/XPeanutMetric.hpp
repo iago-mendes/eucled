@@ -1,16 +1,16 @@
-#ifndef METRICS_ROUND_SPHERE_H
-#define METRICS_ROUND_SPHERE_H
+#ifndef METRICS_X_PEANUT_H
+#define METRICS_X_PEANUT_H
 
 #include <cmath>
 
 #include "Metric.hpp"
 #include "../utils/math.h"
 
-class RoundSphereMetric : public Metric {
+class XPeanutMetric : public Metric {
 	public:
-		RoundSphereMetric();
+		XPeanutMetric();
 
-		RoundSphereMetric(double radius);
+		XPeanutMetric(double s0);
 
 		void set_parameter(std::string parameter, std::string value);
 
@@ -20,7 +20,7 @@ class RoundSphereMetric : public Metric {
 	
 	private:
 		// Radius
-		double R = 1;
+		double s0;
 };
 
 #endif

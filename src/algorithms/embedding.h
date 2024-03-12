@@ -3,7 +3,8 @@
 
 #include "../classes/dyad.h"
 #include "../classes/grid.h"
-#include "../classes/metric.h"
+// #include "../classes/metric.h"
+#include "../metrics/Metric.hpp"
 #include "./factorization.h"
 #include "./relaxation.h"
 #include "./integration.h"
