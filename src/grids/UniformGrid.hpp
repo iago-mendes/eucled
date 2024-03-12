@@ -3,8 +3,10 @@
 
 #include <cmath>
 
+#include "Grid.hpp"
+
 // Grid with angular coordinates uniformly spaced
-class UniformGrid {
+class UniformGrid : Grid {
 	public:
 		// Constructs a uniform grid with N_theta and N_phi 
 		UniformGrid(int N_theta, int N_phi);
@@ -21,25 +23,7 @@ class UniformGrid {
 		// Converts from the coordinate angle phi to the index j
 		int j(double phi);
 
-		// Returns the number of theta grid points
-		int get_N_theta() { return this->N_theta; }
-
-		// Returns the number of phi grid points
-		int get_N_phi() { return this->N_phi; }
-
-		// Returns the separation between theta coordinates
-		int get_delta_theta() { return this->delta_theta; }
-
-		// Returns the separation between phi coordinates
-		int get_delta_phi() { return this->delta_phi; }
-	
 	private:
-		// Number of theta grid points
-		int N_theta;
-
-		// Number of phi grid points
-		int N_phi;
-
 		// Separation between theta coordinates
 		double delta_theta;
 
