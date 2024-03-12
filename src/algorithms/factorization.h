@@ -3,7 +3,7 @@
 
 #include "../classes/dyad.h"
 #include "../classes/grid.h"
-#include "../classes/metric.h"
+#include "../metrics/Metric.hpp"
 
 void run_factorization(
 	shared_ptr<Metric> metric,

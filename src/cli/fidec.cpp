@@ -7,8 +7,15 @@ int main() {
 	cout << "#########################################################\n\n";
 	
 	cout << "Available surface metrics:\n";
-	cout << "\t 1) RoundSphere\n";
-	cout << "\t 2) OblateSpheroid\n";
+	cout << "\t 1) Round Sphere\n";
+	cout << "\t 2) Oblate Spheroid\n";
+	cout << "\t 3) Dented Sphere\n";
+	cout << "\t 4) Ellipsoid\n";
+	cout << "\t 5) Z-Peanut\n";
+	cout << "\t 6) Non-axisymmetric z-Peanut\n";
+	cout << "\t 7) X-Peanut\n";
+	cout << "\t 8) Kerr Horizon\n";
+	cout << "\t 9) Numerical\n";
 	cout << "\n";
 
 	shared_ptr<Metric> pMetric = nullptr;
@@ -40,6 +47,34 @@ int main() {
 				pMetric = make_shared<OblateSpheroidMetric>();
 				break;
 
+			case 3:
+				pMetric = make_shared<DentedSphereMetric>();
+				break;
+			
+			case 4:
+				pMetric = make_shared<EllipsoidMetric>();
+				break;
+
+			case 5:
+				pMetric = make_shared<ZPeanutMetric>();
+				break;
+
+			case 6:
+				pMetric = make_shared<NonaxisymmetricZPeanutMetric>();
+				break;
+
+			case 7:
+				pMetric = make_shared<XPeanutMetric>();
+				break;
+
+			case 8:
+				pMetric = make_shared<KerrHorizonMetric>();
+				break;
+
+			case 9:
+				pMetric = make_shared<NumericalMetric>();
+				break;
+
 			default:
 				cout << "Invalid value!\n\n";
 				choseValidMetric = false;
@@ -53,9 +88,9 @@ int main() {
 
 		cout << parameter << " = ";
 
-		double value;
-		cin >> value;
+		string input;
+		getline(cin, input);
 
-		pMetric->setParameter(parameter, value);
+		pMetric->set_parameter(parameter, input);
 	}
 }

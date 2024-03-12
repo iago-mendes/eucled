@@ -1,7 +1,22 @@
 add_executable(fidec fidec.cpp fidec.hpp)
 target_link_libraries(fidec
 	Metric
+	DentedSphereMetric
+	EllipsoidMetric
+	KerrHorizonMetric
+	NonaxisymmetricZPeanutMetric
+	NumericalMetric
 	OblateSpheroidMetric
 	RoundSphereMetric
+	XPeanutMetric
+	ZPeanutMetric
 	embedding
+	relaxation
+	dyad
+	grid
+	commutator
+	cross_product
+	dot_product
+	math
+	rms
 )
