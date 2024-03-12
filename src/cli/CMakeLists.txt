@@ -1,13 +1,6 @@
-add_executable(fidec fidec.cpp)
+add_executable(fidec fidec.cpp fidec.hpp)
 target_link_libraries(fidec
-	embedding
-	relaxation
-	dyad
-	grid
-	metric
-	commutator
-	cross_product
-	dot_product
-	math
-	rms
+	Metric
+	OblateSpheroidMetric
+	RoundSphereMetric
 )
