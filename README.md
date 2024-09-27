@@ -1,6 +1,6 @@
-# Finite-Difference Embedding Code (FiDEC)
+# Finite-difference Relaxation Embedding Code (FiREC)
 
-FiDEC was created to test the relaxation method for the isometric embedding problem. For more details, see [iagomendes.com/embedding](https://iagomendes.com/embedding).
+FiREC was created to test the relaxation method for the isometric embedding problem. For more details, see [iagomendes.com/embedding](https://iagomendes.com/embedding).
 
 ## Source Directories
 
