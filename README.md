@@ -1,6 +1,6 @@
-# Finite-Difference Embedding Code (FiDEC)
+# Isometric Embedding Code (IsEC)
 
-FiDEC was created to test the relaxation method for the isometric embedding problem. For more details, see [iagomendes.com/embedding](https://iagomendes.com/embedding).
+IsEC was created to test the relaxation method for the isometric embedding problem. For more details, see [iagomendes.com/embedding](https://iagomendes.com/embedding).
 
 ## Source Directories
 

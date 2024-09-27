@@ -1,5 +1,5 @@
-#ifndef CLI_FIDEC_H
-#define CLI_FIDEC_H
+#ifndef CLI_ISEC_H
+#define CLI_ISEC_H
 
 #include <iostream>
 #include <memory>

@@ -1,5 +1,5 @@
-add_executable(fidec fidec.cpp fidec.hpp)
-target_link_libraries(fidec
+add_executable(isec isec.cpp isec.hpp)
+target_link_libraries(isec
 	Metric
 	DentedSphereMetric
 	EllipsoidMetric
