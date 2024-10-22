@@ -1,6 +1,6 @@
-# Finite-difference Relaxation Embedding Code (FiREC)
+# Euclidean Embedding Diagram (`EuclED`) code
 
-FiREC was created to test the relaxation method for the isometric embedding problem. For more details, see [iagomendes.com/embedding](https://iagomendes.com/embedding).
+`EuclED` was created to test the relaxation method for the isometric embedding problem. For more details, see [iagomendes.com/embedding](https://iagomendes.com/embedding).
 
 ## Source Directories
 
