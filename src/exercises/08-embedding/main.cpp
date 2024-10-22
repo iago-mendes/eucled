@@ -39,7 +39,7 @@ int main() {
 	int N_theta, N_phi;
 	char identifier[50];
 
-	N_theta = 50;
+	N_theta = 10;
 	N_phi = 2 * N_theta;
 
 	// Numeric metric input
@@ -50,11 +50,11 @@ int main() {
 
 	Grid grid(N_theta, N_phi);
 
-	// shared_ptr<Metric> metric = make_shared<XPeanutMetric>(1.05);
-	// sprintf(identifier, "xpeanut_%dx%d", N_theta, N_phi);
-	double a = 1;
-	shared_ptr<Metric> metric = make_shared<PeanutMetric>(a);
-	sprintf(identifier, "zpeanut_%.1f_%dx%d", a, N_theta, N_phi);
+	shared_ptr<Metric> metric = make_shared<XPeanutMetric>(1.1);
+	sprintf(identifier, "xpeanut_%dx%d", N_theta, N_phi);
+	// double a = 1;
+	// shared_ptr<Metric> metric = make_shared<PeanutMetric>(a);
+	// sprintf(identifier, "zpeanut_%.1f_%dx%d", a, N_theta, N_phi);
 	// shared_ptr<Metric> metric = make_shared<NonaxisymmetricZPeanutMetric>(1., .7, .1, grid);
 	// sprintf(identifier, "nonaxi_peanut_%dx%d", N_theta, N_phi);
 	// shared_ptr<Metric> metric = make_shared<EllipsoidMetric>(1.5, 1, 1);
