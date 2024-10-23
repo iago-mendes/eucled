@@ -6,7 +6,7 @@ supported_test_cases = [
   'XPeanut'
 ]
 
-def test(case, params):
+def test(case, params, resolution):
   assert case in supported_test_cases, f'{case} is not a supported test case'
 
   process = subprocess.Popen(
@@ -18,6 +18,8 @@ def test(case, params):
   )
 
   input_data = [
+    resolution['Ntheta'],
+    resolution['Nphi'],
     case,
     *params.values()
   ]

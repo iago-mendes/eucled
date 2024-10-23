@@ -16,10 +16,12 @@ def run(input_file):
   with open(input_file_path, 'r') as file:
     input_file_content = yaml.safe_load(file)
   
+  resolution = input_file_content['Resolution']
+  
   if 'TestCase' in input_file_content:
     test_case = input_file_content['TestCase']
     test_params = None
     if 'TestParams' in input_file_content:
       test_params = input_file_content['TestParams']
     
-    test(test_case, test_params)
+    test(test_case, test_params, resolution)
