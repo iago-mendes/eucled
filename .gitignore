@@ -4,6 +4,7 @@ binary
 *.o
 bin/
 lib/
+build/
 
 # Data files
 *.csv
