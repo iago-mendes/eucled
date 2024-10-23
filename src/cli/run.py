@@ -19,7 +19,7 @@ def run(input_file):
   if 'TestCase' in input_file_content:
     test_case = input_file_content['TestCase']
     test_params = None
-    if 'Params' in input_file_content:
-      test_params = input_file_content['Params']
+    if 'TestParams' in input_file_content:
+      test_params = input_file_content['TestParams']
     
     test(test_case, test_params)
