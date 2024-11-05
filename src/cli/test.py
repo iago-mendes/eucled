@@ -10,7 +10,7 @@ def test(case, params, resolution):
   assert case in supported_test_cases, f'{case} is not a supported test case'
 
   process = subprocess.Popen(
-    ['test_case'],
+    ['eucled_test_case'],
     stdin=subprocess.PIPE,
     stdout=subprocess.PIPE,
     stderr=subprocess.STDOUT,
