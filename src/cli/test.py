@@ -2,12 +2,12 @@ import click
 import subprocess
 import sys
 
-supported_test_cases = [
+supported_cases = [
   'XPeanut'
 ]
 
 def test(case, params, resolution):
-  assert case in supported_test_cases, f'{case} is not a supported test case'
+  assert case in supported_cases, f'{case} is not a supported test case'
 
   process = subprocess.Popen(
     ['eucled_test_case'],
@@ -16,6 +16,8 @@ def test(case, params, resolution):
     stderr=subprocess.STDOUT,
     text=True
   )
+
+  # TODO: check params
 
   input_data = [
     resolution['Ntheta'],
@@ -37,18 +39,38 @@ def test(case, params, resolution):
 
 @click.command('test')
 @click.option(
+  '--resolution',
+  '-N',
+  'Ntheta',
+  type=int,
+  required=True,
+  help="Number of theta grid points.",
+)
+@click.option(
   '--case',
-  '-c',
+  '-C',
   'case',
   type=str,
-  required=True
+  required=True,
+  help=f'Which test case to run. Options: {", ".join(supported_cases)}.',
 )
 @click.option(
   '--param',
-  '-p',
-  'params',
+  '-P',
+  'param_list',
   multiple=True,
-  default=None
+  default=None,
+  help=f'Parameters specific to the selected test case.',
 )
-def test_cli(case, params):
-  test(case, params)
+def test_cli(Ntheta, case, param_list):
+  resolution = {
+    'Ntheta': Ntheta,
+    'Nphi': 2*Ntheta
+  }
+
+  params = {}
+  for param in param_list:
+    key, value = param.split('=')
+    params[key] = value
+
+  test(case, params, resolution)
