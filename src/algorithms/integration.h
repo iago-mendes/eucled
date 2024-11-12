@@ -3,7 +3,6 @@
 
 #include "../classes/dyad.h"
 #include "../classes/grid.h"
-#include "../classes/metric.h"
 #include "../utils/math.h"
 #include "./bicgstab.h"
 

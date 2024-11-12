@@ -3,8 +3,10 @@
 #include "../algorithms/embedding.h"
 #include "../classes/dyad.h"
 #include "../classes/grid.h"
-#include "../classes/metric.h"
 #include "../functions/commutator.h"
+
+#include "../Metrics/Metric.hpp"
+#include "../Metrics/XPeanut.hpp"
 
 int main() {
   // Construct mesh
@@ -25,7 +27,7 @@ int main() {
     std::cin >> s0;
     std::cout << "s0 = " << s0 << std::endl;
 
-    metric = make_shared<XPeanutMetric>(s0);
+    metric = make_shared<Metrics::XPeanut>(s0);
   }
 
   // Start counting wall time
