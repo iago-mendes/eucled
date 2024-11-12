@@ -1,4 +1,4 @@
-add_executable(eucled_test_case eucled_test_case.cpp)
+add_executable(eucled_test_case test_case.cpp)
 target_link_libraries(eucled_test_case
 	Metrics
 	embedding
