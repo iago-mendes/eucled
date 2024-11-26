@@ -5,6 +5,7 @@
 #include "../classes/grid.h"
 #include "../functions/commutator.h"
 
+#include "../Metrics/KerrHorizon.hpp"
 #include "../Metrics/Metric.hpp"
 #include "../Metrics/XPeanut.hpp"
 
@@ -22,11 +23,15 @@ int main() {
 
   // Construct metric
   shared_ptr<Metric> metric = nullptr;
-  if (test_case == "XPeanut") {
+  if (test_case == "KerrHorizon") {
+    double spin;
+    std::cin >> spin;
+    std::cout << "spin = " << spin << std::endl;
+    metric = make_shared<Metrics::KerrHorizon>(spin);
+  } else if (test_case == "XPeanut") {
     double s0;
     std::cin >> s0;
     std::cout << "s0 = " << s0 << std::endl;
-
     metric = make_shared<Metrics::XPeanut>(s0);
   }
 

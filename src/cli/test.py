@@ -3,7 +3,8 @@ import subprocess
 import sys
 
 supported_cases = [
-  'XPeanut'
+  'KerrHorizon',
+  'XPeanut',
 ]
 
 def test(case, params, resolution):
