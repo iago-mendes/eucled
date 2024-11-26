@@ -22,6 +22,12 @@ add_custom_command(
   DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/eucled.py"
 )
 add_custom_command(
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/interpolate.py"
+  COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/interpolate.py"
+                                   "${CMAKE_CURRENT_BINARY_DIR}/interpolate.py"
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/interpolate.py"
+)
+add_custom_command(
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/run.py"
   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/run.py"
                                    "${CMAKE_CURRENT_BINARY_DIR}/run.py"
@@ -40,6 +46,7 @@ add_custom_target(cli
   DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/__init__.py"
           "${EXECUTABLE_OUTPUT_PATH}/eucled"
           "${CMAKE_CURRENT_BINARY_DIR}/eucled.py"
+          "${CMAKE_CURRENT_BINARY_DIR}/interpolate.py"
           "${CMAKE_CURRENT_BINARY_DIR}/run.py"
           "${CMAKE_CURRENT_BINARY_DIR}/test.py"
 )
