@@ -11,116 +11,116 @@
 #include "../Utilities/cross_product.hpp"
 #include "../Utilities/math.hpp"
 
-using namespace std;
+namespace {
 
-shared_ptr<DataMesh3D> e_theta__relaxation(nullptr);
-shared_ptr<DataMesh3D> e_phi__relaxation(nullptr);
-shared_ptr<DataMesh3D> embedding__relaxation(nullptr);
-shared_ptr<Metric> metric__relaxation(nullptr);
+std::shared_ptr<DataMesh3D> e_theta(nullptr);
+std::shared_ptr<DataMesh3D> e_phi(nullptr);
+std::shared_ptr<DataMesh3D> embedding(nullptr);
+std::shared_ptr<Metric> metric(nullptr);
 
-Mesh *grid__relaxation;
+Mesh *grid;
 
-// Free parameter
-double gamma__relaxation = 1;
+// Damping parameter
+double damping_param = 1.;
 
-// Operator from equation 28 for theta
-shared_ptr<DataMesh3D> D_theta(shared_ptr<DataMesh3D> v) {
+// Theta operator
+std::shared_ptr<DataMesh3D> D_theta(std::shared_ptr<DataMesh3D> v) {
 	return (v * sin_theta)->partial_theta() * inv_sin_theta;
 }
 
-// Operator from equation 28 for phi
-shared_ptr<DataMesh3D> D_phi(shared_ptr<DataMesh3D> v) {
+// Phi operator
+std::shared_ptr<DataMesh3D> D_phi(std::shared_ptr<DataMesh3D> v) {
 	return (v * sin_theta)->partial_phi() * inv_sin_theta;
 }
 
-// Angular velocity vector from equation 30
-shared_ptr<DataMesh3D> omega() {
-	shared_ptr<DataMesh3D> commutator = get_commutator(e_theta__relaxation, e_phi__relaxation);
+// Angular velocity vector
+std::shared_ptr<DataMesh3D> omega() {
+	std::shared_ptr<DataMesh3D> commutator = get_commutator(e_theta, e_phi);
 
-	return get_cross_product(e_phi__relaxation, D_theta(commutator))
-				 - get_cross_product(e_theta__relaxation, D_phi(commutator));
+	return get_cross_product(e_phi, D_theta(commutator))
+				 - get_cross_product(e_theta, D_phi(commutator));
 }
 
-// Constraint from equation 31 for theta theta
-shared_ptr<DataMesh> C_theta_theta() {
-	return e_theta__relaxation->dot(e_theta__relaxation)
-		+ [](double theta, double phi) {return - metric__relaxation->g_theta_theta(theta, phi);}
+// Theta-theta constraint
+std::shared_ptr<DataMesh> C_theta_theta() {
+	return e_theta->dot(e_theta)
+		+ [](double theta, double phi) {return - metric->g_theta_theta(theta, phi);}
 	;
 }
 
-// Constraint from equation 31 for theta phi
-shared_ptr<DataMesh> C_theta_phi() {
-	return e_theta__relaxation->dot(e_phi__relaxation)
-		+ [](double theta, double phi) {return - metric__relaxation->g_theta_phi(theta, phi);}
+// Theta-phi constraint
+std::shared_ptr<DataMesh> C_theta_phi() {
+	return e_theta->dot(e_phi)
+		+ [](double theta, double phi) {return - metric->g_theta_phi(theta, phi);}
 	;
 }
 
-// Constraint from equation 31 for phi phi
-shared_ptr<DataMesh> C_phi_phi() {
-	return e_phi__relaxation->dot(e_phi__relaxation)
-		+ [](double theta, double phi) {return - metric__relaxation->g_phi_phi(theta, phi);}
+// Phi-phi constraint
+std::shared_ptr<DataMesh> C_phi_phi() {
+	return e_phi->dot(e_phi)
+		+ [](double theta, double phi) {return - metric->g_phi_phi(theta, phi);}
 	;
 }
 
-// Euler stepping for theta
+// Euler stepping for e_theta
 void update_e_theta(double time_step) {
-	// From equation 42
-	shared_ptr<DataMesh3D> e_theta_dot =
-		get_cross_product(omega(), e_theta__relaxation)
-		- e_theta__relaxation * gamma__relaxation * C_theta_theta()
-		- e_phi__relaxation * gamma__relaxation * C_theta_phi() * inv_sqr_sin_theta
+	std::shared_ptr<DataMesh3D> e_theta_dot =
+		get_cross_product(omega(), e_theta)
+		- e_theta * damping_param * C_theta_theta()
+		- e_phi * damping_param * C_theta_phi() * inv_sqr_sin_theta
 	;
 
-	e_theta__relaxation = e_theta__relaxation + e_theta_dot * time_step;
+	e_theta = e_theta + e_theta_dot * time_step;
 }
 
-// Euler stepping for phi
+// Euler stepping for e_phi
 void update_e_phi(double time_step) {
-	// From equation 43
-	shared_ptr<DataMesh3D> e_phi_derivative =
-		get_cross_product(omega(), e_phi__relaxation)
-		- e_theta__relaxation * gamma__relaxation * C_theta_phi()
-		- e_phi__relaxation * gamma__relaxation * C_phi_phi() * inv_sqr_sin_theta
+	std::shared_ptr<DataMesh3D> e_phi_derivative =
+		get_cross_product(omega(), e_phi)
+		- e_theta * damping_param * C_theta_phi()
+		- e_phi * damping_param * C_phi_phi() * inv_sqr_sin_theta
 	;
 
-	e_phi__relaxation = e_phi__relaxation + e_phi_derivative * time_step;
+	e_phi = e_phi + e_phi_derivative * time_step;
 }
 
 // Euler stepping for embedding
 // (returns embedding residual)
 double update_embedding(double time_step) {
 	auto laplacian =
-		embedding__relaxation->second_partial_theta()
-		+ embedding__relaxation->partial_theta() * inv_tan_theta
-		+ embedding__relaxation->second_partial_phi() * inv_sqr_sin_theta
+		embedding->second_partial_theta()
+		+ embedding->partial_theta() * inv_tan_theta
+		+ embedding->second_partial_phi() * inv_sqr_sin_theta
 	;
 
 	auto source =
-		e_theta__relaxation->partial_theta()
-		+ e_theta__relaxation * inv_tan_theta
-		+ e_phi__relaxation->partial_phi() * inv_sqr_sin_theta
+		e_theta->partial_theta()
+		+ e_theta * inv_tan_theta
+		+ e_phi->partial_phi() * inv_sqr_sin_theta
 	;
 
-	shared_ptr<DataMesh3D> embedding_dot = laplacian - source;
-	embedding__relaxation = embedding__relaxation + embedding_dot * sqr_sin_theta * 0.5 * time_step;
+	std::shared_ptr<DataMesh3D> embedding_dot = laplacian - source;
+	embedding = embedding + embedding_dot * sqr_sin_theta * 0.5 * time_step;
 
 	double embedding_residual = (embedding_dot * sqrt_sin_theta)->norm()->rms();
 	return embedding_residual;
 }
 
+} // namespace
+
 double run_relaxation(
-	std::shared_ptr<DataMesh3D> e_theta,
-	std::shared_ptr<DataMesh3D> e_phi,
-	std::shared_ptr<DataMesh3D> embedding,
-	std::shared_ptr<Metric> metric,
+	std::shared_ptr<DataMesh3D> e_theta_,
+	std::shared_ptr<DataMesh3D> e_phi_,
+	std::shared_ptr<DataMesh3D> embedding_,
+	std::shared_ptr<Metric> metric_,
 	char *identifier,
 	double final_time
 ) {
-	e_theta__relaxation = e_theta;
-	e_phi__relaxation = e_phi;
-	embedding__relaxation = embedding;
-	grid__relaxation = &e_theta->mesh;
-	metric__relaxation = metric;
+	e_theta = e_theta_;
+	e_phi = e_phi_;
+	embedding = embedding_;
+	grid = &e_theta_->mesh;
+	metric = metric_;
 	bool use_fixed_final_time = final_time != 0;
 
 	char residuals_filename[50];
@@ -131,22 +131,22 @@ double run_relaxation(
 		sprintf(embedding_residuals_filename, "./assets/embedding_residuals_%s.csv", identifier);
 		sprintf(constraints_filename, "./assets/constraints_%s.csv", identifier);
 	} else {
-		sprintf(residuals_filename, "./assets/residuals_%d.csv", grid__relaxation->N_theta);
-		sprintf(embedding_residuals_filename, "./assets/embedding_residuals_%d.csv", grid__relaxation->N_theta);
+		sprintf(residuals_filename, "./assets/residuals_%d.csv", grid->N_theta);
+		sprintf(embedding_residuals_filename, "./assets/embedding_residuals_%d.csv", grid->N_theta);
 		sprintf(constraints_filename, "./assets/constraints.csv");
 	}
-	ofstream residuals_output(residuals_filename);
-	ofstream embedding_residuals_output(embedding_residuals_filename);
-	ofstream residual_distribution_output("./assets/residual_distribution.csv");
-	ofstream constraints_output(constraints_filename);
+	std::ofstream residuals_output(residuals_filename);
+	std::ofstream embedding_residuals_output(embedding_residuals_filename);
+	std::ofstream residual_distribution_output("./assets/residual_distribution.csv");
+	std::ofstream constraints_output(constraints_filename);
 
 	// output x values
-	for (int i = 0; i < grid__relaxation->N_theta; i++) {
-		for (int j = 0; j < grid__relaxation->N_phi; j++) {
-			residual_distribution_output << grid__relaxation->theta(i);
+	for (int i = 0; i < grid->N_theta; i++) {
+		for (int j = 0; j < grid->N_phi; j++) {
+			residual_distribution_output << grid->theta(i);
 
-			if (i == grid__relaxation->N_theta - 1 && j == grid__relaxation->N_phi - 1) { // last
-				residual_distribution_output << endl;
+			if (i == grid->N_theta - 1 && j == grid->N_phi - 1) { // last
+				residual_distribution_output << std::endl;
 			} else {
 				residual_distribution_output << ",";
 			}
@@ -154,12 +154,12 @@ double run_relaxation(
 	}
 
 	// output y values
-	for (int i = 0; i < grid__relaxation->N_theta; i++) {
-		for (int j = 0; j < grid__relaxation->N_phi; j++) {
-			residual_distribution_output << grid__relaxation->phi(j);
+	for (int i = 0; i < grid->N_theta; i++) {
+		for (int j = 0; j < grid->N_phi; j++) {
+			residual_distribution_output << grid->phi(j);
 
-			if (i == grid__relaxation->N_theta - 1 && j == grid__relaxation->N_phi - 1) { // last
-				residual_distribution_output << endl;
+			if (i == grid->N_theta - 1 && j == grid->N_phi - 1) { // last
+				residual_distribution_output << std::endl;
 			} else {
 				residual_distribution_output << ",";
 			}
@@ -167,7 +167,7 @@ double run_relaxation(
 	}
 
 	double time_step = 0.01; // Good for 15 x 30
-	time_step *= squared(15. / (double) grid__relaxation->N_theta);
+	time_step *= squared(15. / (double) grid->N_theta);
 	printf("Time step = %.2e\n", time_step);
 
 	double residual= abs(get_commutator_rms(e_theta, e_phi));
@@ -196,12 +196,12 @@ double run_relaxation(
 		residual = abs(get_commutator_rms(e_theta, e_phi));
 		residuals_output << iteration_number << "," << residual << std::endl;
 
-		embedding_residuals_output << iteration_number << "," << embedding_residual << endl;
+		embedding_residuals_output << iteration_number << "," << embedding_residual << std::endl;
 
 		constraints_output
 			<< (C_theta_theta() * sin_theta)->rms() << ","
 			<< (C_theta_phi() * sin_theta)->rms() << ","
-			<< (C_phi_phi() * sin_theta)->rms() << endl;
+			<< (C_phi_phi() * sin_theta)->rms() << std::endl;
 		
 		if (isnan(residual)) {
 			printf("Found NaN's!\n");
@@ -226,13 +226,13 @@ double run_relaxation(
 
 		if (iteration_number % OUTPUT_FREQUENCY == 0) {
 			// output residual norm values
-			auto residual_norm = get_commutator(e_theta__relaxation, e_phi__relaxation)->norm();
-			for (int i = 0; i < grid__relaxation->N_theta; i++) {
-				for (int j = 0; j < grid__relaxation->N_phi; j++) {
+			auto residual_norm = get_commutator(e_theta, e_phi)->norm();
+			for (int i = 0; i < grid->N_theta; i++) {
+				for (int j = 0; j < grid->N_phi; j++) {
 					residual_distribution_output << residual_norm->points[i][j];
 
-					if (i == grid__relaxation->N_theta - 1 && j == grid__relaxation->N_phi - 1) { // last
-						residual_distribution_output << endl;
+					if (i == grid->N_theta - 1 && j == grid->N_phi - 1) { // last
+						residual_distribution_output << std::endl;
 					} else {
 						residual_distribution_output << ",";
 					}
@@ -267,7 +267,7 @@ double run_relaxation(
 
 		embedding_residual = update_embedding(time_step);
 
-		embedding_residuals_output << iteration_number << "," << embedding_residual << endl;
+		embedding_residuals_output << iteration_number << "," << embedding_residual << std::endl;
 
 		if (abs(embedding_residual) > abs(prev_embedding_residual)) {
 			max_iterations = iteration_number; // Stop
@@ -290,9 +290,9 @@ double run_relaxation(
 	
 	printf("Embedding relaxation finished with R = %.2e after %d iterations.\n", embedding_residual, iteration_number);
 
-	(*e_theta) = (*best_e_theta);
-	(*e_phi) = (*best_e_phi);
-	(*embedding) = (*embedding);
+	(*e_theta_) = (*best_e_theta);
+	(*e_phi_) = (*best_e_phi);
+	(*embedding_) = (*embedding);
 
 	return best_residual;
 }
