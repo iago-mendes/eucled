@@ -7,7 +7,6 @@ target_link_libraries(eucled_numeric_embedding PRIVATE
 	relaxation
 	commutator
 	cross_product
-	dot_product
 	math
 	rms
 )
@@ -20,7 +19,6 @@ target_link_libraries(eucled_test_case
 	relaxation
 	commutator
 	cross_product
-	dot_product
 	math
 	rms
 )
