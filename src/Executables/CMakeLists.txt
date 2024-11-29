@@ -6,7 +6,6 @@ target_link_libraries(eucled_numeric_embedding PRIVATE
 	relaxation
 	dyad
 	grid
-	metric
 	commutator
 	cross_product
 	dot_product
@@ -21,7 +20,6 @@ target_link_libraries(eucled_test_case
 	relaxation
 	dyad
 	grid
-	metric
 	commutator
 	cross_product
 	dot_product
