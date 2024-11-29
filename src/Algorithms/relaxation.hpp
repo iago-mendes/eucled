@@ -20,9 +20,3 @@ double run_relaxation(
 	char *identifier,
 	double final_time
 );
-
-struct Iteration {
-	std::shared_ptr<DataMesh3D> solution1;
-	std::shared_ptr<DataMesh3D> solution2;
-	double residual;
-};

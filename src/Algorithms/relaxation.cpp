@@ -173,10 +173,9 @@ double run_relaxation(
 	double residual= abs(get_commutator_rms(e_theta, e_phi));
 	double embedding_residual = INFINITY;
 
-	Iteration best_solution;
-	best_solution.solution1 = e_theta;
-	best_solution.solution2 = e_phi;
-	best_solution.residual = INFINITY; // Should be replaced by another solution found after relaxation is done.
+	auto best_e_theta = e_theta;
+	auto best_e_phi = e_phi;
+	auto best_residual = INFINITY;
 
 	// Solve.
 	int iteration_number = 0;
@@ -216,10 +215,10 @@ double run_relaxation(
 			prev_residual = residual;
 		}
 
-		if (started_decreasing && residual < best_solution.residual) {
-			best_solution.solution1 = e_theta__relaxation;
-			best_solution.solution2 = e_phi__relaxation;
-			best_solution.residual = residual;
+		if (started_decreasing && residual < best_residual) {
+			best_e_theta = e_theta;
+			best_e_phi = e_phi;
+			best_residual = residual;
 		} else if (started_decreasing && max_iterations == MAX_ITERATIONS) {
 			max_iterations = iteration_number; // Stop
 			printf("Reached minimum dyad residual.\n");
@@ -251,7 +250,7 @@ double run_relaxation(
 	}
 
 	int dyad_last_iteration = iteration_number;
-	printf("Dyad relaxation finished with R = %.2e after %d iterations.\n", best_solution.residual, dyad_last_iteration);
+	printf("Dyad relaxation finished with R = %.2e after %d iterations.\n", best_residual, dyad_last_iteration);
 
 	// double embedding_final_time = dyad_final_time + 50;
 
@@ -278,7 +277,7 @@ double run_relaxation(
 			}
 		}
 
-		if ((iteration_number - dyad_last_iteration) * time_step > 10 && abs(embedding_residual) <= best_solution.residual) {
+		if ((iteration_number - dyad_last_iteration) * time_step > 10 && abs(embedding_residual) <= best_residual) {
 			max_iterations = iteration_number; // Stop
 			if (!printed_tolerance_msg) {
 				printf("Reached embedding residual TOLERANCE.\n");
@@ -291,9 +290,9 @@ double run_relaxation(
 	
 	printf("Embedding relaxation finished with R = %.2e after %d iterations.\n", embedding_residual, iteration_number);
 
-	(*e_theta) = (*best_solution.solution1);
-	(*e_phi) = (*best_solution.solution2);
-	(*embedding) = (*embedding__relaxation);
+	(*e_theta) = (*best_e_theta);
+	(*e_phi) = (*best_e_phi);
+	(*embedding) = (*embedding);
 
-	return best_solution.residual;
+	return best_residual;
 }
