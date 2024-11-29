@@ -2,7 +2,6 @@
 #define RELAXATION_H
 
 #include "../classes/grid.h"
-#include "../classes/time_stepper.h"
 #include "../functions/commutator.h"
 #include "../functions/cross_product.h"
 #include "./integration.h"
@@ -23,5 +22,11 @@ double run_relaxation(
 	char *identifier,
 	double final_time
 );
+
+struct Iteration {
+	shared_ptr<Grid3DFunction> solution1;
+	shared_ptr<Grid3DFunction> solution2;
+	double residual;
+};
 
 #endif
