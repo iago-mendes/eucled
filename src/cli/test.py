@@ -3,8 +3,11 @@ import subprocess
 import sys
 
 supported_cases = [
+  'Ellipsoid',
   'KerrHorizon',
+  'Sphere',
   'XPeanut',
+  'ZPeanut',
 ]
 
 def test(case, params, resolution):

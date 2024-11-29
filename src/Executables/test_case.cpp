@@ -5,9 +5,12 @@
 #include "../classes/grid.h"
 #include "../functions/commutator.h"
 
+#include "../Metrics/Ellipsoid.hpp"
 #include "../Metrics/KerrHorizon.hpp"
 #include "../Metrics/Metric.hpp"
+#include "../Metrics/Sphere.hpp"
 #include "../Metrics/XPeanut.hpp"
+#include "../Metrics/ZPeanut.hpp"
 
 int main() {
   // Construct mesh
@@ -23,16 +26,35 @@ int main() {
 
   // Construct metric
   shared_ptr<Metric> metric = nullptr;
-  if (test_case == "KerrHorizon") {
+  if (test_case == "Ellipsoid") {
+    double a, b, c;
+    std::cin >> a >> b >> c;
+    std::cout << "a = " << a << std::endl;
+    std::cout << "b = " << b << std::endl;
+    std::cout << "c = " << c << std::endl;
+    metric = make_shared<Metrics::Ellipsoid>(a, b, c);
+  } else if (test_case == "KerrHorizon") {
     double spin;
     std::cin >> spin;
     std::cout << "spin = " << spin << std::endl;
     metric = make_shared<Metrics::KerrHorizon>(spin);
+  } else if (test_case == "Sphere") {
+    double R;
+    std::cin >> R;
+    std::cout << "R = " << R << std::endl;
+    metric = make_shared<Metrics::Sphere>(R);
   } else if (test_case == "XPeanut") {
     double s0;
     std::cin >> s0;
     std::cout << "s0 = " << s0 << std::endl;
     metric = make_shared<Metrics::XPeanut>(s0);
+  } else if (test_case == "ZPeanut") {
+    double r0, b, e;
+    std::cin >> r0 >> b >> e;
+    std::cout << "r0 = " << r0 << std::endl;
+    std::cout << "b = " << b << std::endl;
+    std::cout << "e = " << e << std::endl;
+    metric = make_shared<Metrics::ZPeanut>(r0, b, e);
   }
 
   // Start counting wall time
