@@ -1,3 +1,6 @@
+# Distributed under the MIT License.
+# See LICENSE.txt for details.
+
 cmake_minimum_required(VERSION 3.9.1)
 
 project(eucled)

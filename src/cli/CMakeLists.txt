@@ -1,3 +1,6 @@
+# Distributed under the MIT License.
+# See LICENSE.txt for details.
+
 # Specify the Python interpreter
 find_package(Python3 REQUIRED)
 message(STATUS "Python3 executable found: ${Python3_EXECUTABLE}")

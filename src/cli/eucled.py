@@ -1,3 +1,6 @@
+# Distributed under the MIT License.
+# See LICENSE.txt for details.
+
 import click
 import os
 

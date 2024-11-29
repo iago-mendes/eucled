@@ -1,3 +1,6 @@
+// Distributed under the MIT License.
+// See LICENSE.txt for details.
+
 #include "./DataMesh.hpp"
 
 #include <math.h>

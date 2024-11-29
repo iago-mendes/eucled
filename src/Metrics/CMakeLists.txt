@@ -1,3 +1,6 @@
+# Distributed under the MIT License.
+# See LICENSE.txt for details.
+
 add_library(Metrics STATIC
   Metric.hpp
   Ellipsoid.cpp Ellipsoid.hpp

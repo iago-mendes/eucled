@@ -1,3 +1,6 @@
+// Distributed under the MIT License.
+// See LICENSE.txt for details.
+
 #include "./cross_product.hpp"
 
 std::shared_ptr<DataMesh3D> vector_a__cross_product(nullptr);

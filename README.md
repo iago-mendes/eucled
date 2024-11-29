@@ -1,3 +1,6 @@
+<!-- Distributed under the MIT License. -->
+<!-- See LICENSE.txt for details. -->
+
 # Euclidean Embedding Diagram (`EuclED`) code
 
 `EuclED` was created to test the relaxation method for the isometric embedding problem. For more details, see [iagomendes.com/embedding](https://iagomendes.com/embedding).
