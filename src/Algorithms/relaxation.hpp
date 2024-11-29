@@ -17,7 +17,6 @@ double run_relaxation(
 	std::shared_ptr<DataMesh3D> e_phi,
 	std::shared_ptr<DataMesh3D> embedding,
 	std::shared_ptr<Metric> metric,
-	double (*get_residual)(std::shared_ptr<DataMesh3D> e_theta, std::shared_ptr<DataMesh3D> e_phi),
 	char *identifier,
 	double final_time
 );

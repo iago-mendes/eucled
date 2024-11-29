@@ -109,11 +109,10 @@ double update_embedding(double time_step) {
 }
 
 double run_relaxation(
-	shared_ptr<DataMesh3D> e_theta,
-	shared_ptr<DataMesh3D> e_phi,
-	shared_ptr<DataMesh3D> embedding,
-	shared_ptr<Metric> metric,
-	double (*get_residual)(shared_ptr<DataMesh3D> e_theta, shared_ptr<DataMesh3D> e_phi),
+	std::shared_ptr<DataMesh3D> e_theta,
+	std::shared_ptr<DataMesh3D> e_phi,
+	std::shared_ptr<DataMesh3D> embedding,
+	std::shared_ptr<Metric> metric,
 	char *identifier,
 	double final_time
 ) {
@@ -171,7 +170,7 @@ double run_relaxation(
 	time_step *= squared(15. / (double) grid__relaxation->N_theta);
 	printf("Time step = %.2e\n", time_step);
 
-	double residual= abs(get_residual(e_theta__relaxation, e_phi__relaxation));
+	double residual= abs(get_commutator_rms(e_theta, e_phi));
 	double embedding_residual = INFINITY;
 
 	Iteration best_solution;
@@ -195,8 +194,8 @@ double run_relaxation(
 		update_e_phi(time_step);
 		embedding_residual = update_embedding(time_step);
 
-		residual = abs(get_residual(e_theta__relaxation, e_phi__relaxation));
-		residuals_output << iteration_number << "," << residual << endl;
+		residual = abs(get_commutator_rms(e_theta, e_phi));
+		residuals_output << iteration_number << "," << residual << std::endl;
 
 		embedding_residuals_output << iteration_number << "," << embedding_residual << endl;
 
