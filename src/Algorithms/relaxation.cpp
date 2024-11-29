@@ -18,13 +18,6 @@ shared_ptr<DataMesh3D> e_phi__relaxation(nullptr);
 shared_ptr<DataMesh3D> embedding__relaxation(nullptr);
 shared_ptr<Metric> metric__relaxation(nullptr);
 
-auto sin_theta = [](double theta, [[maybe_unused]] double phi) {return sin(theta);};
-auto sqr_sin_theta = [](double theta, [[maybe_unused]] double phi) {return squared(sin(theta));};
-auto sqrt_sin_theta = [](double theta, [[maybe_unused]] double phi) {return sqrt(sin(theta));};
-auto inv_sin_theta = [](double theta, [[maybe_unused]] double phi) {return 1./sin(theta);};
-auto inv_sqr_sin_theta = [](double theta, [[maybe_unused]] double phi) {return 1./squared(sin(theta));};
-auto inv_tan_theta = [](double theta, [[maybe_unused]] double phi) {return 1/tan(theta);};
-
 Mesh *grid__relaxation;
 
 // Free parameter
