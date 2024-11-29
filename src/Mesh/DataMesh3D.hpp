@@ -36,6 +36,8 @@ class DataMesh3D {
 		std::shared_ptr<DataMesh3D> operator+(double (*function)(double theta, double phi));
 		std::shared_ptr<DataMesh3D> operator+(double (*function)(double theta, double phi, char coord));
 
+		std::shared_ptr<DataMesh3D> operator-(std::shared_ptr<DataMesh3D> other);
+
 		std::shared_ptr<DataMesh3D> operator*(double constant);
 		std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> other);
 		std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh> scalar);
@@ -51,3 +53,18 @@ class DataMesh3D {
 		std::shared_ptr<DataMesh3D> cached_second_partial_phi = nullptr;
 		std::shared_ptr<DataMesh> cached_norm = nullptr;
 };
+
+// Operator overloads for shared_ptr<DataMesh3D>
+
+std::shared_ptr<DataMesh3D> operator+(std::shared_ptr<DataMesh3D> ptr, double constant);
+std::shared_ptr<DataMesh3D> operator+(std::shared_ptr<DataMesh3D> ptr, std::shared_ptr<DataMesh3D> other);
+std::shared_ptr<DataMesh3D> operator+(std::shared_ptr<DataMesh3D> ptr, double (*function)(double theta, double phi));
+std::shared_ptr<DataMesh3D> operator+(std::shared_ptr<DataMesh3D> ptr, double (*function)(double theta, double phi, char coord));
+
+std::shared_ptr<DataMesh3D> operator-(std::shared_ptr<DataMesh3D> ptr, std::shared_ptr<DataMesh3D> other);
+
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, double constant);
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, std::shared_ptr<DataMesh3D> other);
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, std::shared_ptr<DataMesh> scalar);
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, double (*function)(double theta, double phi));
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, double (*function)(double theta, double phi, char coord));

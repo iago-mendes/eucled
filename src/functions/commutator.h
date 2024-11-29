@@ -1,9 +1,9 @@
 #ifndef COMMUTATOR_H
 #define COMMUTATOR_H
 
-#include "../classes/grid.h"
+#include "../Mesh/DataMesh3D.hpp"
 
-shared_ptr<Grid3DFunction> get_commutator(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi);
-double get_commutator_rms(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi);
+std::shared_ptr<DataMesh3D> get_commutator(std::shared_ptr<DataMesh3D> e_theta, std::shared_ptr<DataMesh3D> e_phi);
+double get_commutator_rms(std::shared_ptr<DataMesh3D> e_theta, std::shared_ptr<DataMesh3D> e_phi);
 
 #endif

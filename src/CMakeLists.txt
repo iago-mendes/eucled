@@ -1,5 +1,4 @@
 add_subdirectory(algorithms)
-add_subdirectory(classes)
 add_subdirectory(cli)
 add_subdirectory(Executables)
 add_subdirectory(functions)

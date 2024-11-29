@@ -1,7 +1,7 @@
 #ifndef EMBEDDING_H
 #define EMBEDDING_H
 
-#include "../classes/grid.h"
+#include "../Mesh/DataMesh3D.hpp"
 #include "../Metrics/Metric.hpp"
 #include "./relaxation.h"
 
@@ -10,8 +10,8 @@
  * Writes result to 'embedding'.
 */
 void run_embedding(
-	shared_ptr<Metric> metric,
-	shared_ptr<Grid3DFunction> embedding,
+	std::shared_ptr<Metric> metric,
+	std::shared_ptr<DataMesh3D> embedding,
 	char *identifier = nullptr,
 	double final_time = 0
 );

@@ -309,6 +309,20 @@ std::shared_ptr<DataMesh3D> DataMesh3D::operator+(double (*function)(double thet
 	return new_data;
 }
 
+std::shared_ptr<DataMesh3D> DataMesh3D::operator-(std::shared_ptr<DataMesh3D> other) {
+	auto new_data = get_copy();
+
+	for (int i = 0; i < mesh.N_theta; i++) {
+		for (int j = 0; j < mesh.N_phi; j++) {
+			(*new_data).x_points[i][j] -= other->x_points[i][j];
+			(*new_data).y_points[i][j] -= other->y_points[i][j];
+			(*new_data).z_points[i][j] -= other->z_points[i][j];
+		}
+	}
+
+	return new_data;
+}
+
 std::shared_ptr<DataMesh3D> DataMesh3D::operator*(double constant) {
 	auto new_data = get_copy();
 
@@ -400,4 +414,39 @@ std::shared_ptr<DataMesh> DataMesh3D::dot(std::shared_ptr<DataMesh3D> other) {
 	}
 	
 	return dot_product;
+}
+
+// Operator overloads for shared_ptr<DataMesh3D>
+
+std::shared_ptr<DataMesh3D> operator+(std::shared_ptr<DataMesh3D> ptr, double constant) {
+	return (*ptr) + constant;
+}
+std::shared_ptr<DataMesh3D> operator+(std::shared_ptr<DataMesh3D> ptr, std::shared_ptr<DataMesh3D> other) {
+	return (*ptr) + other;
+}
+std::shared_ptr<DataMesh3D> operator+(std::shared_ptr<DataMesh3D> ptr, double (*function)(double theta, double phi)) {
+	return (*ptr) + function;
+}
+std::shared_ptr<DataMesh3D> operator+(std::shared_ptr<DataMesh3D> ptr, double (*function)(double theta, double phi, char coord)) {
+	return (*ptr) + function;
+}
+
+std::shared_ptr<DataMesh3D> operator-(std::shared_ptr<DataMesh3D> ptr, std::shared_ptr<DataMesh3D> other) {
+	return (*ptr) - other;
+}
+
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, double constant) {
+	return (*ptr) * constant;
+}
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, std::shared_ptr<DataMesh3D> other) {
+	return (*ptr) * other;
+}
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, std::shared_ptr<DataMesh> scalar) {
+	return (*ptr) * scalar;
+}
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, double (*function)(double theta, double phi)) {
+	return (*ptr) * function;
+}
+std::shared_ptr<DataMesh3D> operator*(std::shared_ptr<DataMesh3D> ptr, double (*function)(double theta, double phi, char coord)) {
+	return (*ptr) * function;
 }

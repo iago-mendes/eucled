@@ -1,8 +1,8 @@
 #ifndef CROSS_PRODUCT_H
 #define CROSS_PRODUCT_H
 
-#include "../classes/grid.h"
+#include "../Mesh/DataMesh3D.hpp"
 
-shared_ptr<Grid3DFunction> get_cross_product(shared_ptr<Grid3DFunction> vector_a, shared_ptr<Grid3DFunction> vector_b);
+std::shared_ptr<DataMesh3D> get_cross_product(std::shared_ptr<DataMesh3D> vector_a, std::shared_ptr<DataMesh3D> vector_b);
 
 #endif

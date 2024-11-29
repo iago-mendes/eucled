@@ -1,9 +1,9 @@
 #ifndef RELAXATION_H
 #define RELAXATION_H
 
-#include "../classes/grid.h"
 #include "../functions/commutator.h"
 #include "../functions/cross_product.h"
+#include "../Mesh/DataMesh3D.hpp"
 #include "../Metrics/Metric.hpp"
 
 #define RESIDUAL_TOLERANCE 1e-14
@@ -13,18 +13,18 @@
 #define INITIAL_TIME_STEP 0.01
 
 double run_relaxation(
-	shared_ptr<Grid3DFunction> e_theta,
-	shared_ptr<Grid3DFunction> e_phi,
-	shared_ptr<Grid3DFunction> embedding,
-	shared_ptr<Metric> metric,
-	double (*get_residual)(shared_ptr<Grid3DFunction> e_theta, shared_ptr<Grid3DFunction> e_phi),
+	std::shared_ptr<DataMesh3D> e_theta,
+	std::shared_ptr<DataMesh3D> e_phi,
+	std::shared_ptr<DataMesh3D> embedding,
+	std::shared_ptr<Metric> metric,
+	double (*get_residual)(std::shared_ptr<DataMesh3D> e_theta, std::shared_ptr<DataMesh3D> e_phi),
 	char *identifier,
 	double final_time
 );
 
 struct Iteration {
-	shared_ptr<Grid3DFunction> solution1;
-	shared_ptr<Grid3DFunction> solution2;
+	std::shared_ptr<DataMesh3D> solution1;
+	std::shared_ptr<DataMesh3D> solution2;
 	double residual;
 };
 

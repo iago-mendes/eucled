@@ -1,6 +1,7 @@
 #include "./Numeric.hpp"
 
 #include "H5Cpp.h"
+// #include <string.h>
 
 namespace Metrics {
 
@@ -16,20 +17,20 @@ Numeric::Numeric(std::string file_path, std::string horizon_key, std::string obs
     H5::DataSet dataset_phi_phi = observation_group.openDataSet("g_phi_phi");
     H5::DataSet dataset_theta_phi = observation_group.openDataSet("g_theta_phi");
 
-    // Get grid extents
+    // Get mesh extents
     hsize_t extents[2];
     dataset_theta_theta.getSpace().getSimpleExtentDims(extents, nullptr);
     int N_theta = extents[0];
     int N_phi = extents[1];
-    Grid grid(N_theta, N_phi);
-    this->grid = grid;
+    Mesh mesh(N_theta, N_phi);
+    this->mesh = mesh;
 
     // Construct data matrices
-    this->data_theta_theta = make_shared<std::vector<std::vector<double>>>(
+    this->data_theta_theta = std::make_shared<std::vector<std::vector<double>>>(
           N_theta, std::vector<double>(N_phi));
-    this->data_phi_phi = make_shared<std::vector<std::vector<double>>>(
+    this->data_phi_phi = std::make_shared<std::vector<std::vector<double>>>(
           N_theta, std::vector<double>(N_phi));
-    this->data_theta_phi = make_shared<std::vector<std::vector<double>>>(
+    this->data_theta_phi = std::make_shared<std::vector<std::vector<double>>>(
           N_theta, std::vector<double>(N_phi));
 
     for (int i = 0; i < N_theta; i++) {
@@ -66,22 +67,22 @@ Numeric::Numeric(std::string file_path, std::string horizon_key, std::string obs
 }
 
 double Numeric::g_theta_theta(double theta, double phi) {
-  int i = this->grid.i(theta);
-  int j = this->grid.j(phi);
+  int i = this->mesh.i(theta);
+  int j = this->mesh.j(phi);
 
   return (*data_theta_theta)[i][j];
 }
 
 double Numeric::g_theta_phi(double theta, double phi) {
-  int i = this->grid.i(theta);
-  int j = this->grid.j(phi);
+  int i = this->mesh.i(theta);
+  int j = this->mesh.j(phi);
   
   return (*data_theta_phi)[i][j];
 }
 
 double Numeric::g_phi_phi(double theta, double phi) {
-  int i = this->grid.i(theta);
-  int j = this->grid.j(phi);
+  int i = this->mesh.i(theta);
+  int j = this->mesh.j(phi);
   
   return (*data_phi_phi)[i][j];
 }

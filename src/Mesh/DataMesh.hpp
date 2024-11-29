@@ -36,3 +36,13 @@ class DataMesh {
 		std::shared_ptr<DataMesh> cached_partial_theta;
 		std::shared_ptr<DataMesh> cached_partial_phi;
 };
+
+// Operator overloads for shared_ptr<DataMesh>
+
+std::shared_ptr<DataMesh> operator+(std::shared_ptr<DataMesh> ptr, double constant);
+std::shared_ptr<DataMesh> operator+(std::shared_ptr<DataMesh> ptr, std::shared_ptr<DataMesh> other);
+std::shared_ptr<DataMesh> operator+(std::shared_ptr<DataMesh> ptr, double (*function)(double theta, double phi));
+
+std::shared_ptr<DataMesh> operator*(std::shared_ptr<DataMesh> ptr, double constant);
+std::shared_ptr<DataMesh> operator*(std::shared_ptr<DataMesh> ptr, std::shared_ptr<DataMesh> other);
+std::shared_ptr<DataMesh> operator*(std::shared_ptr<DataMesh> ptr, double (*function)(double theta, double phi));

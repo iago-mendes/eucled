@@ -202,3 +202,25 @@ std::shared_ptr<DataMesh> DataMesh::operator*(double (*function)(double theta, d
 
 	return new_data;
 }
+
+// Operator overloads for shared_ptr<DataMesh>
+
+std::shared_ptr<DataMesh> operator+(std::shared_ptr<DataMesh> ptr, double constant) {
+	return (*ptr) + constant;
+}
+std::shared_ptr<DataMesh> operator+(std::shared_ptr<DataMesh> ptr, std::shared_ptr<DataMesh> other) {
+	return (*ptr) + other;
+}
+std::shared_ptr<DataMesh> operator+(std::shared_ptr<DataMesh> ptr, double (*function)(double theta, double phi)) {
+	return (*ptr) + function;
+}
+
+std::shared_ptr<DataMesh> operator*(std::shared_ptr<DataMesh> ptr, double constant) {
+	return (*ptr) * constant;
+}
+std::shared_ptr<DataMesh> operator*(std::shared_ptr<DataMesh> ptr, std::shared_ptr<DataMesh> other) {
+	return (*ptr) * other;
+}
+std::shared_ptr<DataMesh> operator*(std::shared_ptr<DataMesh> ptr, double (*function)(double theta, double phi)) {
+	return (*ptr) * function;
+}

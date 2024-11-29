@@ -1,25 +1,26 @@
+#include <chrono>
 #include <iostream>
 
 #include "../algorithms/embedding.h"
-#include "../classes/grid.h"
 #include "../functions/commutator.h"
 
+#include "../Mesh/DataMesh3D.hpp"
 #include "../Metrics/Metric.hpp"
 #include "../Metrics/Numeric.hpp"
 
 int main() {
   // Get information needed to get data from H5 file
   std::string file_path, horizon_key, observation_id;
-  cin >> file_path >> horizon_key >> observation_id;
+  std::cin >> file_path >> horizon_key >> observation_id;
 
   // Create numeric metric
-  shared_ptr<Metrics::Numeric> metric = make_shared<Metrics::Numeric>(file_path, horizon_key, observation_id);
+  std::shared_ptr<Metrics::Numeric> metric = std::make_shared<Metrics::Numeric>(file_path, horizon_key, observation_id);
 
   // Start counting wall time
   auto start_time = std::chrono::high_resolution_clock::now();
 
   // Run embedding solver
-  shared_ptr<Grid3DFunction> embedding = make_shared<Grid3DFunction>(metric->grid);
+  std::shared_ptr<DataMesh3D> embedding = std::make_shared<DataMesh3D>(metric->mesh);
   run_embedding(metric, embedding);
 
   // Output wall time
