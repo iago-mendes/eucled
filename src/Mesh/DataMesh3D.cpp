@@ -1,10 +1,12 @@
 #include "./DataMesh3D.hpp"
-#include "./DataMesh.hpp"
-#include "../utils/rms.h"
 
-#include "math.h"
+#include <math.h>
 #include <memory>
 #include <vector>
+
+#include "./DataMesh.hpp"
+#include "../Utilities/rms.hpp"
+#include "../Utilities/math.hpp"
 
 DataMesh3D::DataMesh3D(Mesh mesh, double (*function)(int i, int j, char coord)) {
 	this->mesh = mesh;

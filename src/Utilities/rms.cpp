@@ -1,7 +1,10 @@
-#include "rms.h"
-using namespace std;
+#include "./rms.hpp"
 
-double get_rms(const vector<double> *p_vect) {
+#include <math.h>
+
+#include "./math.hpp"
+
+double get_rms(const std::vector<double> *p_vect) {
 	double squared_sum = 0;
 	int N = (*p_vect).size();
 
@@ -14,7 +17,7 @@ double get_rms(const vector<double> *p_vect) {
 	return result;
 }
 
-double get_rms(const vector<vector<double>> *p_vect) {
+double get_rms(const std::vector<std::vector<double>> *p_vect) {
 	double squared_sum = 0;
 	int total_count = 0;
 

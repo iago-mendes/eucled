@@ -1,7 +1,6 @@
 add_subdirectory(algorithms)
 add_subdirectory(cli)
 add_subdirectory(Executables)
-add_subdirectory(functions)
 add_subdirectory(Mesh)
 add_subdirectory(Metrics)
-add_subdirectory(utils)
+add_subdirectory(Utilities)

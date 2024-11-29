@@ -1,8 +1,13 @@
 #include "relaxation.h"
-#include "../utils/math.h"
-#include <math.h>
+
 #include <cstdio>
+#include <math.h>
 #include <fstream>
+
+#include "../Utilities/commutator.hpp"
+#include "../Utilities/cross_product.hpp"
+#include "../Utilities/math.hpp"
+
 using namespace std;
 
 shared_ptr<DataMesh3D> e_theta__relaxation(nullptr);

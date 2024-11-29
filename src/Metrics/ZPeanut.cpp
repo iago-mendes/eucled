@@ -1,7 +1,8 @@
 #include "./ZPeanut.hpp"
-#include "../utils/math.h"
 
-#include "math.h"
+#include <math.h>
+
+#include "../Utilities/math.hpp"
 
 namespace Metrics {
 

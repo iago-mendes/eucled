@@ -1,4 +1,4 @@
-#include "cross_product.h"
+#include "./cross_product.hpp"
 
 std::shared_ptr<DataMesh3D> vector_a__cross_product(nullptr);
 std::shared_ptr<DataMesh3D> vector_b__cross_product(nullptr);

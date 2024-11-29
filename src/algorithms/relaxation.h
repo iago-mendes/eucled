@@ -1,8 +1,6 @@
 #ifndef RELAXATION_H
 #define RELAXATION_H
 
-#include "../functions/commutator.h"
-#include "../functions/cross_product.h"
 #include "../Mesh/DataMesh3D.hpp"
 #include "../Metrics/Metric.hpp"
 

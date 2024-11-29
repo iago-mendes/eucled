@@ -1,9 +1,10 @@
 #include "./DataMesh.hpp"
-#include "../utils/rms.h"
 
-#include "math.h"
+#include <math.h>
 #include <memory>
 #include <vector>
+
+#include "../Utilities/rms.hpp"
 
 DataMesh::DataMesh(Mesh mesh, double (*function)(int i, int j)) {
 	this->mesh = mesh;

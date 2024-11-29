@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "../algorithms/embedding.h"
-#include "../functions/commutator.h"
 
 #include "../Mesh/Mesh.hpp"
 #include "../Mesh/DataMesh3D.hpp"

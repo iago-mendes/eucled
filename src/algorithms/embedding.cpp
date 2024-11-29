@@ -1,7 +1,11 @@
 #include "embedding.h"
-#include <math.h>
+
 #include <cstdio>
+#include <math.h>
 #include <fstream>
+
+#include "../Utilities/commutator.hpp"
+
 using namespace std;
 
 Mesh grid__embedding;
