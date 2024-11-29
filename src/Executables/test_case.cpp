@@ -64,7 +64,7 @@ int main() {
 
   // Run embedding solver
   std::shared_ptr<DataMesh3D> embedding = std::make_shared<DataMesh3D>(mesh);
-  run_embedding(metric, embedding, nullptr, 250.);
+  run_embedding(metric, embedding, 250.);
 
   // Output wall time
   auto end_time = std::chrono::high_resolution_clock::now();

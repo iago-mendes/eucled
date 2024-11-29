@@ -14,13 +14,8 @@ using namespace std;
 
 Mesh grid__embedding;
 
-void output_embedding(shared_ptr<DataMesh3D> embedding, char *identifier = nullptr) {
-	char embedding_filename[50];
-	if (identifier != nullptr)
-		sprintf(embedding_filename, "./assets/embedding_%s.csv", identifier);
-	else 
-		sprintf(embedding_filename, "./assets/embedding.csv");
-	ofstream embedding_output(embedding_filename);
+void output_embedding(shared_ptr<DataMesh3D> embedding) {
+	ofstream embedding_output("embedding.csv");
 	for (int i = 0; i < grid__embedding.N_theta; i++) {
 		for (int j = 0; j < grid__embedding.N_phi; j++) {
 			embedding_output << embedding->x_points[i][j] << "," << embedding->y_points[i][j] << "," << embedding->z_points[i][j] << endl;
@@ -32,7 +27,6 @@ void output_embedding(shared_ptr<DataMesh3D> embedding, char *identifier = nullp
 void run_embedding(
 	shared_ptr<Metric> metric,
 	shared_ptr<DataMesh3D> embedding,
-	char *identifier,
 	double final_time
 ) {
 	grid__embedding = embedding->mesh;
@@ -71,7 +65,7 @@ void run_embedding(
 		}
 	});
 
-	run_relaxation(e_theta, e_phi, embedding, metric, identifier, final_time);
+	run_relaxation(e_theta, e_phi, embedding, metric, final_time);
 
-	output_embedding(embedding, identifier);
+	output_embedding(embedding);
 }

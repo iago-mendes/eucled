@@ -13,6 +13,5 @@
 void run_embedding(
 	std::shared_ptr<Metric> metric,
 	std::shared_ptr<DataMesh3D> embedding,
-	char *identifier = nullptr,
 	double final_time = 0
 );

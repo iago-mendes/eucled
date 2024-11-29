@@ -113,7 +113,6 @@ double run_relaxation(
 	std::shared_ptr<DataMesh3D> e_phi_,
 	std::shared_ptr<DataMesh3D> embedding_,
 	std::shared_ptr<Metric> metric_,
-	char *identifier,
 	double final_time
 ) {
 	e_theta = e_theta_;
@@ -123,22 +122,10 @@ double run_relaxation(
 	metric = metric_;
 	bool use_fixed_final_time = final_time != 0;
 
-	char residuals_filename[50];
-	char embedding_residuals_filename[50];
-	char constraints_filename[50];
-	if (identifier != nullptr) {
-		sprintf(residuals_filename, "./assets/residuals_%s.csv", identifier);
-		sprintf(embedding_residuals_filename, "./assets/embedding_residuals_%s.csv", identifier);
-		sprintf(constraints_filename, "./assets/constraints_%s.csv", identifier);
-	} else {
-		sprintf(residuals_filename, "./assets/residuals_%d.csv", grid->N_theta);
-		sprintf(embedding_residuals_filename, "./assets/embedding_residuals_%d.csv", grid->N_theta);
-		sprintf(constraints_filename, "./assets/constraints.csv");
-	}
-	std::ofstream residuals_output(residuals_filename);
-	std::ofstream embedding_residuals_output(embedding_residuals_filename);
-	std::ofstream residual_distribution_output("./assets/residual_distribution.csv");
-	std::ofstream constraints_output(constraints_filename);
+	std::ofstream residuals_output("residuals.csv");
+	std::ofstream embedding_residuals_output("embedding_residuals.csv");
+	std::ofstream residual_distribution_output("residual_distribution.csv");
+	std::ofstream constraints_output("constraints.csv");
 
 	// output x values
 	for (int i = 0; i < grid->N_theta; i++) {
