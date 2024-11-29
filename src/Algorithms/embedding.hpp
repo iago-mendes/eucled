@@ -1,9 +1,7 @@
-#ifndef EMBEDDING_H
-#define EMBEDDING_H
+#pragma once
 
 #include "../Mesh/DataMesh3D.hpp"
 #include "../Metrics/Metric.hpp"
-#include "./relaxation.h"
 
 /**
  * Finds an isometric embedding for surface described by the given metric tensor.
@@ -15,5 +13,3 @@ void run_embedding(
 	char *identifier = nullptr,
 	double final_time = 0
 );
-
-#endif

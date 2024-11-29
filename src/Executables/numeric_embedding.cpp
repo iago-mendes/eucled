@@ -1,8 +1,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "../algorithms/embedding.h"
-
+#include "../Algorithms/embedding.hpp"
 #include "../Mesh/DataMesh3D.hpp"
 #include "../Metrics/Metric.hpp"
 #include "../Metrics/Numeric.hpp"

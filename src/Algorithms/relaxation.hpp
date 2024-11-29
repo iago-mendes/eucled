@@ -1,5 +1,4 @@
-#ifndef RELAXATION_H
-#define RELAXATION_H
+#pragma once
 
 #include "../Mesh/DataMesh3D.hpp"
 #include "../Metrics/Metric.hpp"
@@ -25,5 +24,3 @@ struct Iteration {
 	std::shared_ptr<DataMesh3D> solution2;
 	double residual;
 };
-
-#endif

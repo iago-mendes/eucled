@@ -1,9 +1,10 @@
-#include "embedding.h"
+#include "./embedding.hpp"
 
 #include <cstdio>
 #include <math.h>
 #include <fstream>
 
+#include "./relaxation.hpp"
 #include "../Utilities/commutator.hpp"
 
 using namespace std;

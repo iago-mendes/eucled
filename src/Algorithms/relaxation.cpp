@@ -1,4 +1,4 @@
-#include "relaxation.h"
+#include "./relaxation.hpp"
 
 #include <cstdio>
 #include <math.h>
