@@ -4,7 +4,6 @@
 #include "../classes/grid.h"
 #include "../functions/commutator.h"
 #include "../functions/cross_product.h"
-#include "./integration.h"
 #include "../Metrics/Metric.hpp"
 
 #define RESIDUAL_TOLERANCE 1e-14

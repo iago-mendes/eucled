@@ -4,7 +4,6 @@
 #include "../classes/grid.h"
 #include "../Metrics/Metric.hpp"
 #include "./relaxation.h"
-#include "./integration.h"
 
 /**
  * Finds an isometric embedding for surface described by the given metric tensor.
