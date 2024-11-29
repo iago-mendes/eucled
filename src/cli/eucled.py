@@ -1,6 +1,7 @@
 import click
 import os
 
+from .embed import embed
 from .interpolate import interpolate
 from .run import run
 from .test import test_cli
@@ -12,6 +13,7 @@ def eucled():
   if working_dir:
     os.chdir(working_dir)
 
+eucled.add_command(embed)
 eucled.add_command(interpolate)
 eucled.add_command(run)
 eucled.add_command(test_cli)

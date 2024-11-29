@@ -34,6 +34,8 @@ supported_codes = [
   help=f'H5 file to output the interpolated data.',
 )
 def interpolate(code, input_path, output_path):
+  """Interpolate metric from external codes into EuclED's grid."""
+
   code = code.lower()
   assert code.lower() in [code.lower() for code in supported_codes], f'{code} is not a supported interpolation origin'
   if (code == 'spectre'):

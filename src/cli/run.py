@@ -7,7 +7,8 @@ from .test import test
 @click.command()
 @click.argument('input_file')
 def run(input_file):
-  """Run embedding algorithm."""
+  """Run EuclED's input file."""
+
   # Resolve input file path
   input_file_path = Path(input_file).resolve()
   assert input_file_path.exists(), "Input file not found"

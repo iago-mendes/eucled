@@ -8,6 +8,8 @@ supported_cases = [
 ]
 
 def test(case, params, resolution):
+  """Run embedding algorithm on an analytic test case."""
+
   assert case in supported_cases, f'{case} is not a supported test case'
 
   process = subprocess.Popen(
@@ -38,7 +40,7 @@ def test(case, params, resolution):
 
   process.wait()
 
-@click.command('test')
+@click.command('test', help=test.__doc__)
 @click.option(
   '--resolution',
   '-N',
