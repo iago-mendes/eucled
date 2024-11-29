@@ -1,10 +1,8 @@
 #ifndef EMBEDDING_H
 #define EMBEDDING_H
 
-#include "../classes/dyad.h"
 #include "../classes/grid.h"
 #include "../Metrics/Metric.hpp"
-#include "./factorization.h"
 #include "./relaxation.h"
 #include "./integration.h"
 
@@ -16,8 +14,7 @@ void run_embedding(
 	shared_ptr<Metric> metric,
 	shared_ptr<Grid3DFunction> embedding,
 	char *identifier = nullptr,
-	double final_time = 0,
-	shared_ptr<Dyad> initial_guess = nullptr
+	double final_time = 0
 );
 
 #endif

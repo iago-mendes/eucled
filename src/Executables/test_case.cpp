@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "../algorithms/embedding.h"
-#include "../classes/dyad.h"
 #include "../classes/grid.h"
 #include "../functions/commutator.h"
 
