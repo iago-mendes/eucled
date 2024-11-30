@@ -154,7 +154,7 @@ double run_relaxation(
 	}
 
 	double time_step = 0.01; // Good for 15 x 30
-	time_step *= squared(15. / (double) grid->N_theta);
+	time_step *= sqr(15. / (double) grid->N_theta);
 	printf("Time step = %.2e\n", time_step);
 
 	double residual= abs(get_commutator_rms(e_theta, e_phi));

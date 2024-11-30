@@ -90,7 +90,7 @@ std::shared_ptr<DataMesh> DataMesh3D::norm() {
 
 	for (int i = 0; i < mesh.N_theta; i++) {
 		for (int j = 0; j < mesh.N_phi; j++) {
-			norm->points[i][j] = sqrt( squared(x_points[i][j]) + squared(y_points[i][j]) + squared(z_points[i][j]) );
+			norm->points[i][j] = sqrt( sqr(x_points[i][j]) + sqr(y_points[i][j]) + sqr(z_points[i][j]) );
 		}
 	}
 
@@ -199,9 +199,9 @@ std::shared_ptr<DataMesh3D> DataMesh3D::second_partial_theta() {
 				d2f_z = +1. * z_points[i-1][j] -2. * z_points[i][j] +1. * z_points[i+1][j];
 			}
 
-			result->x_points[i][j] = d2f_x / squared(mesh.delta_theta);
-			result->y_points[i][j] = d2f_y / squared(mesh.delta_theta);
-			result->z_points[i][j] = d2f_z / squared(mesh.delta_theta);
+			result->x_points[i][j] = d2f_x / sqr(mesh.delta_theta);
+			result->y_points[i][j] = d2f_y / sqr(mesh.delta_theta);
+			result->z_points[i][j] = d2f_z / sqr(mesh.delta_theta);
 		}
 	}
 
@@ -239,9 +239,9 @@ std::shared_ptr<DataMesh3D> DataMesh3D::second_partial_phi() {
 				d2f_z = +1. * z_points[i][j-1] -2. * z_points[i][j] +1. * z_points[i][j+1];
 			}
 
-			result->x_points[i][j] = d2f_x / squared(mesh.delta_phi);
-			result->y_points[i][j] = d2f_y / squared(mesh.delta_phi);
-			result->z_points[i][j] = d2f_z / squared(mesh.delta_phi);
+			result->x_points[i][j] = d2f_x / sqr(mesh.delta_phi);
+			result->y_points[i][j] = d2f_y / sqr(mesh.delta_phi);
+			result->z_points[i][j] = d2f_z / sqr(mesh.delta_phi);
 		}
 	}
  

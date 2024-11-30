@@ -16,15 +16,15 @@ Ellipsoid::Ellipsoid(double a, double b, double c) {
 }
 
 double Ellipsoid::g_theta_theta(double theta, double phi) {
-	return (squared(a * cos(phi)) + squared(b * sin(phi))) * squared(cos(theta)) + squared(c * sin(theta));
+	return (sqr(a * cos(phi)) + sqr(b * sin(phi))) * sqr(cos(theta)) + sqr(c * sin(theta));
 }
 
 double Ellipsoid::g_theta_phi(double theta, double phi) {
-	return (squared(b) - squared(a)) * cos(theta) * sin(theta) * cos(phi) * sin(phi);
+	return (sqr(b) - sqr(a)) * cos(theta) * sin(theta) * cos(phi) * sin(phi);
 }
 
 double Ellipsoid::g_phi_phi(double theta, double phi) {
-	return (squared(b * cos(phi)) + squared(a * sin(phi))) * squared(sin(theta));
+	return (sqr(b * cos(phi)) + sqr(a * sin(phi))) * sqr(sin(theta));
 }
 
 } // namespace Metrics

@@ -12,7 +12,7 @@ double get_rms(const std::vector<double> *p_vect) {
 	int N = (*p_vect).size();
 
 	for (int I = 0; I < N; I++) {
-		squared_sum += squared((*p_vect)[I]);
+		squared_sum += sqr((*p_vect)[I]);
 	}
 	
 	double result = sqrt(squared_sum / N);
@@ -26,7 +26,7 @@ double get_rms(const std::vector<std::vector<double>> *p_vect) {
 
 	for (int i = 0; i < (int) (*p_vect).size(); i++) {
 		for (int j = 0; j < (int) (*p_vect)[i].size(); j++) {
-			squared_sum += squared((*p_vect)[i][j]);
+			squared_sum += sqr((*p_vect)[i][j]);
 			total_count++;
 		}
 	}

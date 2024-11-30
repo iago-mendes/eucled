@@ -18,7 +18,7 @@ void test_data_mesh_on_unit_sphere(const int N) {
 
   const double result = integrate(data);
 
-  EXPECT_NEAR(result, squared(M_PI), 1e-12);
+  EXPECT_NEAR(result, sqr(M_PI), 1e-12);
 }
 
 void test_2_metric_on_unit_sphere(const int N) {
@@ -30,7 +30,7 @@ void test_2_metric_on_unit_sphere(const int N) {
   
   const double result = integrate_norm(data_theta_theta, data_theta_phi, data_phi_phi);
 
-  EXPECT_NEAR(result, 4 * sqrt(M_PI), 2./squared(N));
+  EXPECT_NEAR(result, 4 * sqrt(M_PI), 2./sqr(N));
 }
 
 } // namespace

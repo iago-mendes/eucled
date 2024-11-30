@@ -16,11 +16,11 @@ ZPeanut::ZPeanut(double r0, double b, double e) {
 }
 
 double ZPeanut::r(double theta, double phi) {
-	return r0 - b * squared(sin(theta)) + e * cos(theta) * sin(theta) * cos(phi);
+	return r0 - b * sqr(sin(theta)) + e * cos(theta) * sin(theta) * cos(phi);
 }
 
 double ZPeanut::partial_theta_r(double theta, double phi) {
-	return - 2 * b * sin(theta) * cos(theta) - e * squared(sin(theta)) * cos(phi) + e * squared(cos(theta)) * cos(phi);
+	return - 2 * b * sin(theta) * cos(theta) - e * sqr(sin(theta)) * cos(phi) + e * sqr(cos(theta)) * cos(phi);
 }
 
 double ZPeanut::partial_phi_r(double theta, double phi) {
@@ -31,7 +31,7 @@ double ZPeanut::g_theta_theta(double theta, double phi) {
 	double partial_theta_r = this->partial_theta_r(theta, phi);
 	double r = this->r(theta, phi);
 
-	return squared(partial_theta_r) + squared(r);
+	return sqr(partial_theta_r) + sqr(r);
 }
 
 double ZPeanut::g_theta_phi(double theta, double phi) {
@@ -45,7 +45,7 @@ double ZPeanut::g_phi_phi(double theta, double phi) {
 	double partial_phi_r = this->partial_phi_r(theta, phi);
 	double r = this->r(theta, phi);
 
-	return squared(partial_phi_r) + squared(r) * squared(sin(theta));
+	return sqr(partial_phi_r) + sqr(r) * sqr(sin(theta));
 }
 
 } // namespace Metrics
