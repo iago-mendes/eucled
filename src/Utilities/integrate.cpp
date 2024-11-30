@@ -22,9 +22,9 @@ double integrate(std::shared_ptr<DataMesh> data) {
 	return result;
 }
 
-double integrate(std::shared_ptr<DataMesh> data_theta_theta,
-                 std::shared_ptr<DataMesh> data_theta_phi,
-                 std::shared_ptr<DataMesh> data_phi_phi) {
+double integrate_norm(std::shared_ptr<DataMesh> data_theta_theta,
+                      std::shared_ptr<DataMesh> data_theta_phi,
+                      std::shared_ptr<DataMesh> data_phi_phi) {
 	const auto sqr_norm = data_theta_theta * data_theta_theta
 								+ data_theta_phi * data_theta_phi * 2 * inv_sqr_sin_theta
 								+ data_phi_phi * data_phi_phi * inv_sin_theta_4;
