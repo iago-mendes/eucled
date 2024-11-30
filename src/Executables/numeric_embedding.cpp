@@ -10,6 +10,9 @@
 #include "../Metrics/Numeric.hpp"
 
 int main() {
+  // Set line-buffering mode for std::cout
+  std::setvbuf(stdout, nullptr, _IOLBF, 0);
+
   // Get information needed to get data from H5 file
   std::string file_path, horizon_key, observation_id;
   std::cin >> file_path >> horizon_key >> observation_id;

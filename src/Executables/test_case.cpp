@@ -15,6 +15,9 @@
 #include "../Metrics/ZPeanut.hpp"
 
 int main() {
+  // Set line-buffering mode for std::cout
+  std::setvbuf(stdout, nullptr, _IOLBF, 0);
+  
   // Construct mesh
   int N_theta, N_phi;
   std::cin >> N_theta >> N_phi;
