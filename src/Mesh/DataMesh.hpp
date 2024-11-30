@@ -17,6 +17,7 @@ class DataMesh {
 		std::vector<std::vector<double>> points;
 
 		DataMesh(Mesh mesh, double (*function)(int i, int j));
+		DataMesh(Mesh mesh, double (*function)(double theta, double phi));
 		DataMesh(Mesh mesh, std::vector<std::vector<double>> *points);
 		DataMesh(Mesh mesh);
 

@@ -25,6 +25,26 @@ DataMesh::DataMesh(Mesh mesh, double (*function)(int i, int j)) {
 	cached_partial_phi = nullptr;
 }
 
+DataMesh::DataMesh(Mesh mesh, double (*function)(double theta, double phi)) {
+	this->mesh = mesh;
+
+	std::vector<double> base_vector(mesh.N_phi, 0.);
+	this->points.resize(mesh.N_theta, base_vector);
+
+	for (int i = 0; i < mesh.N_theta; i++) {
+		double theta = mesh.theta(i);
+
+		for (int j = 0; j < mesh.N_phi; j++) {
+			double phi = mesh.phi(j);
+
+			this->points[i][j] = function(theta, phi);
+		}
+	}
+
+	cached_partial_theta = nullptr;
+	cached_partial_phi = nullptr;
+}
+
 DataMesh::DataMesh(Mesh mesh, std::vector<std::vector<double>> *points) {
 	this->mesh = mesh;
 
