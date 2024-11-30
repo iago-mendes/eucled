@@ -11,4 +11,14 @@ set(LIBRARY_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/lib)
 
 find_package(HDF5 REQUIRED COMPONENTS C CXX)
 
+# Testing framework
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/heads/main.zip
+)
+FetchContent_MakeAvailable(googletest)
+enable_testing()
+
 add_subdirectory(src)
+add_subdirectory(tests)
