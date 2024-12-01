@@ -31,5 +31,5 @@ int main() {
   auto wall_time = std::chrono::duration_cast<std::chrono::seconds>(
     end_time - start_time
   ).count();
-  std::cout << "Wall time: " << wall_time / 60. << " min" << std::endl;
+  std::cout << std::defaultfloat << "Wall time: " << wall_time / 60. << " min" << std::endl;
 }
