@@ -8,7 +8,6 @@
 #include <fstream>
 
 #include "./relaxation.hpp"
-#include "../Utilities/commutator.hpp"
 
 using namespace std;
 
