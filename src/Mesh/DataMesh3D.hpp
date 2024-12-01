@@ -27,7 +27,7 @@ class DataMesh3D {
 		std::shared_ptr<DataMesh3D> get_copy();
 
 		double rms();
-		std::shared_ptr<DataMesh> norm();
+		std::shared_ptr<DataMesh> sqr_norm();
 
 		std::shared_ptr<DataMesh3D> partial_theta();
 		std::shared_ptr<DataMesh3D> partial_phi();
@@ -54,7 +54,7 @@ class DataMesh3D {
 		std::shared_ptr<DataMesh3D> cached_partial_phi = nullptr;
 		std::shared_ptr<DataMesh3D> cached_second_partial_theta = nullptr;
 		std::shared_ptr<DataMesh3D> cached_second_partial_phi = nullptr;
-		std::shared_ptr<DataMesh> cached_norm = nullptr;
+		std::shared_ptr<DataMesh> cached_sqr_norm = nullptr;
 };
 
 // Operator overloads for shared_ptr<DataMesh3D>

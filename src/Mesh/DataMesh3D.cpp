@@ -81,22 +81,22 @@ double DataMesh3D::rms() {
 	return rms;
 }
 
-std::shared_ptr<DataMesh> DataMesh3D::norm() {
-	if (cached_norm != nullptr) {
-		return cached_norm;
+std::shared_ptr<DataMesh> DataMesh3D::sqr_norm() {
+	if (cached_sqr_norm != nullptr) {
+		return cached_sqr_norm;
 	}
 
-	auto norm = std::make_shared<DataMesh>(mesh);
+	auto result = std::make_shared<DataMesh>(mesh);
 
 	for (int i = 0; i < mesh.N_theta; i++) {
 		for (int j = 0; j < mesh.N_phi; j++) {
-			norm->points[i][j] = sqrt( sqr(x_points[i][j]) + sqr(y_points[i][j]) + sqr(z_points[i][j]) );
+			result->points[i][j] = sqr(x_points[i][j]) + sqr(y_points[i][j]) + sqr(z_points[i][j]);
 		}
 	}
 
-	cached_norm = norm;
+	cached_sqr_norm = result;
 
-	return norm;
+	return result;
 }
 
 std::shared_ptr<DataMesh3D> DataMesh3D::partial_theta() {
