@@ -7,11 +7,10 @@
 #include "../Metrics/Metric.hpp"
 
 /**
- * Finds an isometric embedding for surface described by the given metric tensor.
- * Writes result to 'embedding'.
-*/
-void run_embedding(
-	std::shared_ptr<Metric> metric,
-	std::shared_ptr<DataMesh3D> embedding,
-	double final_time = 0
+ * Find an isometric embedding for surface described by the given metric tensor.
+ */
+std::shared_ptr<DataMesh3D> find_embedding(
+	const std::shared_ptr<Metric> metric,
+	const Mesh mesh,
+	const double final_time = 0
 );

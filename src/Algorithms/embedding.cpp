@@ -12,60 +12,58 @@
 
 using namespace std;
 
-Mesh grid__embedding;
-
-void output_embedding(shared_ptr<DataMesh3D> embedding) {
-	ofstream embedding_output("embedding.csv");
-	for (int i = 0; i < grid__embedding.N_theta; i++) {
-		for (int j = 0; j < grid__embedding.N_phi; j++) {
-			embedding_output << embedding->x_points[i][j] << "," << embedding->y_points[i][j] << "," << embedding->z_points[i][j] << endl;
-		}
-	}
-	embedding_output.close();
-}
-
-void run_embedding(
-	shared_ptr<Metric> metric,
-	shared_ptr<DataMesh3D> embedding,
-	double final_time
+std::shared_ptr<DataMesh3D> find_embedding(
+	const std::shared_ptr<Metric> metric,
+	const Mesh mesh,
+	const double final_time
 ) {
-	grid__embedding = embedding->mesh;
-
-	// Initialize dyad vectors to a sphere
-	shared_ptr<DataMesh3D> e_theta = make_shared<DataMesh3D>(grid__embedding, [] (int i, int j, char coord) {
-		double R = 1.;
-		double theta = grid__embedding.theta(i);
-		double phi = grid__embedding.phi(j);
-
+	// Initialize dyad vectors and embedding to sphere of radius 2
+	auto e_theta = make_shared<DataMesh3D>(mesh, [](double theta, double phi, char coord) {
 		switch (coord) {
 			case 'x':
-				return R * cos(theta) * cos(phi);
+				return 2. * cos(theta) * cos(phi);
 			case 'y':
-				return R * cos(theta) * sin(phi);
+				return 2. * cos(theta) * sin(phi);
 			case 'z':
-				return - R * sin(theta);
+				return - 2. * sin(theta);
 			default:
-				return -1.;
+				return 0.;
 		}
 	});
-	shared_ptr<DataMesh3D> e_phi = make_shared<DataMesh3D>(grid__embedding, [] (int i, int j, char coord) {
-		double R = 1.;
-		double theta = grid__embedding.theta(i);
-		double phi = grid__embedding.phi(j);
-
+	auto e_phi = make_shared<DataMesh3D>(mesh, [](double theta, double phi, char coord) {
 		switch (coord) {
 			case 'x':
-				return - R * sin(theta) * sin(phi);
+				return - 2. * sin(theta) * sin(phi);
 			case 'y':
-				return R * sin(theta) * cos(phi);
+				return 2. * sin(theta) * cos(phi);
 			case 'z':
 				return 0.;
 			default:
-				return -1.;
+				return 0.;
+		}
+	});
+	auto embedding = make_shared<DataMesh3D>(mesh, [](double theta, double phi, char coord) {
+		switch (coord) {
+			case 'x':
+				return 2. * sin(theta) * cos(phi);
+			case 'y':
+				return 2. * sin(theta) * sin(phi);
+			case 'z':
+				return 2. * cos(theta);
+			default:
+				return 0.;
 		}
 	});
 
 	run_relaxation(e_theta, e_phi, embedding, metric, final_time);
 
-	output_embedding(embedding);
+	ofstream embedding_output("embedding.csv");
+	for (int i = 0; i < mesh.N_theta; i++) {
+		for (int j = 0; j < mesh.N_phi; j++) {
+			embedding_output << embedding->x_points[i][j] << "," << embedding->y_points[i][j] << "," << embedding->z_points[i][j] << endl;
+		}
+	}
+	embedding_output.close();
+
+	return embedding;
 }

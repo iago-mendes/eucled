@@ -24,8 +24,7 @@ int main() {
   auto start_time = std::chrono::high_resolution_clock::now();
 
   // Run embedding solver
-  std::shared_ptr<DataMesh3D> embedding = std::make_shared<DataMesh3D>(metric->mesh);
-  run_embedding(metric, embedding);
+  const auto embedding = find_embedding(metric, metric->mesh);
 
   // Output wall time
   auto end_time = std::chrono::high_resolution_clock::now();
