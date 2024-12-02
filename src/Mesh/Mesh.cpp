@@ -3,9 +3,14 @@
 
 #include "./Mesh.hpp"
 
-#include "math.h"
+#include <math.h>
+#include <stdexcept>
 
 Mesh::Mesh(int N_theta, int N_phi) {
+	if (N_theta < 10 or N_phi < 10) {
+		throw std::logic_error("The minimum mesh size is 10x10!");
+	}
+
 	this->N_theta = N_theta;
 	this->N_phi = N_phi;
 
