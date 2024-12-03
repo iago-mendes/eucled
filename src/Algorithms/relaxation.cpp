@@ -203,6 +203,7 @@ void run_relaxation(
 	for (; iteration < MAX_ITERATIONS; iteration++) {
 
 		// First-order time stepping
+		const double prev_poisson_residual = poisson_residual;
 		poisson_residual = update_embedding(time_step);
 
 		// Output residuals
@@ -225,8 +226,12 @@ void run_relaxation(
 		}
 
 		// Check stop condition
-		if (iteration > min_iterations and poisson_residual <= commutator_residual) {
+		double relative_poisson_change = fabs(poisson_residual - prev_poisson_residual) / prev_poisson_residual;
+		if (iteration > min_iterations and poisson_residual <= std::max(commutator_residual/1e3, 1e-14)) {
 			std::cout << "Reached poisson residual tolerance" << std::endl;
+			break;
+		} else if (iteration > min_iterations and relative_poisson_change < 1e-10) {
+			std::cout << "Reached poisson residual asymptote" << std::endl;
 			break;
 		}
 	}
